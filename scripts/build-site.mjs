@@ -69,8 +69,8 @@ export function buildSite() {
       .replaceAll('../dist/components.css', '../../components.css')
       .replaceAll('../dist/theme.js', '../../theme.js')
       .replaceAll('../dist/sidebar.js', '../../sidebar.js');
-    const htmlWithoutComments = html.replace(/<!--[\\s\\S]*?-->/g, '');
-    if (/\\{\\{[^}]+\\}\\}/.test(htmlWithoutComments)) throw new Error('網站輸出仍有未填 placeholder：' + site.id);
+    const htmlWithoutComments = html.replace(/<!--[\s\S]*?-->/g, '');
+    if (/\{\{[^}]+\}\}/.test(htmlWithoutComments)) throw new Error('網站輸出仍有未填 placeholder：' + site.id);
     const siteDir = path.join(outputRoot, site.id);
     mkdirSync(siteDir, { recursive: true });
     writeFileSync(path.join(siteDir, 'index.html'), html);
