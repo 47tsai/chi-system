@@ -185,7 +185,7 @@ for (const site of siteRecords) {
   const preview = previewById.get(site.id);
   if (!preview || preview.name !== site.name) fail('preview/sites.json 缺少或名稱不一致：' + site.id);
 }
-const generatedTemplate = stripComments(readFileSync(path.join(ROOT, 'templates', 'base.html'), 'utf8')).replace(/<!--[\\s\\S]*?-->/g, '');
+const generatedTemplate = stripComments(readFileSync(path.join(ROOT, 'templates', 'base.html'), 'utf8')).replace(/<!--[\s\S]*?-->/g, '');
 const allowedPlaceholders = new Set([
   '{{site.brand}}', '{{site.id}}', '{{site.url}}', '{{site.name}}',
   '{{site.logoLight}}', '{{site.logoDark}}', '{{version}}',
