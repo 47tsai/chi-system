@@ -61,7 +61,7 @@
   align-items: center;
   padding: var(--chi-space-2) var(--chi-space-4);
   background: var(--chi-color-surface);
-  border-bottom: 1px solid var(--chi-color-border-subtle);
+  border-bottom: var(--chi-base-border-default-width) solid var(--chi-color-border-subtle);
   overflow-x: auto;
 }
 .chi-subnav:empty {
