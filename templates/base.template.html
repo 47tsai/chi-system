@@ -2,7 +2,8 @@
      由 scripts/build-site.mjs 把 components/*.html 片段組裝成 templates/base.html（生成物）。
      佔位規則（齊定案）：範本不放任何真實內容。標題打「標題」、內文打「內文」、
      品牌寫「站名」／「副標」、導覽寫「連結一／連結二／連結三」。
-     {{site.*}}、{{version}} 由網站建置時以 sites/<site>.json 填入；{{slots.*}} 由各站填入。
+     {{site.*}}（含 logoLight／logoDark）、{{version}} 由網站建置時以 sites/<site>.json 填入；
+     {{slots.*}} 由各站填入。
      參考架構：GOV.UK template.njk「一個頁面殼＋具名區塊」（見研究報告 §3、§6）。 -->
 <!DOCTYPE html>
 <html lang="zh-Hant" data-chi-theme="light" data-chi-brand="{{site.brand}}">
