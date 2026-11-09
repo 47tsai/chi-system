@@ -1,0 +1,12 @@
+/* chi-system Footer — 只引 Token，不寫原始值。 */
+.chi-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--chi-space-4);
+  padding: var(--chi-space-4);
+  color: var(--chi-color-text-muted);
+  font-size: var(--chi-font-size-caption);
+  line-height: var(--chi-font-line-height-caption);
+  border-top: 1px solid var(--chi-color-border-subtle);
+}
