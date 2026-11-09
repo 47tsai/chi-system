@@ -123,7 +123,7 @@ if (/#[0-9a-fA-F]{3,8}\b/.test(template)) fail('硬編碼色值：templates/base
 
 // 4. 網站設定 schema：欄位、型別、品牌檔存在、logo 檔案存在；不寫死站數。
 const REQUIRED = ['id', 'name', 'url', 'brand', 'logoLight', 'logoDark', 'description', 'icon'];
-const ALLOWED_SITE_KEYS = new Set(REQUIRED);
+const ALLOWED_SITE_KEYS = new Set([...REQUIRED, 'layout']);
 const sites = readdirSync(path.join(ROOT, 'sites')).filter((f) => f.endsWith('.json'));
 const siteRecords = [];
 if (sites.length === 0) fail('sites/ 沒有任何網站設定');
@@ -154,6 +154,9 @@ for (const f of sites) {
     if (typeof site[key] !== 'string' || !site[key].trim()) {
       fail('網站設定欄位必須是非空字串：' + f + ' ' + key);
     }
+  }
+  if (site.layout !== undefined && !['header', 'sidebar'].includes(site.layout)) {
+    fail('網站設定 layout 只能是 header 或 sidebar：' + f);
   }
   if (!brands[site.brand]) fail('網站設定品牌不存在：' + f + ' brand=' + site.brand);
   if (typeof site.url !== 'string') {
@@ -192,7 +195,7 @@ for (const site of siteRecords) {
 const generatedTemplate = stripComments(readFileSync(path.join(ROOT, 'templates', 'base.html'), 'utf8')).replace(/<!--[\s\S]*?-->/g, '');
 const allowedPlaceholders = new Set([
   '{{site.brand}}', '{{site.id}}', '{{site.url}}', '{{site.name}}',
-  '{{site.logoLight}}', '{{site.logoDark}}', '{{version}}',
+  '{{site.logoLight}}', '{{site.logoDark}}', '{{site.layout}}', '{{version}}',
   '{{slots.actions}}', '{{slots.subnav}}', '{{slots.nav}}',
 ]);
 const foundPlaceholders = generatedTemplate.match(/\{\{[^}]+\}\}/g) || [];
@@ -213,6 +216,7 @@ for (const site of siteRecords) {
     '{{site.name}}': site.name,
     '{{site.logoLight}}': '../' + site.logoLight,
     '{{site.logoDark}}': '../' + site.logoDark,
+    '{{site.layout}}': site.layout === 'sidebar' ? 'sidebar' : 'header',
     '{{version}}': 'v' + packageVersion,
     ...sampleSlots,
   };
@@ -220,6 +224,9 @@ for (const site of siteRecords) {
   for (const [placeholder, value] of Object.entries(values)) rendered = rendered.split(placeholder).join(value);
   if (/\{\{[^}]+\}\}/.test(rendered)) fail('網站模板仍有未填 placeholder：' + site.id);
   if (!rendered.includes('data-chi-brand="' + site.brand + '"')) fail('網站模板未套用品牌：' + site.id);
+  if (!rendered.includes('data-chi-layout="' + (site.layout === 'sidebar' ? 'sidebar' : 'header') + '"')) {
+    fail('網站模板未套用指定版式：' + site.id);
+  }
   for (const logo of [site.logoLight, site.logoDark]) {
     if (!rendered.includes('../' + logo)) fail('網站模板未輸出 logo：' + site.id + ' ' + logo);
   }
