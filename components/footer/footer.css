@@ -8,5 +8,5 @@
   color: var(--chi-color-text-muted);
   font-size: var(--chi-font-size-caption);
   line-height: var(--chi-font-line-height-caption);
-  border-top: 1px solid var(--chi-color-border-subtle);
+  border-top: var(--chi-base-border-default-width) solid var(--chi-color-border-subtle);
 }
