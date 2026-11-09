@@ -24,7 +24,8 @@ tokens/brands/<站>.tokens.json
 sites/<站>.json
 components/<header|footer|sidebar|button|base>/
 templates/base.template.html  →  templates/base.html（生成物）
-dist/tokens.css  dist/components.css  dist/theme.js  dist/sidebar.js\ndist/sites/<站>/index.html（建置產物）
+dist/tokens.css  dist/components.css  dist/theme.js  dist/sidebar.js
+dist/sites/<站>/index.html（建置產物）
 scripts/build-tokens.mjs  scripts/build-site.mjs  scripts/validate.mjs
 preview/index.html  preview/sites.json（生成物）
 logo/
