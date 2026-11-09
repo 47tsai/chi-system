@@ -259,6 +259,15 @@ for (const w of widths) if (!sidebarCss.includes(`min-width: ${w}px`)) fail(`sid
 if (/max-width:\s*768px/.test(sidebarCss)) fail('sidebar.css 出現 max-width: 768px 反向寫法（舊報告 A16）');
 const sidebarJs = readFileSync(path.join(ROOT, 'dist', 'sidebar.js'), 'utf8');
 if (!sidebarJs.includes('768')) fail('sidebar.js 缺 768 斷點值');
+if (!sidebarJs.includes('sidebar.inert = hidden')) fail('sidebar.js 未將關閉的手機側欄移出 Tab 順序');
+if (!sidebarJs.includes("setAttribute('aria-hidden', hidden ? 'true' : 'false')")) fail('sidebar.js 未同步側欄 aria-hidden');
+if (!sidebarJs.includes("event.key !== 'Tab'")) fail('sidebar.js 缺少手機抽屜 Tab 焦點管理');
+const sidebarMarkup = readFileSync(path.join(ROOT, 'components', 'sidebar', 'sidebar.html'), 'utf8');
+const baseMarkup = readFileSync(path.join(ROOT, 'templates', 'base.template.html'), 'utf8');
+if (!sidebarMarkup.includes('id="chi-sidebar"')) fail('sidebar.html 缺少穩定 id');
+if (!sidebarMarkup.includes('aria-controls="chi-sidebar"') || !baseMarkup.includes('aria-controls="chi-sidebar"')) {
+  fail('側欄觸發按鈕缺少 aria-controls 關聯');
+}
 
 console.log(notes.filter((n) => n.startsWith('對比')).join('\n'));
 if (failures.length) {
