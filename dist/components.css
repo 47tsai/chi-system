@@ -10,6 +10,7 @@
   padding: 0 var(--chi-space-4);
   background: var(--chi-color-surface);
   border-bottom: 1px solid var(--chi-color-border-subtle);
+  box-shadow: inset 0 -2px 0 var(--chi-color-brand);
 }
 .chi-header__brand {
   display: flex;
@@ -25,6 +26,15 @@
   width: 32px;
   height: 32px;
   flex: 0 0 auto;
+}
+.chi-header__logo--dark {
+  display: none;
+}
+[data-chi-theme="dark"] .chi-header__logo--light {
+  display: none;
+}
+[data-chi-theme="dark"] .chi-header__logo--dark {
+  display: block;
 }
 .chi-header__actions {
   display: flex;
@@ -136,6 +146,7 @@ html.chi-sidebar-open body {
   height: var(--chi-layout-header-height);
   padding: 0 var(--chi-space-2) 0 var(--chi-space-4);
   border-bottom: 1px solid var(--chi-color-border-subtle);
+  box-shadow: inset 0 -2px 0 var(--chi-color-brand);
   flex: 0 0 auto;
 }
 .chi-sidebar__brand {
@@ -153,6 +164,15 @@ html.chi-sidebar-open body {
   width: 32px;
   height: 32px;
   flex: 0 0 auto;
+}
+.chi-sidebar__logo--dark {
+  display: none;
+}
+[data-chi-theme="dark"] .chi-sidebar__logo--light {
+  display: none;
+}
+[data-chi-theme="dark"] .chi-sidebar__logo--dark {
+  display: block;
 }
 .chi-sidebar__name {
   overflow: hidden;
@@ -197,6 +217,7 @@ html.chi-sidebar-open body {
 .chi-sidebar__nav a[aria-current="page"] {
   color: var(--chi-color-accent);
   background: var(--chi-color-surface-sunken);
+  box-shadow: inset 3px 0 0 var(--chi-color-brand);
 }
 .chi-sidebar__bottom {
   display: flex;
