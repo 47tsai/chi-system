@@ -1,0 +1,9 @@
+{
+  "$description": "merch 品牌檔 — 只寫別名，不寫原始值。",
+  "color": {
+    "brand": {
+      "$type": "color",
+      "$value": "{color.violet.500}"
+    }
+  }
+}

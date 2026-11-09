@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<!-- chi-system preview — 唯一預覽（SPEC.md §8）。參數：?site=<id>&theme=light|dark&layout=header|sidebar
+     站殼（header／sidebar／footer）用 sites/<site>.json 的真實設定渲染；示範區只用佔位文字
+     （標題／內文／連結一…），不放真實內文。假俗艷品牌測試：把品牌換成刻意刺眼的設定，
+     全部元件必須跟著變臉，否則就是有元件在讀原始值或寫死（研究報告 §2.5、§5）。 -->
+<html lang="zh-Hant" data-chi-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>預覽 — chi-system</title>
+<link rel="stylesheet" href="../dist/tokens.css">
+<link rel="stylesheet" href="../dist/components.css">
+<script src="../dist/theme.js"></script>
+<script src="../dist/sidebar.js" data-chi-sidebar-key="chi-preview-sidebar-collapsed"></script>
+<style>
+  .preview-bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 12px 16px; background: var(--chi-color-surface-sunken); border-bottom: 1px solid var(--chi-color-border-subtle); }
+  .preview-bar select, .preview-bar button { font: inherit; }
+</style>
+</head>
+<body>
+<div class="preview-bar" role="group" aria-label="預覽控制">
+  <label>網站 <select id="site-select"></select></label>
+  <label>主題 <select id="theme-select"><option value="light">淺色</option><option value="dark">深色</option></select></label>
+  <label>版式 <select id="layout-select"><option value="header">header</option><option value="sidebar">sidebar</option></select></label>
+  <button id="loud-brand" type="button">假俗艷品牌測試</button>
+  <span id="preview-note"></span>
+</div>
+<div id="preview-app"></div>
+<main class="chi-main" id="preview-demo">
+  <h1>標題</h1>
+  <p>內文</p>
+  <h2>標題</h2>
+  <p>
+    <button class="chi-btn chi-btn--primary" type="button">按鈕</button>
+    <button class="chi-btn chi-btn--secondary" type="button">按鈕</button>
+    <button class="chi-btn chi-btn--ghost" type="button">按鈕</button>
+    <button class="chi-btn chi-btn--danger" type="button">按鈕</button>
+  </p>
+  <p>
+    <span class="chi-badge chi-badge--success"><span class="chi-badge__dot"></span>狀態</span>
+    <span class="chi-badge chi-badge--warning"><span class="chi-badge__dot"></span>狀態</span>
+    <span class="chi-badge chi-badge--danger"><span class="chi-badge__dot"></span>狀態</span>
+    <span class="chi-badge chi-badge--info"><span class="chi-badge__dot"></span>狀態</span>
+  </p>
+  <div class="chi-state">
+    <div class="chi-state__title">標題</div>
+    <div class="chi-state__desc">內文</div>
+    <button class="chi-btn chi-btn--primary chi-state__action" type="button">按鈕</button>
+  </div>
+</main>
+<script>
+(function () {
+  var params = new URLSearchParams(location.search);
+  var siteId = params.get('site') || 'chi';
+  var theme = params.get('theme') || 'light';
+  var layout = params.get('layout') || 'header';
+  var root = document.documentElement;
+  root.setAttribute('data-chi-theme', theme);
+  document.getElementById('theme-select').value = theme;
+  document.getElementById('layout-select').value = layout;
+  var note = document.getElementById('preview-note');
+  fetch('../sites/' + siteId + '.json').then(function (r) { return r.json(); }).then(function (site) {
+    root.setAttribute('data-chi-brand', site.brand);
+    document.getElementById('site-select').innerHTML = '';
+    return fetch('../templates/base.html').then(function (r) { return r.text(); }).then(function (tpl) {
+      var logo = theme === 'dark' ? site.logoDark : site.logoLight;
+      var html = tpl
+        .replaceAll('{{site.url}}', site.url)
+        .replaceAll('{{site.name}}', site.name)
+        .replaceAll('{{site.logo}}', '../' + logo)
+        .replaceAll('{{site.brand}}', site.brand)
+        .replaceAll('{{site.id}}', site.id)
+        .replaceAll('{{version}}', 'v1.0.0')
+        .replaceAll('{{slots.actions}}', '')
+        .replaceAll('{{slots.subnav}}', '<a href="#" aria-current="page">連結一</a><a href="#">連結二</a><a href="#">連結三</a>')
+        .replaceAll('{{slots.nav}}', '<a href="#" aria-current="page"><span class="chi-sidebar__icon">◆</span><span class="chi-sidebar__label">連結一</span></a><a href="#"><span class="chi-sidebar__icon">◆</span><span class="chi-sidebar__label">連結二</span></a><a href="#"><span class="chi-sidebar__icon">◆</span><span class="chi-sidebar__label">連結三</span></a>');
+      // base.html 是完整文件：只取 <body> 內的殼，套進預覽頁
+      var body = html.split('<body>')[1].split('</body>')[0];
+      body = body.replace('data-chi-layout="header"', 'data-chi-layout="' + layout + '"');
+      document.getElementById('preview-app').innerHTML = body;
+      note.textContent = '目前預覽：' + site.name + '（' + site.url + '）';
+      // 預覽頁的 <head> 腳本在 base 片段裡不會執行：重新綁定一次主題／側邊欄
+      if (window.ChiTheme) window.ChiTheme.bindToggles();
+      if (window.ChiSidebar) window.ChiSidebar.bind();
+    });
+  }).catch(function () { note.textContent = '找不到網站設定：' + siteId; });
+  document.getElementById('site-select').addEventListener('change', function (e) {
+    params.set('site', e.target.value); location.search = params.toString();
+  });
+  document.getElementById('theme-select').addEventListener('change', function (e) {
+    params.set('theme', e.target.value); location.search = params.toString();
+  });
+  document.getElementById('layout-select').addEventListener('change', function (e) {
+    params.set('layout', e.target.value); location.search = params.toString();
+  });
+  // 假俗艷品牌測試：飽和綠＋直角＋襯線標題。全部元件必須變臉，否則就是讀寫死值。
+  document.getElementById('loud-brand').addEventListener('click', function () {
+    var s = document.createElement('style');
+    s.textContent = ':root{--chi-color-brand:#00C853;--chi-radius-md:0px;--chi-radius-lg:0px;--chi-font-sans:Georgia,serif}';
+    document.head.appendChild(s);
+    note.textContent = '假俗艷品牌測試：品牌已換成飽和綠＋直角＋襯線字。檢查 header、按鈕、側邊欄是否全數變臉。';
+  });
+  // 網站下拉選單：清單由 build-site.mjs 從 sites/*.json 產生（preview/sites.json），不得寫死。
+  fetch('../preview/sites.json').then(function (r) { return r.json(); }).then(function (list) {
+    var sel = document.getElementById('site-select');
+    list.forEach(function (s) {
+      var o = document.createElement('option'); o.value = s.id; o.textContent = s.name + '（' + s.id + '）';
+      if (s.id === siteId) o.selected = true; sel.appendChild(o);
+    });
+  });
+})();
+</script>
+</body>
+</html>

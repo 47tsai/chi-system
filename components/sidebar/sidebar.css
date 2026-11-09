@@ -1,0 +1,213 @@
+/* chi-system Sidebar — 只引 Token，不寫原始值。斷點只用 min-width：768px、1024px。
+   行動優先：手機版為抽屜（預設藏在畫面外）；≥768px 為圖示列；≥1024px 為完整側邊欄，
+   收合態（html[data-chi-sidebar-collapsed]）回到圖示列。導覽連結寫法：
+   <a href="…"><span class="chi-sidebar__icon">…</span><span class="chi-sidebar__label">…</span></a> */
+.chi-shell {
+  display: flex;
+  min-height: 100vh;
+}
+.chi-content {
+  flex: 1;
+  min-width: 0;
+}
+.chi-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  width: var(--chi-layout-sidebar-width);
+  height: 100vh;
+  background: var(--chi-color-surface);
+  border-right: 1px solid var(--chi-color-border-subtle);
+  transform: translateX(-100%);
+  transition: transform var(--chi-duration-base) ease;
+}
+.chi-sidebar.mobile-open {
+  transform: none;
+}
+.chi-sidebar__scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: none;
+  background: var(--chi-color-surface-sunken);
+  opacity: 0.6;
+}
+.chi-sidebar__scrim.visible {
+  display: block;
+}
+html.chi-sidebar-open body {
+  overflow: hidden;
+}
+.chi-sidebar__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--chi-space-2);
+  height: var(--chi-layout-header-height);
+  padding: 0 var(--chi-space-2) 0 var(--chi-space-4);
+  border-bottom: 1px solid var(--chi-color-border-subtle);
+  flex: 0 0 auto;
+}
+.chi-sidebar__brand {
+  display: flex;
+  align-items: center;
+  gap: var(--chi-space-2);
+  color: var(--chi-color-text-primary);
+  text-decoration: none;
+  font-size: var(--chi-font-size-label);
+  font-weight: var(--chi-font-weight-label);
+  line-height: var(--chi-font-line-height-label);
+  min-width: 0;
+}
+.chi-sidebar__logo {
+  width: 32px;
+  height: 32px;
+  flex: 0 0 auto;
+}
+.chi-sidebar__name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.chi-sidebar__trigger,
+.chi-sidebar__theme {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--chi-size-touch-min);
+  min-height: var(--chi-size-touch-min);
+  padding: 0;
+  background: var(--chi-color-surface);
+  color: var(--chi-color-text-primary);
+  border: 1px solid var(--chi-color-border-subtle);
+  border-radius: var(--chi-radius-md);
+  cursor: pointer;
+  flex: 0 0 auto;
+}
+.chi-sidebar__trigger:focus-visible,
+.chi-sidebar__theme:focus-visible {
+  outline: var(--chi-focus-width) solid var(--chi-color-focus-ring);
+  outline-offset: var(--chi-focus-offset);
+}
+.chi-sidebar__nav {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--chi-space-2);
+}
+.chi-sidebar__nav a {
+  display: flex;
+  align-items: center;
+  gap: var(--chi-space-2);
+  min-height: var(--chi-size-list-row);
+  padding: 0 var(--chi-space-2);
+  color: var(--chi-color-text-secondary);
+  text-decoration: none;
+  border-radius: var(--chi-radius-md);
+}
+.chi-sidebar__nav a[aria-current="page"] {
+  color: var(--chi-color-accent);
+  background: var(--chi-color-surface-sunken);
+}
+.chi-sidebar__bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--chi-space-2);
+  padding: var(--chi-space-2) var(--chi-space-4);
+  border-top: 1px solid var(--chi-color-border-subtle);
+  color: var(--chi-color-text-muted);
+  font-size: var(--chi-font-size-caption);
+  flex: 0 0 auto;
+}
+/* 手機版頁面標頭的開抽屜按鈕：只在 <768px 顯示。 */
+.chi-mobile-header {
+  display: flex;
+  align-items: center;
+  gap: var(--chi-space-2);
+  height: var(--chi-layout-header-height);
+  padding: 0 var(--chi-space-4);
+  background: var(--chi-color-surface);
+  border-bottom: 1px solid var(--chi-color-border-subtle);
+}
+.chi-mobile-header .chi-sidebar__trigger {
+  margin-left: calc(var(--chi-space-2) * -1);
+}
+@media (min-width: 768px) {
+  .chi-mobile-header {
+    display: none;
+  }
+  .chi-sidebar {
+    position: sticky;
+    transform: none;
+    width: var(--chi-layout-sidebar-collapsed-width);
+  }
+  .chi-sidebar__scrim {
+    display: none;
+  }
+  .chi-sidebar__name,
+  .chi-sidebar__label,
+  .chi-sidebar__version {
+    display: none;
+  }
+  .chi-sidebar__top {
+    flex-direction: column;
+    height: auto;
+    padding: var(--chi-space-2);
+    gap: var(--chi-space-2);
+  }
+  .chi-sidebar__bottom {
+    flex-direction: column;
+    padding: var(--chi-space-2);
+  }
+  .chi-sidebar__nav a {
+    justify-content: center;
+    padding: 0;
+  }
+}
+@media (min-width: 1024px) {
+  .chi-sidebar {
+    width: var(--chi-layout-sidebar-width);
+  }
+  .chi-sidebar__name,
+  .chi-sidebar__label,
+  .chi-sidebar__version {
+    display: revert;
+  }
+  .chi-sidebar__top {
+    flex-direction: row;
+    height: var(--chi-layout-header-height);
+    padding: 0 var(--chi-space-2) 0 var(--chi-space-4);
+  }
+  .chi-sidebar__bottom {
+    flex-direction: row;
+    padding: var(--chi-space-2) var(--chi-space-4);
+  }
+  .chi-sidebar__nav a {
+    justify-content: flex-start;
+    padding: 0 var(--chi-space-2);
+  }
+  html[data-chi-sidebar-collapsed] .chi-sidebar {
+    width: var(--chi-layout-sidebar-collapsed-width);
+  }
+  html[data-chi-sidebar-collapsed] .chi-sidebar__name,
+  html[data-chi-sidebar-collapsed] .chi-sidebar__label,
+  html[data-chi-sidebar-collapsed] .chi-sidebar__version {
+    display: none;
+  }
+  html[data-chi-sidebar-collapsed] .chi-sidebar__top {
+    flex-direction: column;
+    height: auto;
+    padding: var(--chi-space-2);
+  }
+  html[data-chi-sidebar-collapsed] .chi-sidebar__bottom {
+    flex-direction: column;
+    padding: var(--chi-space-2);
+  }
+  html[data-chi-sidebar-collapsed] .chi-sidebar__nav a {
+    justify-content: center;
+    padding: 0;
+  }
+}

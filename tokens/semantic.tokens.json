@@ -1,0 +1,133 @@
+{
+  "$description": "chi-system semantic tokens（淺色）— 角色層。元件只讀這一層，絕不讀 primitive。別名指向 primitives.tokens.json。",
+  "color": {
+    "accent": {
+      "$description": "連結文字與主要操作",
+      "$type": "color",
+      "$value": "{color.accent.light}"
+    },
+    "accent-active": {
+      "$type": "color",
+      "$value": "{color.accent.light-active}"
+    },
+    "accent-hover": {
+      "$type": "color",
+      "$value": "{color.accent.light-hover}"
+    },
+    "border-strong": {
+      "$type": "color",
+      "$value": "{color.neutral.border-strong-light}"
+    },
+    "border-subtle": {
+      "$type": "color",
+      "$value": "{color.neutral.border-subtle-light}"
+    },
+    "brand": {
+      "$description": "站識別色，由品牌檔覆寫；預設 chi 藍",
+      "$type": "color",
+      "$value": "{color.blue.500}"
+    },
+    "canvas": {
+      "$type": "color",
+      "$value": "{color.neutral.canvas-light}"
+    },
+    "danger": {
+      "$type": "color",
+      "$value": "{color.semantic.danger-light}"
+    },
+    "danger-bg": {
+      "$type": "color",
+      "$value": "{color.semantic.danger-bg-light}"
+    },
+    "danger-strong": {
+      "$type": "color",
+      "$value": "{color.semantic.danger-strong-light}"
+    },
+    "focus-ring": {
+      "$type": "color",
+      "$value": "{color.accent.light}"
+    },
+    "info": {
+      "$type": "color",
+      "$value": "{color.semantic.info-light}"
+    },
+    "info-bg": {
+      "$type": "color",
+      "$value": "{color.semantic.info-bg-light}"
+    },
+    "info-strong": {
+      "$type": "color",
+      "$value": "{color.semantic.info-strong-light}"
+    },
+    "on-accent": {
+      "$type": "color",
+      "$value": "{color.neutral.surface-light}"
+    },
+    "success": {
+      "$type": "color",
+      "$value": "{color.semantic.success-light}"
+    },
+    "success-bg": {
+      "$type": "color",
+      "$value": "{color.semantic.success-bg-light}"
+    },
+    "success-strong": {
+      "$type": "color",
+      "$value": "{color.semantic.success-strong-light}"
+    },
+    "surface": {
+      "$type": "color",
+      "$value": "{color.neutral.surface-light}"
+    },
+    "surface-raised": {
+      "$type": "color",
+      "$value": "{color.neutral.surface-light}"
+    },
+    "surface-sunken": {
+      "$type": "color",
+      "$value": "{color.neutral.sunken-light}"
+    },
+    "text-disabled": {
+      "$type": "color",
+      "$value": "{color.neutral.text-disabled-light}"
+    },
+    "text-muted": {
+      "$type": "color",
+      "$value": "{color.neutral.text-muted-light}"
+    },
+    "text-primary": {
+      "$type": "color",
+      "$value": "{color.neutral.text-primary-light}"
+    },
+    "text-secondary": {
+      "$type": "color",
+      "$value": "{color.neutral.text-secondary-light}"
+    },
+    "warning": {
+      "$type": "color",
+      "$value": "{color.semantic.warning-light}"
+    },
+    "warning-bg": {
+      "$type": "color",
+      "$value": "{color.semantic.warning-bg-light}"
+    },
+    "warning-strong": {
+      "$type": "color",
+      "$value": "{color.semantic.warning-strong-light}"
+    }
+  },
+  "shadow": {
+    "overlay": {
+      "$type": "shadow",
+      "$value": "{shadow.overlay-light}"
+    },
+    "raised": {
+      "$type": "shadow",
+      "$value": "{shadow.raised-light}"
+    },
+    "whisper": {
+      "$type": "shadow",
+      "$value": "{shadow.whisper-light}"
+    }
+  }
+}

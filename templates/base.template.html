@@ -1,0 +1,37 @@
+<!-- chi-system base template — 新站起步頁（來源檔，templates/base.template.html）。
+     由 scripts/build-site.mjs 把 components/*.html 片段組裝成 templates/base.html（生成物）。
+     佔位規則（齊定案）：範本不放任何真實內容。標題打「標題」、內文打「內文」、
+     品牌寫「站名」／「副標」、導覽寫「連結一／連結二／連結三」。
+     {{site.*}}、{{version}} 由網站建置時以 sites/<site>.json 填入；{{slots.*}} 由各站填入。
+     參考架構：GOV.UK template.njk「一個頁面殼＋具名區塊」（見研究報告 §3、§6）。 -->
+<!DOCTYPE html>
+<html lang="zh-Hant" data-chi-theme="light" data-chi-brand="{{site.brand}}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>標題 — 站名</title>
+<link rel="stylesheet" href="../dist/tokens.css">
+<link rel="stylesheet" href="../dist/components.css">
+<script src="../dist/theme.js"></script>
+<script src="../dist/sidebar.js" data-chi-sidebar-key="chi-{{site.id}}-sidebar-collapsed"></script>
+</head>
+<body>
+<!-- 版式由 data-chi-layout 一個屬性決定：header（預設）或 sidebar；同一份模板，不另開第二份。 -->
+<div class="chi-shell" data-chi-layout="header">
+<!-- chi-component:sidebar -->
+<div class="chi-content">
+<div class="chi-mobile-header">
+<button class="chi-sidebar__trigger" type="button" data-chi-sidebar-toggle aria-expanded="false" aria-label="開啟導覽選單" title="開啟導覽選單">☰</button>
+<span class="chi-header__name">{{site.name}}</span>
+</div>
+<!-- chi-component:header -->
+<main class="chi-main">
+<h1>標題</h1>
+<p>內文</p>
+<!-- chi-component:button -->
+</main>
+<!-- chi-component:footer -->
+</div>
+</div>
+</body>
+</html>
