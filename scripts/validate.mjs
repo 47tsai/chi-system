@@ -1,6 +1,6 @@
 // chi-system validate.mjs — 驗真的渲染依據，不是檔案在不在。
-// 參考：研究報告 §5 的九道關卡，本版實作其中可本地驗證的 6 道
-//   （Token 解析、對比計算、禁硬編碼、網站設定 schema、斷點一致、生成物由 CI 另驗）。
+// 本地驗證 Token schema／解析、對比計算、禁硬編碼、網站設定、模板渲染、
+//   每站建置輸出與斷點一致；axe／Playwright 仍列為 v1.1。
 //   axe／Playwright 計算樣式／視覺回歸列為 v1.1（見 SPEC.md §8）。
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
