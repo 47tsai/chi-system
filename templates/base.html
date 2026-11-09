@@ -3,7 +3,8 @@
      由 scripts/build-site.mjs 把 components/*.html 片段組裝成 templates/base.html（生成物）。
      佔位規則（齊定案）：範本不放任何真實內容。標題打「標題」、內文打「內文」、
      品牌寫「站名」／「副標」、導覽寫「連結一／連結二／連結三」。
-     {{site.*}}、{{version}} 由網站建置時以 sites/<site>.json 填入；{{slots.*}} 由各站填入。
+     {{site.*}}（含 logoLight／logoDark）、{{version}} 由網站建置時以 sites/<site>.json 填入；
+     {{slots.*}} 由各站填入。
      參考架構：GOV.UK template.njk「一個頁面殼＋具名區塊」（見研究報告 §3、§6）。 -->
 <!DOCTYPE html>
 <html lang="zh-Hant" data-chi-theme="light" data-chi-brand="{{site.brand}}">
@@ -27,7 +28,8 @@
 <aside class="chi-sidebar" aria-label="本站導覽">
   <div class="chi-sidebar__top">
     <a class="chi-sidebar__brand" href="{{site.url}}">
-      <img class="chi-sidebar__logo" src="{{site.logo}}" alt="{{site.name}}" width="32" height="32">
+      <img class="chi-sidebar__logo chi-sidebar__logo--light" src="{{site.logoLight}}" alt="{{site.name}}" width="32" height="32">
+      <img class="chi-sidebar__logo chi-sidebar__logo--dark" src="{{site.logoDark}}" alt="{{site.name}}" width="32" height="32">
       <span class="chi-sidebar__name">{{site.name}}</span>
     </a>
     <button class="chi-sidebar__trigger" type="button" data-chi-sidebar-toggle aria-expanded="true" aria-label="收合側邊欄" title="收合側邊欄">‹</button>
@@ -50,7 +52,8 @@
      導覽不進 header，放 header 下方獨立一列（slots.subnav），沒有導覽的站省略整段。 -->
 <header class="chi-header">
   <a class="chi-header__brand" href="{{site.url}}">
-    <img class="chi-header__logo" src="{{site.logo}}" alt="{{site.name}}" width="32" height="32">
+    <img class="chi-header__logo chi-header__logo--light" src="{{site.logoLight}}" alt="{{site.name}}" width="32" height="32">
+    <img class="chi-header__logo chi-header__logo--dark" src="{{site.logoDark}}" alt="{{site.name}}" width="32" height="32">
     <span class="chi-header__name">{{site.name}}</span>
   </a>
   <div class="chi-header__actions">
