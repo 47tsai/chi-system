@@ -80,5 +80,5 @@ export function buildSite() {
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const r = buildSite();
-  console.log(`base.html、components.css、preview/sites.json 已生成（版本 v${r.version}，${r.sites} 站）`);
+  console.log(`base.html、components.css、preview/sites.json、dist/sites/*/index.html 已生成（版本 v${r.version}，${r.sites} 站）`);
 }
