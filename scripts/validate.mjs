@@ -243,7 +243,11 @@ for (const site of siteRecords) {
     if (!output.includes(asset)) fail('網站建置輸出缺少共用資產路徑：' + site.id + ' ' + asset);
   }
   for (const logo of [site.logoLight, site.logoDark]) {
-    if (!output.includes('../../../' + logo)) fail('網站建置輸出缺少品牌 Logo：' + site.id + ' ' + logo);
+    const bundledLogo = '../../logo/' + path.basename(logo);
+    if (!output.includes(bundledLogo)) fail('網站建置輸出缺少品牌 Logo 路徑：' + site.id + ' ' + bundledLogo);
+    if (!existsSync(path.join(ROOT, 'dist', 'logo', path.basename(logo)))) {
+      fail('網站發佈目錄缺少品牌 Logo 檔案：' + site.id + ' ' + logo);
+    }
   }
 }
 console.log('網站建置輸出檢查通過：' + siteRecords.length + ' 站');
