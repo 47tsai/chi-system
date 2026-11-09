@@ -21,7 +21,7 @@
  * - color-scheme 由 tokens.css 依 data-chi-theme 設定（§4）；此檔同時寫入
  *   documentElement.style.colorScheme，只是讓原生控制項在樣式表載入前就跟上，不取代 CSS 的設定。
  * - 對外 API（供框架薄包裝與除錯用）：window.ChiTheme = { getMode, setMode, cycle,
- *   getEffective, bindToggles, KEY, MODES }；切換時在 window 派發 chi-theme-change
+ *   getEffective, setPreviewMode, bindToggles, KEY, MODES }；setPreviewMode 僅供預覽使用、不寫入 localStorage；切換時在 window 派發 chi-theme-change
  *   事件，detail 為 { mode, effective }。
  */
 (function () {
@@ -124,6 +124,12 @@
     apply(mode);
   }
 
+  // 預覽頁設定主題時只改當前頁面，不污染正式網站的使用者偏好。
+  function setPreviewMode(mode) {
+    if (!isMode(mode)) return;
+    apply(mode);
+  }
+
   function cycle() {
     var next = ORDER[(ORDER.indexOf(currentMode) + 1) % ORDER.length];
     setMode(next);
@@ -174,6 +180,7 @@
       return effectiveOf(currentMode);
     },
     setMode: setMode,
+    setPreviewMode: setPreviewMode,
     cycle: cycle,
     bindToggles: bindToggles,
   };
