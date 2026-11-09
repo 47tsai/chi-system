@@ -201,7 +201,7 @@
   height: var(--chi-base-choice-size);
   flex: none;
   margin: 0;
-  border: 1px solid var(--chi-color-border-strong);
+  border: var(--chi-base-border-default-width) solid var(--chi-color-border-strong);
   background-color: var(--chi-color-surface);
   cursor: pointer;
   transition:
@@ -336,7 +336,7 @@
 
 .chi-card {
   background-color: var(--chi-color-surface);
-  border: 1px solid var(--chi-color-border-subtle);
+  border: var(--chi-base-border-default-width) solid var(--chi-color-border-subtle);
   border-radius: var(--chi-radius-lg);
   padding: var(--chi-space-5);
   box-shadow: var(--chi-shadow-whisper);
@@ -384,7 +384,7 @@
   margin: 0;
   padding: 0;
   background-color: var(--chi-color-surface);
-  border: 1px solid var(--chi-color-border-subtle);
+  border: var(--chi-base-border-default-width) solid var(--chi-color-border-subtle);
   border-radius: var(--chi-radius-lg);
   overflow: hidden;
 }
@@ -395,7 +395,7 @@
   gap: var(--chi-space-3);
   min-height: var(--chi-size-list-row);
   padding: var(--chi-space-2) var(--chi-space-4);
-  border-bottom: 1px solid var(--chi-color-border-subtle);
+  border-bottom: var(--chi-base-border-default-width) solid var(--chi-color-border-subtle);
   color: var(--chi-color-text-primary);
 }
 
@@ -421,7 +421,7 @@
 
 .chi-table-wrap {
   overflow-x: auto;
-  border: 1px solid var(--chi-color-border-subtle);
+  border: var(--chi-base-border-default-width) solid var(--chi-color-border-subtle);
   border-radius: var(--chi-radius-lg);
   background-color: var(--chi-color-surface);
 }
@@ -437,7 +437,7 @@
 .chi-table th {
   text-align: left;
   padding: var(--chi-space-3) var(--chi-space-4);
-  border-bottom: 1px solid var(--chi-color-border-strong);
+  border-bottom: var(--chi-base-border-default-width) solid var(--chi-color-border-strong);
   font-size: var(--chi-font-size-label);
   line-height: var(--chi-line-height-label);
   font-weight: var(--chi-font-weight-label);
@@ -447,7 +447,7 @@
 
 .chi-table td {
   padding: var(--chi-space-3) var(--chi-space-4);
-  border-bottom: 1px solid var(--chi-color-border-subtle);
+  border-bottom: var(--chi-base-border-default-width) solid var(--chi-color-border-subtle);
 }
 
 .chi-table tr:last-child td {
@@ -460,7 +460,7 @@
 
 .chi-table tr[aria-selected="true"] {
   background-color: var(--chi-color-surface-sunken);
-  box-shadow: inset 3px 0 0 var(--chi-color-accent);
+  box-shadow: inset var(--chi-base-border-indicator-width) 0 0 var(--chi-color-accent);
 }
 
 /* ---------- 徽章與狀態 ---------- */
