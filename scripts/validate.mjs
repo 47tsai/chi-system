@@ -155,6 +155,57 @@ for (const file of tokenFiles) {
 }
 console.log(`Token schema 檢查完成：${tokenFiles.length} 份來源檔`);
 
+// 1. Token schema：每個 Token 都必須明確宣告 $type 與 $value。
+//    這一關獨立於 resolveAll，避免「可解析」被誤當成「符合 Token 格式」。
+const tokenFiles = [
+  'primitives.tokens.json',
+  'semantic.tokens.json',
+  'semantic-dark.tokens.json',
+  'components.tokens.json',
+  ...readdirSync(path.join(ROOT, 'tokens', 'brands'))
+    .filter((name) => name.endsWith('.tokens.json'))
+    .map((name) => `brands/${name}`),
+];
+const TOKEN_METADATA = new Set(['$description', '$type', '$extensions', '$deprecated', '$experimental']);
+function validateTokenNode(node, file, tokenPath = '') {
+  if (!node || typeof node !== 'object' || Array.isArray(node)) {
+    fail(`Token 結構錯誤：${file} ${tokenPath || '(root)'} 必須是物件`);
+    return;
+  }
+  if (Object.prototype.hasOwnProperty.call(node, '$value')) {
+    if (typeof node.$type !== 'string' || !node.$type.trim()) {
+      fail(`Token 缺少有效 $type：${file} ${tokenPath}`);
+    }
+    if (typeof node.$value === 'string') {
+      const value = node.$value;
+      const opens = (value.match(/\\{/g) || []).length;
+      const closes = (value.match(/\\}/g) || []).length;
+      if (opens !== closes || /\\{\\s*\\}/.test(value)) {
+        fail(`Token 別名格式錯誤：${file} ${tokenPath}`);
+      }
+    }
+    return;
+  }
+  if (node.$type !== undefined && (typeof node.$type !== 'string' || !node.$type.trim())) {
+    fail(`Token 群組 $type 無效：${file} ${tokenPath || '(root)'}`);
+  }
+  const children = Object.entries(node).filter(([key]) => !TOKEN_METADATA.has(key) && !key.startsWith('$'));
+  if (tokenPath && children.length === 0) fail(`空 Token 群組：${file} ${tokenPath}`);
+  for (const [key, value] of children) {
+    validateTokenNode(value, file, tokenPath ? `${tokenPath}.${key}` : key);
+  }
+}
+for (const file of tokenFiles) {
+  const fullPath = path.join(ROOT, 'tokens', file);
+  try {
+    validateTokenNode(JSON.parse(readFileSync(fullPath, 'utf8')), `tokens/${file}`);
+  } catch (error) {
+    if (error instanceof SyntaxError) fail(`Token JSON 無法解析：tokens/${file}：${error.message}`);
+    else throw error;
+  }
+}
+console.log(`Token schema 檢查完成：${tokenFiles.length} 份來源檔`);
+
 // 1. Token 解析（buildTokens 內已做別名解析與循環檢查；未解析會直接拋錯）
 const { resolvedLight, resolvedDark, brands } = buildTokens();
 console.log(`Token 解析通過：淺色 ${Object.keys(resolvedLight).length} 個，深色 ${Object.keys(resolvedDark).length} 個，品牌 ${Object.keys(brands).length} 個`);
