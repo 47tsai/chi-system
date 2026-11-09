@@ -67,6 +67,15 @@ html.chi-sidebar-open body {
   height: 32px;
   flex: 0 0 auto;
 }
+.chi-sidebar__logo--dark {
+  display: none;
+}
+[data-chi-theme="dark"] .chi-sidebar__logo--light {
+  display: none;
+}
+[data-chi-theme="dark"] .chi-sidebar__logo--dark {
+  display: block;
+}
 .chi-sidebar__name {
   overflow: hidden;
   text-overflow: ellipsis;
