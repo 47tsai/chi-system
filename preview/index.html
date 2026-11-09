@@ -63,11 +63,11 @@
     root.setAttribute('data-chi-brand', site.brand);
     document.getElementById('site-select').innerHTML = '';
     return fetch('../templates/base.html').then(function (r) { return r.text(); }).then(function (tpl) {
-      var logo = theme === 'dark' ? site.logoDark : site.logoLight;
       var html = tpl
         .replaceAll('{{site.url}}', site.url)
         .replaceAll('{{site.name}}', site.name)
-        .replaceAll('{{site.logo}}', '../' + logo)
+        .replaceAll('{{site.logoLight}}', '../' + site.logoLight)
+        .replaceAll('{{site.logoDark}}', '../' + site.logoDark)
         .replaceAll('{{site.brand}}', site.brand)
         .replaceAll('{{site.id}}', site.id)
         .replaceAll('{{version}}', 'v1.0.0')
