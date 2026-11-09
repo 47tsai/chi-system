@@ -5,6 +5,7 @@
 :root {
   --chi-base-badge-dot-size: 6px;
   --chi-base-badge-min-height: 24px;
+  --chi-base-border-accent-offset: -2px;
   --chi-base-border-accent-width: 2px;
   --chi-base-border-default-width: 1px;
   --chi-base-border-indicator-width: 3px;
