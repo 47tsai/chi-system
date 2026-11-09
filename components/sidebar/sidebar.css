@@ -20,7 +20,7 @@
   width: var(--chi-layout-sidebar-width);
   height: 100vh;
   background: var(--chi-color-surface);
-  border-right: 1px solid var(--chi-color-border-subtle);
+  border-right: var(--chi-base-border-default-width) solid var(--chi-color-border-subtle);
   transform: translateX(-100%);
   transition: transform var(--chi-duration-base) ease;
 }
@@ -48,8 +48,8 @@ html.chi-sidebar-open body {
   gap: var(--chi-space-2);
   height: var(--chi-layout-header-height);
   padding: 0 var(--chi-space-2) 0 var(--chi-space-4);
-  border-bottom: 1px solid var(--chi-color-border-subtle);
-  box-shadow: inset 0 -2px 0 var(--chi-color-brand);
+  border-bottom: var(--chi-base-border-default-width) solid var(--chi-color-border-subtle);
+  box-shadow: inset 0 calc(-1 * var(--chi-base-border-accent-width)) 0 var(--chi-color-brand);
   flex: 0 0 auto;
 }
 .chi-sidebar__brand {
@@ -64,8 +64,8 @@ html.chi-sidebar-open body {
   min-width: 0;
 }
 .chi-sidebar__logo {
-  width: 32px;
-  height: 32px;
+  width: var(--chi-sidebar-logo-size);
+  height: var(--chi-sidebar-logo-size);
   flex: 0 0 auto;
 }
 .chi-sidebar__logo--dark {
@@ -92,7 +92,7 @@ html.chi-sidebar-open body {
   padding: 0;
   background: var(--chi-color-surface);
   color: var(--chi-color-text-primary);
-  border: 1px solid var(--chi-color-border-subtle);
+  border: var(--chi-base-border-default-width) solid var(--chi-color-border-subtle);
   border-radius: var(--chi-radius-md);
   cursor: pointer;
   flex: 0 0 auto;
@@ -120,7 +120,7 @@ html.chi-sidebar-open body {
 .chi-sidebar__nav a[aria-current="page"] {
   color: var(--chi-color-accent);
   background: var(--chi-color-surface-sunken);
-  box-shadow: inset 3px 0 0 var(--chi-color-brand);
+  box-shadow: inset var(--chi-sidebar-active-indicator-width) 0 0 var(--chi-color-brand);
 }
 .chi-sidebar__bottom {
   display: flex;
@@ -128,7 +128,7 @@ html.chi-sidebar-open body {
   justify-content: space-between;
   gap: var(--chi-space-2);
   padding: var(--chi-space-2) var(--chi-space-4);
-  border-top: 1px solid var(--chi-color-border-subtle);
+  border-top: var(--chi-base-border-default-width) solid var(--chi-color-border-subtle);
   color: var(--chi-color-text-muted);
   font-size: var(--chi-font-size-caption);
   flex: 0 0 auto;
