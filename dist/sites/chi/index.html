@@ -1,0 +1,87 @@
+<!-- chi-system base.html — 生成物，DO NOT EDIT。由 scripts/build-site.mjs 從 templates/base.template.html ＋ components/*/*.html 組裝。版本 v1.0.0。 -->
+<!-- chi-system base template — 新站起步頁（來源檔，templates/base.template.html）。
+     由 scripts/build-site.mjs 把 components/*.html 片段組裝成 templates/base.html（生成物）。
+     佔位規則（齊定案）：範本不放任何真實內容。標題打「標題」、內文打「內文」、
+     品牌寫「站名」／「副標」、導覽寫「連結一／連結二／連結三」。
+     {{site.*}}（含 logoLight／logoDark）、v1.0.0 由網站建置時以 sites/<site>.json 填入；
+     {{slots.*}} 由各站填入。
+     參考架構：GOV.UK template.njk「一個頁面殼＋具名區塊」（見研究報告 §3、§6）。 -->
+<!DOCTYPE html>
+<html lang="zh-Hant" data-chi-theme="light" data-chi-brand="chi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>標題 — 站名</title>
+<link rel="stylesheet" href="../../tokens.css">
+<link rel="stylesheet" href="../../components.css">
+<script src="../../theme.js"></script>
+<script src="../../sidebar.js" data-chi-sidebar-key="chi-chi-sidebar-collapsed"></script>
+</head>
+<body>
+<!-- 版式由 data-chi-layout 一個屬性決定：header（預設）或 sidebar；同一份模板，不另開第二份。 -->
+<div class="chi-shell" data-chi-layout="header">
+<!-- chi-system Sidebar — 唯一實作（SPEC.md §6）。
+     適用門檻：本站導覽 ≥5 個頂層區段，或為動態分類，才用側邊欄版式；否則用 header＋副導覽列。
+     收合開關在側邊欄頂列右側；收合 key 只有一個存放位置：引入 sidebar.js 的
+     <script data-chi-sidebar-key="chi-<站點>-sidebar-collapsed">，<aside> 上不寫 key。
+     佔位符：https://chi.qzz.io/ Chi 主站 ../../../logo/chi-b.png ../../../logo/chi-w.png；<a href="#" aria-current="page"><span class="chi-sidebar__icon" aria-hidden="true">◆</span><span class="chi-sidebar__label">連結一</span></a><a href="#"><span class="chi-sidebar__icon" aria-hidden="true">◆</span><span class="chi-sidebar__label">連結二</span></a><a href="#"><span class="chi-sidebar__icon" aria-hidden="true">◆</span><span class="chi-sidebar__label">連結三</span></a> 為本站導覽連結。 -->
+<aside class="chi-sidebar" aria-label="本站導覽">
+  <div class="chi-sidebar__top">
+    <a class="chi-sidebar__brand" href="https://chi.qzz.io/">
+      <img class="chi-sidebar__logo chi-sidebar__logo--light" src="../../../logo/chi-b.png" alt="Chi 主站" width="32" height="32">
+      <img class="chi-sidebar__logo chi-sidebar__logo--dark" src="../../../logo/chi-w.png" alt="Chi 主站" width="32" height="32">
+      <span class="chi-sidebar__name">Chi 主站</span>
+    </a>
+    <button class="chi-sidebar__trigger" type="button" data-chi-sidebar-toggle aria-expanded="true" aria-label="收合側邊欄" title="收合側邊欄">‹</button>
+  </div>
+  <nav class="chi-sidebar__nav"><a href="#" aria-current="page"><span class="chi-sidebar__icon" aria-hidden="true">◆</span><span class="chi-sidebar__label">連結一</span></a><a href="#"><span class="chi-sidebar__icon" aria-hidden="true">◆</span><span class="chi-sidebar__label">連結二</span></a><a href="#"><span class="chi-sidebar__icon" aria-hidden="true">◆</span><span class="chi-sidebar__label">連結三</span></a></nav>
+  <div class="chi-sidebar__bottom">
+    <button class="chi-sidebar__theme" type="button" data-chi-theme-toggle aria-label="切換主題" title="切換主題">◐</button>
+    <span class="chi-sidebar__version" data-chi-version>版本 v1.0.0</span>
+  </div>
+</aside>
+<div class="chi-sidebar__scrim" data-chi-sidebar-scrim aria-hidden="true"></div>
+<div class="chi-content">
+<div class="chi-mobile-header">
+<button class="chi-sidebar__trigger" type="button" data-chi-sidebar-toggle aria-expanded="false" aria-label="開啟導覽選單" title="開啟導覽選單">☰</button>
+<span class="chi-header__name">Chi 主站</span>
+</div>
+<!-- chi-system Header — 唯一實作（SPEC.md §6）。網站不得複製修改。
+     佔位符由網站建置時以 sites/<site>.json 填入：https://chi.qzz.io/ Chi 主站 ../../../logo/chi-b.png ../../../logo/chi-w.png
+     主題切換按鈕在 header 版式；側邊欄版式的站沒有 header，切換改放側邊欄底部。
+     導覽不進 header，放 header 下方獨立一列（slots.subnav），沒有導覽的站省略整段。 -->
+<header class="chi-header">
+  <a class="chi-header__brand" href="https://chi.qzz.io/">
+    <img class="chi-header__logo chi-header__logo--light" src="../../../logo/chi-b.png" alt="Chi 主站" width="32" height="32">
+    <img class="chi-header__logo chi-header__logo--dark" src="../../../logo/chi-w.png" alt="Chi 主站" width="32" height="32">
+    <span class="chi-header__name">Chi 主站</span>
+  </a>
+  <div class="chi-header__actions">
+    
+    <button class="chi-header__theme" type="button" data-chi-theme-toggle aria-label="切換主題" title="切換主題">
+      <span aria-hidden="true">◐</span>
+    </button>
+  </div>
+</header>
+<nav class="chi-subnav" aria-label="本站導覽"><a href="#" aria-current="page">連結一</a><a href="#">連結二</a><a href="#">連結三</a></nav>
+<main class="chi-main">
+<h1>標題</h1>
+<p>內文</p>
+<!-- chi-system Button — 唯一實作（SPEC.md §6）。四級 closed enum：
+     primary／secondary／ghost／danger；一個操作情境至多一個 primary。
+     示範文字一律用佔位「按鈕」，站內文案由各站自填。 -->
+<button class="chi-btn chi-btn--primary" type="button">按鈕</button>
+<button class="chi-btn chi-btn--secondary" type="button">按鈕</button>
+<button class="chi-btn chi-btn--ghost" type="button">按鈕</button>
+<button class="chi-btn chi-btn--danger" type="button">按鈕</button>
+</main>
+<!-- chi-system Footer — 唯一實作（SPEC.md §6）。頁尾跨站清單已拿掉，不放其他站連結。
+     佔位符：Chi 主站 站名、v1.0.0 由建置時填入（例如 v1.0.0）。 -->
+<footer class="chi-footer">
+  <span class="chi-footer__name">Chi 主站</span>
+  <span class="chi-footer__version" data-chi-version>版本 v1.0.0</span>
+</footer>
+</div>
+</div>
+</body>
+</html>
