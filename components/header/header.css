@@ -1,0 +1,68 @@
+/* chi-system Header — 只引 Token，不寫原始值。 */
+.chi-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--chi-layout-header-height);
+  padding: 0 var(--chi-space-4);
+  background: var(--chi-color-surface);
+  border-bottom: 1px solid var(--chi-color-border-subtle);
+}
+.chi-header__brand {
+  display: flex;
+  align-items: center;
+  gap: var(--chi-space-2);
+  color: var(--chi-color-text-primary);
+  text-decoration: none;
+  font-size: var(--chi-font-size-label);
+  font-weight: var(--chi-font-weight-label);
+  line-height: var(--chi-font-line-height-label);
+}
+.chi-header__logo {
+  width: 32px;
+  height: 32px;
+  flex: 0 0 auto;
+}
+.chi-header__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--chi-space-2);
+}
+.chi-header__theme {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--chi-size-touch-min);
+  min-height: var(--chi-size-touch-min);
+  padding: 0 var(--chi-space-2);
+  background: var(--chi-color-surface);
+  color: var(--chi-color-text-primary);
+  border: 1px solid var(--chi-color-border-subtle);
+  border-radius: var(--chi-radius-md);
+  cursor: pointer;
+}
+.chi-header__theme:focus-visible {
+  outline: var(--chi-focus-width) solid var(--chi-color-focus-ring);
+  outline-offset: var(--chi-focus-offset);
+}
+.chi-subnav {
+  display: flex;
+  gap: var(--chi-space-4);
+  align-items: center;
+  padding: var(--chi-space-2) var(--chi-space-4);
+  background: var(--chi-color-surface);
+  border-bottom: 1px solid var(--chi-color-border-subtle);
+  overflow-x: auto;
+}
+.chi-subnav:empty {
+  display: none;
+}
+.chi-subnav a {
+  color: var(--chi-color-text-secondary);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.chi-subnav a[aria-current="page"] {
+  color: var(--chi-color-accent);
+  font-weight: var(--chi-font-weight-label);
+}
