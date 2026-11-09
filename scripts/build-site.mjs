@@ -4,7 +4,7 @@
 // 輸出：templates/base.html、dist/components.css（皆為生成物，DO NOT EDIT）
 // CSS 串接順序固定為 header、footer、sidebar、button、base：base 在最後，
 //   其中的版式開關（data-chi-layout）才能覆寫前面的版式規則。
-import { readFileSync, writeFileSync, readdirSync, mkdirSync, rmSync } from 'node:fs';
+import { readFileSync, writeFileSync, readdirSync, mkdirSync, rmSync, cpSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
@@ -44,6 +44,7 @@ export function buildSite() {
   // 站點功能內容仍由各站自行提供；此輸出只負責一致的共用殼與預設佔位導覽。
   const outputRoot = path.join(ROOT, 'dist', 'sites');
   rmSync(outputRoot, { recursive: true, force: true });
+  cpSync(path.join(ROOT, 'logo'), path.join(ROOT, 'dist', 'logo'), { recursive: true });
   for (const entry of sites) {
     const site = JSON.parse(readFileSync(path.join(ROOT, 'sites', entry.id + '.json'), 'utf8'));
     const escapeHtml = (value) => String(value).replaceAll('&', '&amp;').replaceAll('"', '&quot;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
@@ -57,8 +58,8 @@ export function buildSite() {
       '{{site.id}}': escapeHtml(site.id),
       '{{site.url}}': escapeHtml(site.url),
       '{{site.name}}': escapeHtml(site.name),
-      '{{site.logoLight}}': '../../../' + escapeHtml(site.logoLight),
-      '{{site.logoDark}}': '../../../' + escapeHtml(site.logoDark),
+      '{{site.logoLight}}': '../../logo/' + path.basename(site.logoLight),
+      '{{site.logoDark}}': '../../logo/' + path.basename(site.logoDark),
       '{{version}}': 'v' + VERSION,
       ...slots,
     };
