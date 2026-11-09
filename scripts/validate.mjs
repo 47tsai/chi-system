@@ -116,6 +116,9 @@ for (const dir of ['components']) {
     const src = stripComments(readFileSync(path.join(ROOT, dir, f), 'utf8'));
     const hits = src.match(/#[0-9a-fA-F]{3,8}\b/g);
     if (hits) fail(`硬編碼色值：${dir}/${f} 出現 ${[...new Set(hits)].join('、')}`);
+    const dimensionSource = src.replace(/min-width:\s*\d+px/g, '');
+    const dimensionHits = dimensionSource.match(/(?<![\w-])-?\d+(?:\.\d+)?px\b/g);
+    if (dimensionHits) fail(`硬編碼尺寸：${dir}/${f} 出現 ${[...new Set(dimensionHits)].join('、')}，請改用 Token`);
   }
 }
 const template = stripComments(readFileSync(path.join(ROOT, 'templates', 'base.template.html'), 'utf8'));
