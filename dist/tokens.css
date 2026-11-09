@@ -3,6 +3,33 @@
  * DTCG 2025.10（Community Group Report，不是 W3C 正式標準）。
  */
 :root {
+  --chi-base-badge-dot-size: 6px;
+  --chi-base-badge-min-height: 24px;
+  --chi-base-border-accent-width: 2px;
+  --chi-base-border-default-width: 1px;
+  --chi-base-border-indicator-width: 3px;
+  --chi-base-choice-checkmark-size: 14px;
+  --chi-base-choice-radio-checked-border-width: 5px;
+  --chi-base-choice-size: 18px;
+  --chi-base-dialog-inline-gutter: 32px;
+  --chi-base-dialog-max-width: 480px;
+  --chi-base-form-select-icon-padding: 36px;
+  --chi-base-form-textarea-min-height: 96px;
+  --chi-base-icon-lg: 24px;
+  --chi-base-icon-md: 20px;
+  --chi-base-icon-sm: 16px;
+  --chi-base-skeleton-min-height: 16px;
+  --chi-base-spinner-border-width: 3px;
+  --chi-base-spinner-size: 24px;
+  --chi-base-state-description-max-width: 420px;
+  --chi-base-state-icon-size: 48px;
+  --chi-base-switch-height: 24px;
+  --chi-base-switch-thumb-inset: 3px;
+  --chi-base-switch-thumb-size: 18px;
+  --chi-base-switch-thumb-travel: 20px;
+  --chi-base-switch-width: 44px;
+  --chi-base-tabs-indicator-overlap: -1px;
+  --chi-base-tabs-indicator-width: 2px;
   --chi-button-danger-background: #D73220;
   --chi-button-danger-text: #FFFFFF;
   --chi-button-ghost-background: #FFFFFF;
@@ -70,6 +97,7 @@
   --chi-font-weight-label: 600;
   --chi-font-weight-page-title: 700;
   --chi-font-weight-section-title: 700;
+  --chi-header-logo-size: 32px;
   --chi-layout-content-max: 1080px;
   --chi-layout-header-height: 60px;
   --chi-layout-sidebar-collapsed-width: 72px;
@@ -88,7 +116,9 @@
   --chi-shadow-whisper: 0 1px 2px rgb(16 24 40 / 0.06);
   --chi-shadow-whisper-dark: none;
   --chi-shadow-whisper-light: 0 1px 2px rgb(16 24 40 / 0.06);
+  --chi-sidebar-active-indicator-width: 3px;
   --chi-sidebar-background: #FFFFFF;
+  --chi-sidebar-logo-size: 32px;
   --chi-sidebar-text-active: #2563EB;
   --chi-size-control: 40px;
   --chi-size-control-compact: 36px;
