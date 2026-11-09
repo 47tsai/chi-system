@@ -52,10 +52,11 @@
 (function () {
   var params = new URLSearchParams(location.search);
   var siteId = params.get('site') || 'chi';
-  var theme = params.get('theme') || 'light';
-  var layout = params.get('layout') || 'header';
+  var theme = params.get('theme') === 'dark' ? 'dark' : 'light';
+  var layout = params.get('layout') === 'sidebar' ? 'sidebar' : 'header';
   var root = document.documentElement;
-  root.setAttribute('data-chi-theme', theme);
+  if (window.ChiTheme) window.ChiTheme.setPreviewMode(theme);
+  else root.setAttribute('data-chi-theme', theme);
   document.getElementById('theme-select').value = theme;
   document.getElementById('layout-select').value = layout;
   var note = document.getElementById('preview-note');
@@ -78,6 +79,11 @@
       var body = html.split('<body>')[1].split('</body>')[0];
       body = body.replace('data-chi-layout="header"', 'data-chi-layout="' + layout + '"');
       document.getElementById('preview-app').innerHTML = body;
+      // 元件展示也要放在共用殼內，讓 sidebar 版式能正確排列整個內容區。
+      var demo = document.getElementById('preview-demo');
+      var content = document.querySelector('#preview-app .chi-content');
+      var footer = content && content.querySelector('.chi-footer');
+      if (demo && content) content.insertBefore(demo, footer || null);
       note.textContent = '目前預覽：' + site.name + '（' + site.url + '）';
       // 預覽頁的 <head> 腳本在 base 片段裡不會執行：重新綁定一次主題／側邊欄
       if (window.ChiTheme) window.ChiTheme.bindToggles();
