@@ -84,6 +84,14 @@
     });
   }
 
+  // 關閉的手機抽屜必須退出 Tab 順序與輔助科技瀏覽；桌面側欄則保持可讀。
+  function syncMobileAccessibility() {
+    if (!sidebar) return;
+    var hidden = isMobile() && !sidebar.classList.contains('mobile-open');
+    sidebar.inert = hidden;
+    sidebar.setAttribute('aria-hidden', hidden ? 'true' : 'false');
+  }
+
   function setCollapsed(collapsed) {
     var next = !!collapsed;
     if (next === isCollapsed()) return;
@@ -105,6 +113,7 @@
     if (!sidebar) return;
     lastTrigger = document.activeElement;
     sidebar.classList.add('mobile-open');
+    syncMobileAccessibility();
     if (scrim) scrim.classList.add('visible');
     root.classList.add('chi-sidebar-open');
     updateTriggerLabel();
@@ -116,6 +125,7 @@
     if (!sidebar) return;
     if (!sidebar.classList.contains('mobile-open')) return;
     sidebar.classList.remove('mobile-open');
+    syncMobileAccessibility();
     if (scrim) scrim.classList.remove('visible');
     root.classList.remove('chi-sidebar-open');
     updateTriggerLabel();
@@ -144,15 +154,40 @@
       trigger.addEventListener('click', onTriggerClick);
     });
     updateTriggerLabel();
+    syncMobileAccessibility();
     scrim = document.querySelector('[data-chi-sidebar-scrim]');
     if (scrim) {
       scrim.addEventListener('click', closeMobile);
     }
     document.addEventListener('keydown', function (event) {
-      if (event.key === 'Escape') closeMobile();
+      if (event.key === 'Escape') {
+        closeMobile();
+        return;
+      }
+      if (event.key !== 'Tab' || !isMobile() || !sidebar.classList.contains('mobile-open')) return;
+      var focusable = sidebar.querySelectorAll(
+        'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      );
+      if (!focusable.length) {
+        event.preventDefault();
+        return;
+      }
+      var first = focusable[0];
+      var last = focusable[focusable.length - 1];
+      if (!sidebar.contains(document.activeElement)) {
+        event.preventDefault();
+        first.focus();
+      } else if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
     });
     window.addEventListener('resize', function () {
       if (!isMobile()) closeMobile();
+      syncMobileAccessibility();
       updateTriggerLabel();
     });
     document.addEventListener('keydown', function (event) {
