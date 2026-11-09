@@ -36,47 +36,47 @@ const tokenFiles = [
   'components.tokens.json',
   ...readdirSync(path.join(ROOT, 'tokens', 'brands'))
     .filter((name) => name.endsWith('.tokens.json'))
-    .map((name) => \`brands/\${name}\`),
+    .map((name) => 'brands/' + name),
 ];
 const TOKEN_METADATA = new Set(['$description', '$type', '$extensions', '$deprecated', '$experimental']);
 function validateTokenNode(node, file, tokenPath = '') {
   if (!node || typeof node !== 'object' || Array.isArray(node)) {
-    fail(\`Token 結構錯誤：\${file} \${tokenPath || '(root)'} 必須是物件\`);
+    fail('Token 結構錯誤：' + file + ' ' + (tokenPath || '(root)') + ' 必須是物件');
     return;
   }
   if (Object.prototype.hasOwnProperty.call(node, '$value')) {
     if (typeof node.$type !== 'string' || !node.$type.trim()) {
-      fail(\`Token 缺少有效 $type：\${file} \${tokenPath}\`);
+      fail('Token 缺少有效 $type：' + file + ' ' + tokenPath);
     }
     if (typeof node.$value === 'string') {
       const value = node.$value;
       const opens = (value.match(/\{/g) || []).length;
       const closes = (value.match(/\}/g) || []).length;
       if (opens !== closes || /\{\s*\}/.test(value)) {
-        fail(\`Token 別名格式錯誤：\${file} \${tokenPath}\`);
+        fail('Token 別名格式錯誤：' + file + ' ' + tokenPath);
       }
     }
     return;
   }
   if (node.$type !== undefined && (typeof node.$type !== 'string' || !node.$type.trim())) {
-    fail(\`Token 群組 $type 無效：\${file} \${tokenPath || '(root)'}\`);
+    fail('Token 群組 $type 無效：' + file + ' ' + (tokenPath || '(root)'));
   }
   const children = Object.entries(node).filter(([key]) => !TOKEN_METADATA.has(key) && !key.startsWith('$'));
-  if (tokenPath && children.length === 0) fail(\`空 Token 群組：\${file} \${tokenPath}\`);
+  if (tokenPath && children.length === 0) fail('空 Token 群組：' + file + ' ' + tokenPath);
   for (const [key, value] of children) {
-    validateTokenNode(value, file, tokenPath ? \`\${tokenPath}.\${key}\` : key);
+    validateTokenNode(value, file, tokenPath ? tokenPath + '.' + key : key);
   }
 }
 for (const file of tokenFiles) {
   const fullPath = path.join(ROOT, 'tokens', file);
   try {
-    validateTokenNode(JSON.parse(readFileSync(fullPath, 'utf8')), \`tokens/\${file}\`);
+    validateTokenNode(JSON.parse(readFileSync(fullPath, 'utf8')), 'tokens/' + file);
   } catch (error) {
-    if (error instanceof SyntaxError) fail(\`Token JSON 無法解析：tokens/\${file}：\${error.message}\`);
+    if (error instanceof SyntaxError) fail('Token JSON 無法解析：tokens/' + file + '：' + error.message);
     else throw error;
   }
 }
-console.log(\`Token schema 檢查完成：\${tokenFiles.length} 份來源檔\`);
+console.log('Token schema 檢查完成：' + tokenFiles.length + ' 份來源檔');
 
 // 1. Token 解析（buildTokens 內已做別名解析與循環檢查；未解析會直接拋錯）
 const { resolvedLight, resolvedDark, brands } = buildTokens();
