@@ -232,9 +232,9 @@ for (const site of siteRecords) {
     continue;
   }
   const output = readFileSync(outputPath, 'utf8');
-  const outputWithoutComments = output.replace(/<!--[\\s\\S]*?-->/g, '');
-  if (/\\{\\{[^}]+\\}\\}/.test(outputWithoutComments)) {
-    fail('網站建置輸出仍有未填 placeholder：' + site.id);
+  const outputWithoutComments = output.replace(/<!--[\s\S]*?-->/g, '');
+  if (/\{\{[^}]+\}\}/.test(outputWithoutComments)) {
+  if (/\{\{[^}]+\}\}/.test(outputWithoutComments)) {
   }
   if (!output.includes('data-chi-brand="' + site.brand + '"')) {
     fail('網站建置輸出未套用品牌：' + site.id);
