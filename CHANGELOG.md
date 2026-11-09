@@ -8,6 +8,7 @@
 - Header／Sidebar 支援依主題切換淺色與深色 Logo。
 - 預覽主題切換不污染正式網站的 localStorage；元件展示區納入共用殼內容區。
 - Header／Sidebar 增加品牌識別線，預覽測試文案同步更新。
+- 修正手機版側邊欄關閉時仍可鍵盤聚焦的問題；加入 inert／aria-hidden、Tab 焦點循環與控制關係。
 
 ## v1.0.0 — 2026-11-09
 
