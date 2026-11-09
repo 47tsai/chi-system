@@ -47,19 +47,19 @@
 
 /* 圖示尺寸：與 icons.svg 的 <use> 搭配 */
 .chi-icon {
-  width: 20px;
-  height: 20px;
+  width: var(--chi-base-icon-md);
+  height: var(--chi-base-icon-md);
   flex: none;
 }
 
 .chi-icon--sm {
-  width: 16px;
-  height: 16px;
+  width: var(--chi-base-icon-sm);
+  height: var(--chi-base-icon-sm);
 }
 
 .chi-icon--lg {
-  width: 24px;
-  height: 24px;
+  width: var(--chi-base-icon-lg);
+  height: var(--chi-base-icon-lg);
 }
 
 /* ---------- 連結 ---------- */
@@ -108,7 +108,7 @@
 .chi-textarea {
   min-height: var(--chi-size-control);
   padding: 0 var(--chi-space-3);
-  border: 1px solid var(--chi-color-border-strong);
+  border: var(--chi-base-border-default-width) solid var(--chi-color-border-strong);
   border-radius: var(--chi-radius-md);
   background-color: var(--chi-color-surface);
   color: var(--chi-color-text-primary);
@@ -138,7 +138,7 @@
 }
 
 .chi-textarea {
-  min-height: 96px;
+  min-height: var(--chi-base-form-textarea-min-height);
   padding: var(--chi-space-3);
   resize: vertical;
 }
@@ -167,7 +167,7 @@
 .chi-select {
   appearance: none;
   width: 100%;
-  padding-right: 36px;
+  padding-right: var(--chi-base-form-select-icon-padding);
   cursor: pointer;
 }
 
@@ -197,8 +197,8 @@
 .chi-check__input,
 .chi-radio__input {
   appearance: none;
-  width: 18px;
-  height: 18px;
+  width: var(--chi-base-choice-size);
+  height: var(--chi-base-choice-size);
   flex: none;
   margin: 0;
   border: 1px solid var(--chi-color-border-strong);
@@ -222,14 +222,14 @@
   background-color: var(--chi-color-accent);
   border-color: var(--chi-color-accent);
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E");
-  background-size: 14px;
+  background-size: var(--chi-base-choice-checkmark-size);
   background-position: center;
   background-repeat: no-repeat;
 }
 
 .chi-radio__input:checked {
   border-color: var(--chi-color-accent);
-  border-width: 5px;
+  border-width: var(--chi-base-choice-radio-checked-border-width);
   background-color: var(--chi-color-surface);
 }
 
@@ -258,8 +258,8 @@
 
 .chi-switch__input {
   appearance: none;
-  width: 44px;
-  height: 24px;
+  width: var(--chi-base-switch-width);
+  height: var(--chi-base-switch-height);
   flex: none;
   margin: 0;
   border-radius: var(--chi-radius-full);
@@ -272,10 +272,10 @@
 .chi-switch__input::after {
   content: "";
   position: absolute;
-  top: 3px;
-  left: 3px;
-  width: 18px;
-  height: 18px;
+  top: var(--chi-base-switch-thumb-inset);
+  left: var(--chi-base-switch-thumb-inset);
+  width: var(--chi-base-switch-thumb-size);
+  height: var(--chi-base-switch-thumb-size);
   border-radius: var(--chi-radius-full);
   background-color: var(--chi-color-surface);
   transition: transform var(--chi-duration);
@@ -286,7 +286,7 @@
 }
 
 .chi-switch__input:checked::after {
-  transform: translateX(20px);
+  transform: translateX(var(--chi-base-switch-thumb-travel));
 }
 
 .chi-switch__input:disabled {
@@ -299,15 +299,15 @@
 .chi-tabs {
   display: flex;
   gap: var(--chi-space-1);
-  border-bottom: 1px solid var(--chi-color-border-subtle);
+  border-bottom: var(--chi-base-border-default-width) solid var(--chi-color-border-subtle);
   overflow-x: auto;
 }
 
 .chi-tab {
   padding: var(--chi-space-3) var(--chi-space-4);
   border: none;
-  border-bottom: 2px solid transparent;
-  margin-bottom: -1px;
+  border-bottom: var(--chi-base-tabs-indicator-width) solid transparent;
+  margin-bottom: var(--chi-base-tabs-indicator-overlap);
   background: none;
   color: var(--chi-color-text-secondary);
   font-family: var(--chi-font-sans);
@@ -416,7 +416,7 @@
 /* selected：accent 細標記 + 底色並行（SPEC.md 7.7） */
 .chi-list__item[aria-selected="true"] {
   background-color: var(--chi-color-surface-sunken);
-  box-shadow: inset 3px 0 0 var(--chi-color-accent);
+  box-shadow: inset var(--chi-base-border-indicator-width) 0 0 var(--chi-color-accent);
 }
 
 .chi-table-wrap {
@@ -469,7 +469,7 @@
   display: inline-flex;
   align-items: center;
   gap: var(--chi-space-1);
-  min-height: 24px;
+  min-height: var(--chi-base-badge-min-height);
   padding: 0 var(--chi-space-2);
   border-radius: var(--chi-radius-full);
   font-size: var(--chi-font-size-caption);
@@ -479,8 +479,8 @@
 }
 
 .chi-badge__dot {
-  width: 6px;
-  height: 6px;
+  width: var(--chi-base-badge-dot-size);
+  height: var(--chi-base-badge-dot-size);
   flex: none;
   border-radius: var(--chi-radius-full);
 }
@@ -532,8 +532,8 @@
   color: var(--chi-color-text-primary);
   box-shadow: var(--chi-shadow-overlay);
   padding: var(--chi-space-5);
-  max-width: 480px;
-  width: calc(100% - 32px);
+  max-width: var(--chi-base-dialog-max-width);
+  width: calc(100% - var(--chi-base-dialog-inline-gutter));
 }
 
 .chi-dialog::backdrop {
@@ -573,8 +573,8 @@
 }
 
 .chi-state__icon {
-  width: 48px;
-  height: 48px;
+  width: var(--chi-base-state-icon-size);
+  height: var(--chi-base-state-icon-size);
   margin: 0 auto var(--chi-space-4);
   color: var(--chi-color-text-muted);
 }
@@ -589,7 +589,7 @@
 
 .chi-state__desc {
   margin: 0 auto;
-  max-width: 420px;
+  max-width: var(--chi-base-state-description-max-width);
   font-size: var(--chi-font-size-body-small);
   line-height: var(--chi-line-height-body-small);
   color: var(--chi-color-text-secondary);
@@ -601,9 +601,9 @@
 
 /* 載入中：有載入指示，不留整頁空白；不造成版面跳動（SPEC.md §6） */
 .chi-spinner {
-  width: 24px;
-  height: 24px;
-  border: 3px solid var(--chi-color-border-subtle);
+  width: var(--chi-base-spinner-size);
+  height: var(--chi-base-spinner-size);
+  border: var(--chi-base-spinner-border-width) solid var(--chi-color-border-subtle);
   border-top-color: var(--chi-color-accent);
   border-radius: var(--chi-radius-full);
   animation: chi-spin 0.8s linear infinite;
@@ -619,7 +619,7 @@
 .chi-skeleton {
   background-color: var(--chi-color-surface-sunken);
   border-radius: var(--chi-radius-sm);
-  min-height: 16px;
+  min-height: var(--chi-base-skeleton-min-height);
 }
 
 /* ---------- 文件基礎（v2 新增，舊 repo 沒有 body 樣式） ---------- */
