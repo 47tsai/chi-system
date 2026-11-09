@@ -1,1 +1,209 @@
-{"$description":"chi-system component tokens — 元件專用，只指 semantic 層。","button":{"danger":{"background":{"$type":"color","$value":"{color.danger}"},"text":{"$type":"color","$value":"{color.on-accent}"}},"ghost":{"background":{"$type":"color","$value":"{color.surface}"},"text":{"$type":"color","$value":"{color.text-primary}"}},"primary":{"background":{"$type":"color","$value":"{color.accent}"},"background-active":{"$type":"color","$value":"{color.accent-active}"},"background-hover":{"$type":"color","$value":"{color.accent-hover}"},"text":{"$type":"color","$value":"{color.on-accent}"}},"secondary":{"background":{"$type":"color","$value":"{color.surface-sunken}"},"text":{"$type":"color","$value":"{color.text-primary}"}}},"sidebar":{"background":{"$type":"color","$value":"{color.surface}"},"text-active":{"$type":"color","$value":"{color.accent}"}}}
+{
+  "$description": "chi-system component tokens — 元件專用，只指 semantic 層。",
+  "button": {
+    "danger": {
+      "background": {
+        "$type": "color",
+        "$value": "{color.danger}"
+      },
+      "text": {
+        "$type": "color",
+        "$value": "{color.on-accent}"
+      }
+    },
+    "ghost": {
+      "background": {
+        "$type": "color",
+        "$value": "{color.surface}"
+      },
+      "text": {
+        "$type": "color",
+        "$value": "{color.text-primary}"
+      }
+    },
+    "primary": {
+      "background": {
+        "$type": "color",
+        "$value": "{color.accent}"
+      },
+      "background-active": {
+        "$type": "color",
+        "$value": "{color.accent-active}"
+      },
+      "background-hover": {
+        "$type": "color",
+        "$value": "{color.accent-hover}"
+      },
+      "text": {
+        "$type": "color",
+        "$value": "{color.on-accent}"
+      }
+    },
+    "secondary": {
+      "background": {
+        "$type": "color",
+        "$value": "{color.surface-sunken}"
+      },
+      "text": {
+        "$type": "color",
+        "$value": "{color.text-primary}"
+      }
+    }
+  },
+  "sidebar": {
+    "background": {
+      "$type": "color",
+      "$value": "{color.surface}"
+    },
+    "text-active": {
+      "$type": "color",
+      "$value": "{color.accent}"
+    },
+    "logo-size": {
+      "$type": "dimension",
+      "$value": "{header.logo-size}"
+    },
+    "active-indicator-width": {
+      "$type": "dimension",
+      "$value": "{base.border.indicator-width}"
+    }
+  },
+  "base": {
+    "border": {
+      "default-width": {
+        "$type": "dimension",
+        "$value": "1px"
+      },
+      "accent-width": {
+        "$type": "dimension",
+        "$value": "2px"
+      },
+      "indicator-width": {
+        "$type": "dimension",
+        "$value": "3px"
+      }
+    },
+    "icon": {
+      "sm": {
+        "$type": "dimension",
+        "$value": "16px"
+      },
+      "md": {
+        "$type": "dimension",
+        "$value": "20px"
+      },
+      "lg": {
+        "$type": "dimension",
+        "$value": "24px"
+      }
+    },
+    "form": {
+      "textarea-min-height": {
+        "$type": "dimension",
+        "$value": "96px"
+      },
+      "select-icon-padding": {
+        "$type": "dimension",
+        "$value": "36px"
+      }
+    },
+    "choice": {
+      "size": {
+        "$type": "dimension",
+        "$value": "18px"
+      },
+      "checkmark-size": {
+        "$type": "dimension",
+        "$value": "14px"
+      },
+      "radio-checked-border-width": {
+        "$type": "dimension",
+        "$value": "5px"
+      }
+    },
+    "switch": {
+      "width": {
+        "$type": "dimension",
+        "$value": "44px"
+      },
+      "height": {
+        "$type": "dimension",
+        "$value": "24px"
+      },
+      "thumb-size": {
+        "$type": "dimension",
+        "$value": "18px"
+      },
+      "thumb-inset": {
+        "$type": "dimension",
+        "$value": "3px"
+      },
+      "thumb-travel": {
+        "$type": "dimension",
+        "$value": "20px"
+      }
+    },
+    "tabs": {
+      "indicator-width": {
+        "$type": "dimension",
+        "$value": "2px"
+      },
+      "indicator-overlap": {
+        "$type": "dimension",
+        "$value": "-1px"
+      }
+    },
+    "badge": {
+      "min-height": {
+        "$type": "dimension",
+        "$value": "24px"
+      },
+      "dot-size": {
+        "$type": "dimension",
+        "$value": "6px"
+      }
+    },
+    "dialog": {
+      "max-width": {
+        "$type": "dimension",
+        "$value": "480px"
+      },
+      "inline-gutter": {
+        "$type": "dimension",
+        "$value": "32px"
+      }
+    },
+    "state": {
+      "icon-size": {
+        "$type": "dimension",
+        "$value": "48px"
+      },
+      "description-max-width": {
+        "$type": "dimension",
+        "$value": "420px"
+      }
+    },
+    "spinner": {
+      "size": {
+        "$type": "dimension",
+        "$value": "24px"
+      },
+      "border-width": {
+        "$type": "dimension",
+        "$value": "3px"
+      }
+    },
+    "skeleton": {
+      "min-height": {
+        "$type": "dimension",
+        "$value": "16px"
+      }
+    }
+  },
+  "header": {
+    "logo-size": {
+      "$type": "dimension",
+      "$value": "32px"
+    }
+  }
+}
