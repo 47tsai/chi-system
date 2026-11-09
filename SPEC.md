@@ -94,8 +94,9 @@ Foundations（原則）→ Tokens（數值）→ Components（元件）→ Patte
   → 設計（只用 Token、列出全部狀態、響應式、鍵盤＋ARIA）→ preview（一站試用）
   → stable（程式＋文件＋驗收全部完成）。無文件＝未完成，無無障礙驗收＝不 stable。
   參考：GOV.UK 貢獻標準、Carbon 產品開發生命週期（皆縮小為一人維護版）。
-- 新網站：加一份品牌檔（只寫別名）＋一份 sites/*.json＋一次建置目標；元件庫不動。
-  CI：全部 semantic Token 可解析、每品牌×淺深色對比過關、假俗艷品牌測試通過。
+- 新網站：加一份品牌檔（只寫別名）＋一份 sites/*.json，執行同一個建置目標；元件庫不動。
+  建置器產生 dist/sites/<站>/index.html 共用殼起始頁，正式導覽、操作與內容由站點專案提供。
+  CI：全部 semantic Token 可解析、對比檢查通過、假俗艷品牌測試通過。
   系統擁有 primitive＋semantic 合約；各站擁有自己的品牌檔與設定檔。
 - 新 Token：只提角色、不提數值；角色至少在 2 站或 2 元件出現才加。
   廢棄用 `$deprecated` 標註替代品與移除版本，移除只在下一個 major。
@@ -110,7 +111,7 @@ CI 驗真的渲染依據，不是檔案在不在（舊系統三支腳本全綠�
 4. 網站設定 schema（欄位、型別、logo 檔案存在；預覽清單與 sites 一致）
 5. 對比計算（每品牌×淺深色：一般文字 4.5:1、大字與非文字 UI 3:1）
 6. 斷點一致（768／1024 在 JSON、CSS、JS 三處一致）
-7. 預覽煙霧測試（每站設定都能渲染出 header／footer／sidebar，無 console 錯誤、logo 無 404）
+7. 站點輸出煙霧測試（每份站設定都產生完整 index.html；placeholder 全數填入、品牌與 Logo 路徑正確、共用 CSS／JS 路徑存在）。瀏覽器 console 與實際 404 驗收列為 v1.1 Playwright 工作。
 8. axe／Playwright 計算樣式／視覺回歸：列為 v1.1（Storybook 未引入前，以上 7 道為 v1.0 門檻）
 
 ## 9. 版本
