@@ -81,6 +81,10 @@
       "indicator-width": {
         "$type": "dimension",
         "$value": "3px"
+      },
+      "accent-offset": {
+        "$type": "dimension",
+        "$value": "-2px"
       }
     },
     "icon": {
