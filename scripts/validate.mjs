@@ -224,6 +224,30 @@ for (const site of siteRecords) {
   }
 }
 console.log('模板靜態煙霧測試通過：' + siteRecords.length + ' 站，placeholder 全數可填');
+// 4c. 實際站點產物：每份 sites/*.json 都必須有完整、無未填變數的可部署 index.html。
+for (const site of siteRecords) {
+  const outputPath = path.join(ROOT, 'dist', 'sites', site.id, 'index.html');
+  if (!existsSync(outputPath)) {
+    fail('缺少網站建置輸出：dist/sites/' + site.id + '/index.html');
+    continue;
+  }
+  const output = readFileSync(outputPath, 'utf8');
+  const outputWithoutComments = output.replace(/<!--[\\s\\S]*?-->/g, '');
+  if (/\\{\\{[^}]+\\}\\}/.test(outputWithoutComments)) {
+    fail('網站建置輸出仍有未填 placeholder：' + site.id);
+  }
+  if (!output.includes('data-chi-brand="' + site.brand + '"')) {
+    fail('網站建置輸出未套用品牌：' + site.id);
+  }
+  for (const asset of ['../../tokens.css', '../../components.css', '../../theme.js', '../../sidebar.js']) {
+    if (!output.includes(asset)) fail('網站建置輸出缺少共用資產路徑：' + site.id + ' ' + asset);
+  }
+  for (const logo of [site.logoLight, site.logoDark]) {
+    if (!output.includes('../../../' + logo)) fail('網站建置輸出缺少品牌 Logo：' + site.id + ' ' + logo);
+  }
+}
+console.log('網站建置輸出檢查通過：' + siteRecords.length + ' 站');
+
 
 // // 5. 斷點一致：768／1024 在 JSON、CSS、JS 三處一致；不得用 max-width 反向寫法。
 const bp = JSON.parse(readFileSync(path.join(ROOT, 'breakpoints.json'), 'utf8'));
