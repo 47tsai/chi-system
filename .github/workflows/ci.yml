@@ -11,9 +11,5 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 24
-      - name: Build generated files
-        run: npm run build
-      - name: Validate
-        run: npm run validate
-      - name: Generated files must be up to date
-        run: git diff --exit-code -- dist templates/base.html preview/sites.json
+      - name: Build, validate, and verify generated files
+        run: npm run check
