@@ -56,7 +56,7 @@ Foundations（原則）→ Tokens（數值）→ Components（元件）→ Patte
 | tokens/*.tokens.json | 數值唯一來源 | 放元件名、站名、散文理由 |
 | dist/*、templates/base.html、preview/sites.json | 生成物 | 手改 |
 | components/<Name>/ | 元件唯一實作（.html＋.css） | 站名、原始色值、複製到站裡改 |
-| sites/*.json | 站設定：id、名稱、網址、品牌、logo、描述、圖示 | 設計數值、未知欄位 |
+| sites/*.json | 站設定：id、名稱、網址、品牌、logo、描述、圖示；版式 `layout` 可選 `header`／`sidebar`，預設 `header` | 設計數值、未知欄位 |
 | preview/index.html | 一個參數化預覽（?site=&theme=&layout=） | 每站一頁、示範區放真實內文 |
 
 ## 5. 範本規則（齊定案）
@@ -74,7 +74,7 @@ Foundations（原則）→ Tokens（數值）→ Components（元件）→ Patte
   導覽不進 header，放 header 下方獨立一列；沒有導覽的站省略整段。
   主題切換在 header 版式放 header，側邊欄版式放側邊欄底部。
 - Footer：站名＋版本識別；不放跨站連結。
-- Sidebar：適用門檻——本站導覽 ≥5 個頂層區段，或為動態分類，才用側邊欄版式；
+- Sidebar：站設定 `layout: "sidebar"` 才使用側邊欄版式；適用門檻——本站導覽 ≥5 個頂層區段，或為動態分類；
   否則用 header＋副導覽列。收合開關在側邊欄頂列右側；收合 key 只有一個存放位置
   （引入 sidebar.js 的 `<script data-chi-sidebar-key>`），值
   `chi-<站點>-sidebar-collapsed`；手機版為抽屜，開關只在 <768px 顯示；抽屜關閉時須退出 Tab 順序並對輔助科技隱藏，開啟時限制 Tab 焦點於抽屜內，關閉後焦點返回觸發按鈕。
