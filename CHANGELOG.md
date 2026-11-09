@@ -11,6 +11,7 @@
 - 修正手機版側邊欄關閉時仍可鍵盤聚焦的問題；加入 inert／aria-hidden、Tab 焦點循環與控制關係。
 - 對比驗證新增實際元件配色組合，涵蓋 danger 按鈕文字、一般表面與次要表面。
 - 站點設定新增可選 `layout`（header／sidebar），建置器與互動預覽共用同一設定規則，省略時預設 header。
+- Header／Sidebar／Base／Button／Footer 的像素尺寸與邊框寬度改由 component tokens 管理；CI 新增 px 硬編碼檢查。
 
 ## v1.0.0 — 2026-11-09
 
