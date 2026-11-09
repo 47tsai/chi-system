@@ -23,6 +23,15 @@
   height: 32px;
   flex: 0 0 auto;
 }
+.chi-header__logo--dark {
+  display: none;
+}
+[data-chi-theme="dark"] .chi-header__logo--light {
+  display: none;
+}
+[data-chi-theme="dark"] .chi-header__logo--dark {
+  display: block;
+}
 .chi-header__actions {
   display: flex;
   align-items: center;
