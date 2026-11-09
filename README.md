@@ -24,7 +24,7 @@ tokens/brands/<站>.tokens.json
 sites/<站>.json
 components/<header|footer|sidebar|button|base>/
 templates/base.template.html  →  templates/base.html（生成物）
-dist/tokens.css  dist/components.css  dist/theme.js  dist/sidebar.js
+dist/tokens.css  dist/components.css  dist/theme.js  dist/sidebar.js\ndist/sites/<站>/index.html（建置產物）
 scripts/build-tokens.mjs  scripts/build-site.mjs  scripts/validate.mjs
 preview/index.html  preview/sites.json（生成物）
 logo/
@@ -34,8 +34,8 @@ logo/
 ## 用法
 
 ```sh
-npm run build     # 產生 dist/tokens.css、dist/components.css、templates/base.html、preview/sites.json
-npm run validate  # Token 解析、對比計算、禁硬編碼、網站設定、斷點一致
+npm run build     # 產生 Token／元件 CSS、共用模板、預覽清單與 dist/sites/<站>/index.html
+npm run validate  # Token schema／解析、對比、硬編碼、站設定、模板與站點輸出、斷點
 npm run check     # build + validate + 生成物 diff 必須為空
 ```
 
