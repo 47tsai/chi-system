@@ -9,7 +9,7 @@
   font-size: var(--chi-font-size-body-small);
   font-weight: var(--chi-font-weight-label);
   line-height: var(--chi-font-line-height-body-small);
-  border: 1px solid var(--chi-color-border-subtle);
+  border: var(--chi-base-border-default-width) solid var(--chi-color-border-subtle);
   border-radius: var(--chi-radius-md);
   cursor: pointer;
 }
