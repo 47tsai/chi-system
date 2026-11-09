@@ -141,7 +141,7 @@ html.chi-sidebar-open body {
   height: var(--chi-layout-header-height);
   padding: 0 var(--chi-space-4);
   background: var(--chi-color-surface);
-  border-bottom: 1px solid var(--chi-color-border-subtle);
+  border-bottom: var(--chi-base-border-default-width) solid var(--chi-color-border-subtle);
 }
 .chi-mobile-header .chi-sidebar__trigger {
   margin-left: calc(var(--chi-space-2) * -1);
