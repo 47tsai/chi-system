@@ -2,7 +2,11 @@
 
 ## Unreleased
 
-（無）
+- 新增 DTCG Token schema 驗證，明確檢查 `$type`、`$value`、別名括號格式。
+- 統一本地與 CI 驗收入口為 `npm run check`。
+- 新增每站共用殼起始頁生成：`dist/sites/<站>/index.html`，並驗證 placeholder、品牌、Logo 與共用資產路徑。
+- Header／Sidebar 支援依主題切換淺色與深色 Logo。
+- Header／Sidebar 增加品牌識別線，預覽測試文案同步更新。
 
 ## v1.0.0 — 2026-11-09
 
