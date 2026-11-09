@@ -86,6 +86,10 @@ console.log(`Token 解析通過：淺色 ${Object.keys(resolvedLight).length} �
 const pairs = [
   ['text-primary', 'canvas', 4.5], ['text-secondary', 'canvas', 4.5], ['text-muted', 'canvas', 4.5],
   ['accent', 'canvas', 4.5], ['on-accent', 'accent', 4.5],
+  // 元件實際配色：danger 按鈕、secondary／ghost 按鈕與一般表面。
+  ['on-accent', 'danger', 4.5], ['text-primary', 'surface', 4.5],
+  ['text-primary', 'surface-sunken', 4.5], ['text-secondary', 'surface', 4.5],
+  ['accent', 'surface', 4.5],
   ['success', 'canvas', 4.5], ['warning', 'canvas', 4.5], ['danger', 'canvas', 4.5], ['info', 'canvas', 4.5],
   ['success-strong', 'success-bg', 4.5], ['warning-strong', 'warning-bg', 4.5],
   ['danger-strong', 'danger-bg', 4.5], ['info-strong', 'info-bg', 4.5],
