@@ -41,7 +41,7 @@ npm run check     # build + validate + 生成物 diff 必須為空
 ```
 
 新站起步：新增 `tokens/brands/<站>.tokens.json` 與 `sites/<站>.json`，再執行 `npm run build`。
-建置會自動產生 `dist/sites/<站>/index.html` 共用殼起始頁；站點實際導覽與功能內容仍由該站提供。
+建置會自動產生 `dist/sites/<站>/index.html` 共用殼起始頁；站點實際導覽與功能內容仍由該站提供。 這些頁面以 repo 根目錄為發布根，需一併保留 `dist/` 與 `logo/`，不可只抽出 `dist/sites/` 子目錄。
 
 ## 版本
 
