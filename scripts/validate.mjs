@@ -250,6 +250,10 @@ for (const site of siteRecords) {
   if (!output.includes('data-chi-brand="' + site.brand + '"')) {
     fail('網站建置輸出未套用品牌：' + site.id);
   }
+  const expectedLayout = site.layout === 'sidebar' ? 'sidebar' : 'header';
+  if (!output.includes('data-chi-layout="' + expectedLayout + '"')) {
+    fail('網站建置輸出未套用版式：' + site.id + ' expected=' + expectedLayout);
+  }
   for (const asset of ['../../tokens.css', '../../components.css', '../../theme.js', '../../sidebar.js']) {
     if (!output.includes(asset)) fail('網站建置輸出缺少共用資產路徑：' + site.id + ' ' + asset);
   }
