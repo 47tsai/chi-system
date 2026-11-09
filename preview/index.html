@@ -98,7 +98,7 @@
     var s = document.createElement('style');
     s.textContent = ':root{--chi-color-brand:#00C853;--chi-radius-md:0px;--chi-radius-lg:0px;--chi-font-sans:Georgia,serif}';
     document.head.appendChild(s);
-    note.textContent = '假俗艷品牌測試：品牌已換成飽和綠＋直角＋襯線字。檢查 header、按鈕、側邊欄是否全數變臉。';
+    note.textContent = '測試品牌已套用：檢查 header／sidebar 品牌識別線、圓角與字型是否同步變化。';
   });
   // 網站下拉選單：清單由 build-site.mjs 從 sites/*.json 產生（preview/sites.json），不得寫死。
   fetch('../preview/sites.json').then(function (r) { return r.json(); }).then(function (list) {
