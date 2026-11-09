@@ -54,6 +54,7 @@ export function buildSite() {
     };
     const values = {
       '{{site.brand}}': escapeHtml(site.brand),
+      '{{site.layout}}': site.layout === 'sidebar' ? 'sidebar' : 'header',
       '{{site.id}}': escapeHtml(site.id),
       '{{site.url}}': escapeHtml(site.url),
       '{{site.name}}': escapeHtml(site.name),
