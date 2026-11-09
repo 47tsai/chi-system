@@ -232,9 +232,9 @@ for (const site of siteRecords) {
     continue;
   }
   const output = readFileSync(outputPath, 'utf8');
-  const outputWithoutComments = output.replace(/<!--[\s\S]*?-->/g, '');
-  if (/\{\{[^}]+\}\}/.test(outputWithoutComments)) {
-  if (/\{\{[^}]+\}\}/.test(outputWithoutComments)) {
+  const outputWithoutComments = output.replace(/<!--[\\s\\S]*?-->/g, '');
+  if (/\\{\\{[^}]+\\}\\}/.test(outputWithoutComments)) {
+    fail('網站建置輸出仍有未填 placeholder：' + site.id);
   }
   if (!output.includes('data-chi-brand="' + site.brand + '"')) {
     fail('網站建置輸出未套用品牌：' + site.id);
@@ -248,8 +248,7 @@ for (const site of siteRecords) {
 }
 console.log('網站建置輸出檢查通過：' + siteRecords.length + ' 站');
 
-
-// // 5. 斷點一致：768／1024 在 JSON、CSS、JS 三處一致；不得用 max-width 反向寫法。
+// 5. 斷點一致：768／1024 在 JSON、CSS、JS 三處一致；不得用 max-width 反向寫法。
 const bp = JSON.parse(readFileSync(path.join(ROOT, 'breakpoints.json'), 'utf8'));
 const widths = bp.breakpoints.map((b) => b.minWidth);
 if (JSON.stringify(widths) !== '[768,1024]') fail(`斷點不是 768／1024：${JSON.stringify(widths)}`);
