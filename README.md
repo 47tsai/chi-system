@@ -39,8 +39,8 @@ npm run validate  # Token schema／解析、對比、硬編碼、站設定、模
 npm run check     # build + validate + 生成物 diff 必須為空
 ```
 
-新站起步：複製 `templates/base.html`，填 `{{site.*}}`，填 `{{slots.*}}`，
-`data-chi-layout` 選 `header` 或 `sidebar`。
+新站起步：新增 `tokens/brands/<站>.tokens.json` 與 `sites/<站>.json`，再執行 `npm run build`。
+建置會自動產生 `dist/sites/<站>/index.html` 共用殼起始頁；站點實際導覽與功能內容仍由該站提供。
 
 ## 版本
 
