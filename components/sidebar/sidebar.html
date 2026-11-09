@@ -3,14 +3,14 @@
      收合開關在側邊欄頂列右側；收合 key 只有一個存放位置：引入 sidebar.js 的
      <script data-chi-sidebar-key="chi-<站點>-sidebar-collapsed">，<aside> 上不寫 key。
      佔位符：{{site.url}} {{site.name}} {{site.logoLight}} {{site.logoDark}}；{{slots.nav}} 為本站導覽連結。 -->
-<aside class="chi-sidebar" aria-label="本站導覽">
+<aside id="chi-sidebar" class="chi-sidebar" aria-label="本站導覽">
   <div class="chi-sidebar__top">
     <a class="chi-sidebar__brand" href="{{site.url}}">
       <img class="chi-sidebar__logo chi-sidebar__logo--light" src="{{site.logoLight}}" alt="{{site.name}}" width="32" height="32">
       <img class="chi-sidebar__logo chi-sidebar__logo--dark" src="{{site.logoDark}}" alt="{{site.name}}" width="32" height="32">
       <span class="chi-sidebar__name">{{site.name}}</span>
     </a>
-    <button class="chi-sidebar__trigger" type="button" data-chi-sidebar-toggle aria-expanded="true" aria-label="收合側邊欄" title="收合側邊欄">‹</button>
+    <button class="chi-sidebar__trigger" type="button" data-chi-sidebar-toggle aria-controls="chi-sidebar" aria-expanded="true" aria-label="收合側邊欄" title="收合側邊欄">‹</button>
   </div>
   <nav class="chi-sidebar__nav">{{slots.nav}}</nav>
   <div class="chi-sidebar__bottom">
