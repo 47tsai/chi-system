@@ -28,7 +28,7 @@ class Element {
   querySelector() { return this.children[0] ?? null; }
   querySelectorAll() { return this.children; }
   focus() { this.focused = true; this.onFocus?.(this); }
-  contains(node) { return this === node || this.children.includes(node); }
+  contains(node) { return this === node || this.children.some(child => child === node || child.contains?.(node)); }
 }
 
 function createSidebar(width = 500) {
@@ -104,4 +104,40 @@ test('desktop collapsed state updates root attribute and trigger ARIA', () => {
   ctx.api.toggleCollapsed();
   assert.equal(ctx.api.isCollapsed(), false);
   assert.equal(ctx.trigger.getAttribute('aria-expanded'), 'true');
+});
+test('scrim click closes the drawer and restores focus', () => {
+  const ctx = createSidebar();
+  ctx.api.openMobile();
+  ctx.scrim.dispatch('click');
+  assert.equal(ctx.sidebar.classList.contains('mobile-open'), false);
+  assert.equal(ctx.scrim.classList.contains('visible'), false);
+  assert.equal(ctx.trigger.focused, true);
+});
+
+test('Tab and Shift+Tab stay inside the open mobile drawer', () => {
+  const ctx = createSidebar();
+  const last = new Element('BUTTON');
+  ctx.sidebar.children.push(last);
+  ctx.sidebar.querySelectorAll = selector => selector.startsWith('a[') ? [ctx.link, last] : [];
+  ctx.api.openMobile();
+  ctx.document.activeElement = last;
+  let prevented = false;
+  ctx.docListeners.get('keydown')({ key: 'Tab', shiftKey: false, preventDefault() { prevented = true; } });
+  assert.equal(prevented, true);
+  assert.equal(ctx.link.focused, true);
+  prevented = false;
+  ctx.document.activeElement = ctx.link;
+  ctx.docListeners.get('keydown')({ key: 'Tab', shiftKey: true, preventDefault() { prevented = true; } });
+  assert.equal(prevented, true);
+  assert.equal(last.focused, true);
+});
+
+test('Command/Ctrl+B toggles sidebar but does not intercept text inputs', () => {
+  const ctx = createSidebar(1200);
+  let prevented = false;
+  ctx.docListeners.get('keydown')({ key: 'b', ctrlKey: true, target: { tagName: 'INPUT' }, preventDefault() { prevented = true; } });
+  assert.equal(prevented, false);
+  ctx.docListeners.get('keydown')({ key: 'b', metaKey: true, target: { tagName: 'BODY' }, preventDefault() { prevented = true; } });
+  assert.equal(prevented, true);
+  assert.equal(ctx.api.isCollapsed(), true);
 });
