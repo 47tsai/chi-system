@@ -43,11 +43,10 @@ test('Dialog contract documents accessible title association and focus options',
   }
 });
 function createDialogHarness() {
-  const documentListeners = {};
   const dialogListeners = {};
   const document = {
     activeElement: null,
-    addEventListener(type, callback) { documentListeners[type] = callback; },
+    addEventListener() {},
     querySelectorAll() { return [dialog]; },
     getElementById(id) { return id === 'test-dialog' ? dialog : null; },
   };
@@ -65,7 +64,7 @@ function createDialogHarness() {
   };
   const window = {};
   vm.runInNewContext(runtime, { document, window, WeakMap, WeakSet });
-  return { api: window.ChiDialog, document, dialog, opener, target, documentListeners };
+  return { api: window.ChiDialog, document, dialog, opener, target };
 }
 
 test('Dialog runtime moves focus in, closes, and restores focus to the opener', () => {
@@ -97,8 +96,7 @@ test('Dialog backdrop close is opt-in and close restores focus', () => {
   const h = createDialogHarness();
   h.dialog.attributes['data-chi-dialog-backdrop-close'] = '';
   h.api.open(h.dialog, h.opener);
-  const click = h.dialog.listeners.click[0];
-  click({ target: h.dialog });
+  h.dialog.listeners.click[0]({ target: h.dialog });
   assert.equal(h.dialog.open, false);
   assert.equal(h.dialog.returnValue, 'backdrop');
   assert.equal(h.document.activeElement, h.opener);

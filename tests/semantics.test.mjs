@@ -49,7 +49,7 @@ test('Semantic examples are documented as the reference contract', () => {
   assert.ok(spec.includes('components/base/examples.html'));
   assert.ok(validator.includes('基礎元件語意範例'));
 });
-
+ 
 test('Form error styling and ARIA state are represented consistently', () => {
   assert.match(examples, /class="chi-field chi-field--error"/);
   assert.match(examples, /aria-invalid="true"/);
