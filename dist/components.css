@@ -383,6 +383,7 @@ html.chi-sidebar-open body {
 }
 
 
+
 /* Disabled 是穩定狀態：不可因 hover／active 顯示可互動的視覺回饋。 */
 .chi-btn--primary:disabled,
 .chi-btn--primary:disabled:hover,
