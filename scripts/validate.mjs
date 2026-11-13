@@ -123,6 +123,9 @@ for (const dir of ['components']) {
 }
 const template = stripComments(readFileSync(path.join(ROOT, 'templates', 'base.template.html'), 'utf8'));
 if (/#[0-9a-fA-F]{3,8}\b/.test(template)) fail('硬編碼色值：templates/base.template.html 出現 hex');
+const layoutAttributeCount = (template.match(/\bdata-chi-layout=/g) || []).length;
+if (layoutAttributeCount !== 1) fail('模板來源必須且只能有一個 data-chi-layout，實際：' + layoutAttributeCount);
+if (/<div\b[^>]*\bdata-chi-layout=/.test(template)) fail('data-chi-layout 必須由根 html 元素統一管理，不可在內層重複設定');
 
 // 4. 網站設定 schema：欄位、型別、品牌檔存在、logo 檔案存在；不寫死站數。
 const REQUIRED = ['id', 'name', 'url', 'brand', 'logoLight', 'logoDark', 'description', 'icon'];
