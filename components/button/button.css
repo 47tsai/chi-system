@@ -50,3 +50,28 @@
   min-height: var(--chi-size-control-compact);
   padding: 0 var(--chi-space-3);
 }
+
+/* Disabled 是穩定狀態：不可因 hover／active 顯示可互動的視覺回饋。 */
+.chi-btn--primary:disabled,
+.chi-btn--primary:disabled:hover,
+.chi-btn--primary:disabled:active {
+  background: var(--chi-button-primary-background);
+  border-color: var(--chi-button-primary-background);
+}
+.chi-btn--secondary:disabled,
+.chi-btn--secondary:disabled:hover,
+.chi-btn--secondary:disabled:active {
+  background: var(--chi-button-secondary-background);
+}
+.chi-btn--ghost:disabled,
+.chi-btn--ghost:disabled:hover,
+.chi-btn--ghost:disabled:active {
+  background: var(--chi-button-ghost-background);
+  border-color: transparent;
+}
+.chi-btn--danger:disabled,
+.chi-btn--danger:disabled:hover,
+.chi-btn--danger:disabled:active {
+  background: var(--chi-button-danger-background);
+  border-color: var(--chi-button-danger-background);
+}
