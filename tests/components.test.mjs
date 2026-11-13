@@ -88,3 +88,8 @@ test('Tabs disabled state and reduced-motion cover all choice controls', () => {
     assert.ok(reducedMotion[1].includes(selector), `${selector} transition is disabled`);
   }
 });
+
+test('Sidebar consumes its component-level surface and active-text tokens', () => {
+  assert.match(sidebarCss, /\.chi-sidebar\s*\{[^}]*background:\s*var\(--chi-sidebar-background\)/s);
+  assert.match(sidebarCss, /\.chi-sidebar__nav a\[aria-current="page"\]\s*\{[^}]*color:\s*var\(--chi-sidebar-text-active\)/s);
+});

@@ -19,7 +19,7 @@
   flex-direction: column;
   width: var(--chi-layout-sidebar-width);
   height: 100vh;
-  background: var(--chi-color-surface);
+  background: var(--chi-sidebar-background);
   border-right: var(--chi-base-border-default-width) solid var(--chi-color-border-subtle);
   transform: translateX(-100%);
   transition: transform var(--chi-duration-base) ease;
@@ -122,7 +122,7 @@ html.chi-sidebar-open body {
   border-radius: var(--chi-radius-md);
 }
 .chi-sidebar__nav a[aria-current="page"] {
-  color: var(--chi-color-accent);
+  color: var(--chi-sidebar-text-active);
   background: var(--chi-color-surface-sunken);
   box-shadow: inset var(--chi-sidebar-active-indicator-width) 0 0 var(--chi-color-brand);
 }
