@@ -54,6 +54,9 @@
   var triggers = [];
   var scrim = null;
   var lastTrigger = null;
+  var boundTriggers = new WeakSet();
+  var boundScrims = new WeakSet();
+  var documentHandlersBound = false;
 
   function isMobile() {
     return window.innerWidth < MOBILE_MAX;
@@ -152,14 +155,21 @@
     // key 只有一個來源：<script data-chi-sidebar-key>。<aside> 上不寫 key，不再回讀。
     triggers = Array.prototype.slice.call(document.querySelectorAll('[data-chi-sidebar-toggle]'));
     triggers.forEach(function (trigger) {
+      if (boundTriggers.has(trigger)) return;
+      boundTriggers.add(trigger);
       trigger.addEventListener('click', onTriggerClick);
     });
     updateTriggerLabel();
     syncMobileAccessibility();
     scrim = document.querySelector('[data-chi-sidebar-scrim]');
-    if (scrim) {
+    if (scrim && !boundScrims.has(scrim)) {
+      boundScrims.add(scrim);
       scrim.addEventListener('click', closeMobile);
     }
+    // bind() is public and may be called after partial DOM updates; global handlers
+    // belong to this runtime instance, not to each bind invocation.
+    if (documentHandlersBound) return;
+    documentHandlersBound = true;
     document.addEventListener('keydown', function (event) {
       if (event.key === 'Escape') {
         closeMobile();
