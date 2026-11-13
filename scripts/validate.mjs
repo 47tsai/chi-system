@@ -121,6 +121,33 @@ for (const dir of ['components']) {
     if (dimensionHits) fail(`硬編碼尺寸：${dir}/${f} 出現 ${[...new Set(dimensionHits)].join('、')}，請改用 Token`);
   }
 }
+
+// CSS 自訂屬性引用完整性：元件與生成 CSS 的 var(--chi-*) 必須有定義，或明確提供 fallback。
+const cssFiles = [
+  ...readdirSync(path.join(ROOT, 'components'), { recursive: true })
+    .filter((file) => file.endsWith('.css'))
+    .map((file) => path.join(ROOT, 'components', file)),
+  path.join(ROOT, 'dist', 'tokens.css'),
+  path.join(ROOT, 'dist', 'components.css'),
+];
+const cssSources = cssFiles.map((file) => [file, stripComments(readFileSync(file, 'utf8'))]);
+const customProperties = new Set();
+for (const [, source] of cssSources) {
+  for (const match of source.matchAll(/(--[\\w-]+)\\s*:/g)) customProperties.add(match[1]);
+}
+const unresolvedProperties = new Map();
+for (const [file, source] of cssSources) {
+  for (const match of source.matchAll(/var\\(\\s*(--[\\w-]+)\\s*(,)?/g)) {
+    if (!customProperties.has(match[1]) && !match[2]) {
+      if (!unresolvedProperties.has(match[1])) unresolvedProperties.set(match[1], new Set());
+      unresolvedProperties.get(match[1]).add(path.relative(ROOT, file));
+    }
+  }
+}
+for (const [name, files] of unresolvedProperties) {
+  fail(`CSS Token 未定義：${name}，引用位置：${[...files].join('、')}`);
+}
+
 const template = stripComments(readFileSync(path.join(ROOT, 'templates', 'base.template.html'), 'utf8'));
 if (/#[0-9a-fA-F]{3,8}\b/.test(template)) fail('硬編碼色值：templates/base.template.html 出現 hex');
 const layoutAttributeCount = (template.match(/\bdata-chi-layout=/g) || []).length;
