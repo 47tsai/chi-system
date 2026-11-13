@@ -131,16 +131,14 @@ const cssFiles = [
   path.join(ROOT, 'dist', 'components.css'),
 ];
 const cssSources = cssFiles.map((file) => [file, stripComments(readFileSync(file, 'utf8'))]);
-const customProperties = new Set();
-for (const [, source] of cssSources) {
-  for (const match of source.matchAll(/(--[\\w-]+)\\s*:/g)) customProperties.add(match[1]);
-}
+const allCss = cssSources.map(([, source]) => source).join('\n');
 const unresolvedProperties = new Map();
 for (const [file, source] of cssSources) {
   for (const match of source.matchAll(/var\(\s*(--[\w-]+)\s*(,)?/g)) {
-    if (!customProperties.has(match[1]) && !match[2]) {
-      if (!unresolvedProperties.has(match[1])) unresolvedProperties.set(match[1], new Set());
-      unresolvedProperties.get(match[1]).add(path.relative(ROOT, file));
+    const name = match[1];
+    if (!allCss.includes(name + ':') && !match[2]) {
+      if (!unresolvedProperties.has(name)) unresolvedProperties.set(name, new Set());
+      unresolvedProperties.get(name).add(path.relative(ROOT, file));
     }
   }
 }
