@@ -346,6 +346,24 @@ for (const site of siteRecords) {
 }
 console.log('網站建置輸出檢查通過：' + siteRecords.length + ' 站');
 
+// 4d. 共用殼的語意契約：品牌文字已提供可讀名稱，Logo 圖片只作視覺識別；
+// 側欄本身是 complementary landmark，內層 nav 才是具名導覽 landmark。
+const headerHtml = readFileSync(path.join(ROOT, 'components', 'header', 'header.html'), 'utf8');
+const sidebarHtml = readFileSync(path.join(ROOT, 'components', 'sidebar', 'sidebar.html'), 'utf8');
+for (const [name, source, logoClass] of [
+  ['header', headerHtml, 'chi-header__logo'],
+  ['sidebar', sidebarHtml, 'chi-sidebar__logo'],
+]) {
+  for (const theme of ['light', 'dark']) {
+    const match = source.match(new RegExp('<img[^>]*class="[^"]*' + logoClass + '[^"]*' + theme + '[^"]*"[^>]*>'));
+    if (!match) fail(`${name} 缺少 ${theme} Logo`);
+    else if (!match[0].includes('alt=""')) fail(`${name} ${theme} Logo 應為裝飾圖片，避免與品牌文字重複朗讀`);
+  }
+}
+if (!sidebarHtml.includes('<aside id="chi-sidebar" class="chi-sidebar" aria-label="側邊欄">')) fail('sidebar aside 必須使用描述其 landmark 的名稱「側邊欄」');
+if (!sidebarHtml.includes('<nav class="chi-sidebar__nav" aria-label="本站導覽">')) fail('sidebar 導覽 nav 必須有明確的「本站導覽」名稱');
+if (!headerHtml.includes('<nav class="chi-subnav" aria-label="本站導覽">')) fail('header 副導覽 nav 必須有明確名稱');
+
 // 5. 斷點一致：768／1024 在 JSON、CSS、JS 三處一致；不得用 max-width 反向寫法。
 const bp = JSON.parse(readFileSync(path.join(ROOT, 'breakpoints.json'), 'utf8'));
 const widths = bp.breakpoints.map((b) => b.minWidth);
