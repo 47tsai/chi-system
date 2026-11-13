@@ -86,6 +86,7 @@ Foundations（原則）→ Tokens（數值）→ Components（元件）→ Patte
   導覽連結寫法：`<a><span class="chi-sidebar__icon">…</span><span class="chi-sidebar__label">…</span></a>`。
 - Button：primary／secondary／ghost／danger 四級 closed enum；
   一個操作情境至多一個 primary；不得自由傳 class。
+- Tabs：容器使用 `data-chi-tabs` 與 `role="tablist"`；每個 tab 使用原生 button、`role="tab"`、唯一 id、`aria-controls`、`aria-selected`、`tabindex`；panel 使用 `role="tabpanel"`、唯一 id、`aria-labelledby`。方向鍵循環切換、Home／End 移至首／末個可用 tab，選取時同步更新 panel hidden；disabled tab 略過。
 - 其他元件（表單、Tabs、卡片、清單／表格、徽章、對話框、資料狀態）：
   樣式在 components/base/base.css，沿用舊版已核對的段落（見 §10 來源）。
   已知缺口：對話框焦點管理（移入／限制／返回）只有文字要求、沒有程式，
