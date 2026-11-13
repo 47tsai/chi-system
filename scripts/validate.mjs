@@ -189,6 +189,17 @@ for (const name of Object.keys(tokenSource('components.tokens.json'))) {
   const variable = `var(--chi-${name.replaceAll('.', '-')})`;
   if (!componentCss.includes(variable)) fail(`元件 Token 未被任何元件 CSS 使用：${name}`);
 }
+const semanticDefinitions = tokenSource('semantic.tokens.json');
+const componentDefinitions = tokenSource('components.tokens.json');
+const componentAliasReferences = new Set(Object.values(componentDefinitions).flatMap((token) =>
+  typeof token.$value === 'string'
+    ? [...token.$value.matchAll(/\{([^{}]+)\}/g)].map(([, name]) => name.trim())
+    : [],
+));
+for (const name of Object.keys(semanticDefinitions)) {
+  const variable = `var(--chi-${name.replaceAll('.', '-')})`;
+  if (!componentCss.includes(variable) && !componentAliasReferences.has(name)) fail(`Semantic Token 未被元件 CSS 或元件 Token 使用：${name}`);
+}
 const definedProperties = new Set();
 for (const [, source] of cssSources) {
   for (const match of source.matchAll(/(^|[;{\s])(--[\w-]+)\s*:/gm)) definedProperties.add(match[2]);
