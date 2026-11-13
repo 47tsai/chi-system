@@ -58,6 +58,11 @@
   outline: var(--chi-focus-width) solid var(--chi-color-focus-ring);
   outline-offset: var(--chi-focus-offset);
 }
+.chi-header__brand:focus-visible,
+.chi-subnav a:focus-visible {
+  outline: var(--chi-focus-width) solid var(--chi-color-focus-ring);
+  outline-offset: var(--chi-focus-offset);
+}
 .chi-subnav {
   display: flex;
   gap: var(--chi-space-4);
@@ -196,6 +201,10 @@ html.chi-sidebar-open body {
 }
 .chi-sidebar__trigger:focus-visible,
 .chi-sidebar__theme:focus-visible {
+  outline: var(--chi-focus-width) solid var(--chi-color-focus-ring);
+  outline-offset: var(--chi-focus-offset);
+}
+.chi-sidebar__nav a:focus-visible {
   outline: var(--chi-focus-width) solid var(--chi-color-focus-ring);
   outline-offset: var(--chi-focus-offset);
 }
