@@ -8,6 +8,8 @@ const read = path => readFileSync(new URL(path, import.meta.url), 'utf8');
 const buttonHtml = read('../components/button/button.html');
 const buttonCss = read('../components/button/button.css');
 const headerHtml = read('../components/header/header.html');
+const footerHtml = read('../components/footer/footer.html');
+const footerCss = read('../components/footer/footer.css');
 const sidebarHtml = read('../components/sidebar/sidebar.html');
 const headerCss = read('../components/header/header.css');
 const sidebarCss = read('../components/sidebar/sidebar.css');
@@ -140,4 +142,34 @@ test('Every generated site asset resolves inside the standalone dist root', () =
       assert.ok(existsSync(resolved), `${site} asset does not exist in dist: ${asset}`);
     }
   }
+});
+
+
+test('Runtime loading order protects first paint and DOM initialization', () => {
+  const validator = read('../scripts/validate.mjs');
+  assert.match(validator, /Runtime 載入時序/);
+  assert.match(validator, /Theme Runtime 必須先於 Sidebar Runtime/);
+  assert.match(validator, /必須在樣式表之前載入/);
+  assert.match(validator, /必須使用 defer 且不可 async/);
+  const scripts = [...baseTemplate.matchAll(/<script\b([^>]*)><\/script>/g)].map(([, attrs]) => attrs);
+  const theme = scripts.findIndex((attrs) => attrs.includes('theme.js'));
+  const sidebar = scripts.findIndex((attrs) => attrs.includes('sidebar.js'));
+  const tabs = scripts.find((attrs) => attrs.includes('tabs.js'));
+  const dialog = scripts.find((attrs) => attrs.includes('dialog.js'));
+  assert.ok(theme >= 0 && sidebar > theme);
+  assert.match(tabs, /\bdefer\b/);
+  assert.match(dialog, /\bdefer\b/);
+});
+
+
+test('Header brand and Footer expose the documented shell semantics', () => {
+  assert.match(headerHtml, /<span class="chi-header__name">{{site.name}}<\/span>/);
+  assert.match(headerHtml, /class="chi-header__logo chi-header__logo--light"[^>]*alt=""/);
+  assert.match(headerHtml, /class="chi-header__logo chi-header__logo--dark"[^>]*alt=""/);
+  assert.match(footerHtml, /<footer class="chi-footer">/);
+  assert.match(footerHtml, /<span class="chi-footer__name">{{site.name}}<\/span>/);
+  assert.match(footerHtml, /data-chi-version/);
+  assert.doesNotMatch(footerHtml, /<a\b/);
+  assert.match(footerCss, /border-top:\s*var\(--chi-base-border-default-width\)/);
+  assert.match(read('../scripts/validate.mjs'), /Footer 不得加入跨站連結/);
 });
