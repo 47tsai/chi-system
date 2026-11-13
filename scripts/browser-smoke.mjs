@@ -38,6 +38,9 @@ const browserFixture = `
     <section id="smoke-panel-one" role="tabpanel" aria-labelledby="smoke-tab-one">One panel</section>
     <section id="smoke-panel-two" role="tabpanel" aria-labelledby="smoke-tab-two" hidden>Two panel</section>
   </div>
+  <button id="smoke-motion-button" class="chi-btn" type="button">Motion button</button>
+  <input id="smoke-motion-input" class="chi-input" aria-label="Motion input">
+  <span id="smoke-motion-spinner" class="chi-spinner" aria-hidden="true"></span>
   <button id="smoke-dialog-opener" type="button" data-chi-dialog-open="smoke-dialog">Open dialog</button>
   <dialog id="smoke-dialog" class="chi-dialog" aria-labelledby="smoke-dialog-title">
     <h2 id="smoke-dialog-title" class="chi-dialog__title" tabindex="-1" data-chi-dialog-initial-focus>Smoke dialog</h2>
@@ -57,6 +60,29 @@ const browserFixture = `
         const nextMode = window.ChiTheme.getMode();
         check('theme-cycle', nextMode !== oldMode && themeButton.getAttribute('aria-label').includes('目前色彩模式'));
       } else check('theme-cycle', false);
+
+      const reducedMotionExpected = new URL(location.href).searchParams.get('motion') === 'reduce';
+      const reducedMotionActive = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      check('reduced-motion-preference', reducedMotionActive === reducedMotionExpected);
+      const motionButton = document.getElementById('smoke-motion-button');
+      const spinner = document.getElementById('smoke-motion-spinner');
+      const buttonTransition = getComputedStyle(motionButton).transitionDuration.split(',').map((value) => parseFloat(value) || 0);
+      const spinnerAnimation = getComputedStyle(spinner).animationName;
+      check('reduced-motion-effects', !reducedMotionExpected || (buttonTransition.every((duration) => duration === 0) && spinnerAnimation === 'none'));
+
+      const focusRules = [];
+      const collectFocusRules = (rules) => {
+        for (const rule of rules) {
+          if (rule.cssRules) collectFocusRules(rule.cssRules);
+          if (rule.selectorText && rule.selectorText.includes(':focus-visible') && rule.style && rule.style.getPropertyValue('outline')) {
+            focusRules.push(rule.selectorText);
+          }
+        }
+      };
+      for (const sheet of document.styleSheets) {
+        try { collectFocusRules(sheet.cssRules); } catch {}
+      }
+      check('focus-visible-css-contract', focusRules.some((selector) => selector.includes('.chi-btn')) && focusRules.some((selector) => selector.includes('.chi-header__theme')) && focusRules.some((selector) => selector.includes('.chi-sidebar__trigger')));
 
       const root = document.documentElement;
       const originalLayout = root.getAttribute('data-chi-layout');
@@ -155,6 +181,10 @@ const viewports = [
   { name: 'desktop', size: '1365,900' },
   { name: 'mobile', size: '390,844' },
 ];
+const motionModes = [
+  { name: 'default', query: '', flags: [] },
+  { name: 'reduced-motion', query: '?motion=reduce', flags: ['--force-prefers-reduced-motion=reduce'] },
+];
 const failures = [];
 let passed = 0;
 
@@ -163,11 +193,13 @@ try {
     const site = JSON.parse(readFileSync(path.join(sitesDir, siteId + '.json'), 'utf8'));
     const expectedLayout = site.layout || 'header';
     for (const viewport of viewports) {
-      const url = `${origin}/sites/${siteId}/index.html`;
+      for (const motionMode of motionModes) {
+      const url = `${origin}/sites/${siteId}/index.html${motionMode.query}`;
       const child = spawn(browser, [
         '--headless=new', '--no-sandbox', '--disable-gpu', '--disable-dev-shm-usage',
         '--no-first-run', '--no-default-browser-check', '--enable-logging=stderr',
         '--log-level=0', '--virtual-time-budget=2500', `--window-size=${viewport.size}`,
+        ...motionMode.flags,
         '--dump-dom', url,
       ], { env: { ...process.env, DISPLAY: '' } });
       let stdout = '';
@@ -192,16 +224,17 @@ try {
       if (!interaction) issues.push('browser interaction harness did not finish');
       else issues.push(...interaction.split(';').filter((result) => !result.endsWith(':PASS')).map((result) => `interaction ${result}`));
       if (browserErrors.length) issues.push(...browserErrors);
-      if (issues.length) failures.push({ site: siteId, viewport: viewport.name, issues });
+      if (issues.length) failures.push({ site: siteId, viewport: viewport.name, motion: motionMode.name, issues });
       else passed++;
-      console.log(`${issues.length ? 'FAIL' : 'PASS'} ${siteId} ${viewport.name}${interaction ? ` [${interaction}]` : ''}`);
+      console.log(`${issues.length ? 'FAIL' : 'PASS'} ${siteId} ${viewport.name} ${motionMode.name}${interaction ? ` [${interaction}]` : ''}`);
+      }
     }
   }
 } finally {
   await new Promise((resolve) => server.close(resolve));
 }
 
-console.log(`Chrome interaction smoke: ${passed}/${sites.length * viewports.length} site/viewport combinations passed (theme, sidebar, responsive layout, overflow, tabs, dialog).`);
+console.log(`Chrome interaction smoke: ${passed}/${sites.length * viewports.length * motionModes.length} site/viewport/motion combinations passed (theme, sidebar, responsive layout, overflow, focus-visible CSS contract, reduced motion, tabs, dialog).`);
 if (failures.length) {
   for (const failure of failures) console.error(JSON.stringify(failure));
   process.exitCode = 1;

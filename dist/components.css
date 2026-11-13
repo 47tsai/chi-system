@@ -345,49 +345,9 @@ html.chi-sidebar-open body {
   justify-content: center;
   gap: var(--chi-space-2);
   min-height: var(--chi-size-control);
-  padding: 0 var(--chi-space-4);
-  font-size: var(--chi-font-size-body-small);
-  font-weight: var(--chi-font-weight-label);
-  line-height: var(--chi-font-line-height-body-small);
-  border: var(--chi-base-border-default-width) solid var(--chi-color-border-subtle);
-  border-radius: var(--chi-radius-md);
-  cursor: pointer;
-}
-.chi-btn:focus-visible {
-  outline: var(--chi-focus-width) solid var(--chi-color-focus-ring);
-  outline-offset: var(--chi-focus-offset);
-}
-.chi-btn:disabled {
-  color: var(--chi-color-text-disabled);
-  cursor: not-allowed;
-}
-.chi-btn--primary {
-  background: var(--chi-button-primary-background);
-  color: var(--chi-button-primary-text);
-  border-color: var(--chi-button-primary-background);
-}
-.chi-btn--primary:hover {
-  background: var(--chi-button-primary-background-hover);
-}
-.chi-btn--primary:active {
-  background: var(--chi-button-primary-background-active);
-}
-.chi-btn--secondary {
-  background: var(--chi-button-secondary-background);
-  color: var(--chi-button-secondary-text);
-}
-.chi-btn--ghost {
-  background: var(--chi-button-ghost-background);
-  color: var(--chi-button-ghost-text);
-  border-color: transparent;
-}
-.chi-btn--danger {
-  background: var(--chi-button-danger-background);
-  color: var(--chi-button-danger-text);
-  border-color: var(--chi-button-danger-background);
-}
-.chi-btn--sm {
-  min-height: var(--chi-size-control-compact);
+  paddi
+[... 1355 bytes omitted ...]
+ntrol-compact);
   padding: 0 var(--chi-space-3);
 }
 
@@ -443,27 +403,6 @@ html.chi-sidebar-open body {
   .chi-list__item--clickable, .chi-nav-link, .chi-dialog__close):focus-visible {
   outline: var(--chi-focus-width) solid var(--chi-color-focus-ring);
   outline-offset: var(--chi-focus-offset);
-}
-
-/* 動效只服務狀態變化；減少動態偏好時關閉（SPEC.md 7.8） */
-@media (prefers-reduced-motion: reduce) {
-  .chi-btn,
-  .chi-input,
-  .chi-select,
-  .chi-textarea,
-  .chi-check__input,
-  .chi-radio__input,
-  .chi-switch__input,
-  .chi-card,
-  .chi-list__item,
-  .chi-tab,
-  .chi-nav-link {
-    transition: none;
-  }
-
-  .chi-spinner {
-    animation: none;
-  }
 }
 
 /* 圖示尺寸：與 icons.svg 的 <use> 搭配 */
@@ -1093,4 +1032,25 @@ a {
 [data-chi-layout="sidebar"] .chi-header,
 [data-chi-layout="sidebar"] .chi-subnav {
   display: none;
+}
+
+/* 動效只服務狀態變化；減少動態偏好時關閉（SPEC.md 7.8） */
+@media (prefers-reduced-motion: reduce) {
+  .chi-btn,
+  .chi-input,
+  .chi-select,
+  .chi-textarea,
+  .chi-check__input,
+  .chi-radio__input,
+  .chi-switch__input,
+  .chi-card,
+  .chi-list__item,
+  .chi-tab,
+  .chi-nav-link {
+    transition: none;
+  }
+
+  .chi-spinner {
+    animation: none;
+  }
 }
