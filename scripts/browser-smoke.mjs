@@ -198,7 +198,7 @@ try {
       const child = spawn(browser, [
         '--headless=new', '--no-sandbox', '--disable-gpu', '--disable-dev-shm-usage',
         '--no-first-run', '--no-default-browser-check', '--enable-logging=stderr',
-        '--log-level=0', '--virtual-time-budget=2500', `--window-size=${viewport.size}`,
+        '--log-level=0', '--virtual-time-budget=5000', `--window-size=${viewport.size}`,
         ...motionMode.flags,
         '--dump-dom', url,
       ], { env: { ...process.env, DISPLAY: '' } });
