@@ -10,6 +10,7 @@
 - 每站所需 Logo 複製至 `dist/logo/`，相對路徑不再逃出部署根目錄；新增靜態資產解析測試。
 - 加入 Node 原生 HTTP 部署 smoke test，逐一請求六站入口與所有本機 CSS／JS／Logo，驗證 200 與 MIME。
 - 補足 Header 品牌可存取名稱與 Footer landmark／站名／版本的語意合約。
+- 新增無依賴 headless Chrome smoke test，於可用環境驗證六站桌機／手機載入與 console。
 
 - 新增 DTCG Token schema 驗證，明確檢查 `$type`、`$value`、別名括號格式。
 - 統一本地與 CI 驗收入口為 `npm run check`。

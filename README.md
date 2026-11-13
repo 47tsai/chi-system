@@ -39,12 +39,13 @@ logo/
 ```sh
 npm run build     # 產生 Token／元件 CSS、共用模板、預覽清單、dist/logo 與 dist/sites/<站>/index.html
 npm run validate  # Token schema／解析、對比、硬編碼、站設定、模板與站點輸出、dist 產物清單、斷點
-npm run test      # Node.js 行為、Theme／Sidebar／Tabs／Dialog、Header／Footer、Button／表單、HTML 語意契約、鍵盤焦點與靜態部署 HTTP 資產測試
-npm run check     # build + validate + test + 生成物 diff 必須為空
+npm run test      # Node.js 行為、Theme／Sidebar／Tabs／Dialog、Header／Footer、Button／表單與 HTML 語意測試
+npm run test:browser # Chrome 可用時，六站桌機／手機 headless smoke test
+npm run check     # build + validate + test + browser smoke + 生成物 diff
 ```
 
 新站起步：新增 `tokens/brands/<站>.tokens.json` 與 `sites/<站>.json`，再執行 `npm run build`。站設定可選 `"layout": "header"` 或 `"layout": "sidebar"`，省略時預設 `header`。
-建置會自動產生 `dist/sites/<站>/index.html` 共用殼起始頁；站點實際導覽與功能內容仍由該站提供。 這些頁面以 repo 根目錄為發布根，需一併保留 `dist/` 與 `logo/`，不可只抽出 `dist/sites/` 子目錄。
+建置會產生可獨立部署的 `dist/` 根目錄，包含 `dist/sites/<站>/index.html`、共用 CSS／JS 與 `dist/logo/`；可直接發布整個 `dist/`，不可只抽出 `dist/sites/` 子目錄。站點實際導覽與功能內容仍由該站提供。
 
 ## 版本
 
