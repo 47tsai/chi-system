@@ -127,6 +127,15 @@ const layoutAttributeCount = (template.match(/\bdata-chi-layout=/g) || []).lengt
 if (layoutAttributeCount !== 1) fail('模板來源必須且只能有一個 data-chi-layout，實際：' + layoutAttributeCount);
 if (/<div\b[^>]*\bdata-chi-layout=/.test(template)) fail('data-chi-layout 必須由根 html 元素統一管理，不可在內層重複設定');
 
+// 預覽必須操作與正式模板相同的根層版式契約，不能再修改內層 shell。
+const previewSource = readFileSync(path.join(ROOT, 'preview', 'index.html'), 'utf8');
+if (!previewSource.includes("root.setAttribute('data-chi-layout', layout)")) {
+  fail('preview/index.html 必須將版式設定到 document.documentElement');
+}
+if (previewSource.includes("body.replace('data-chi-layout=\\\"header\\\"'")) {
+  fail('preview/index.html 不可再修改內層 body shell 的 data-chi-layout');
+}
+
 // 4. 網站設定 schema：欄位、型別、品牌檔存在、logo 檔案存在；不寫死站數。
 const REQUIRED = ['id', 'name', 'url', 'brand', 'logoLight', 'logoDark', 'description', 'icon'];
 const ALLOWED_SITE_KEYS = new Set([...REQUIRED, 'layout']);
