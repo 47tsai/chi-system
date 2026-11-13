@@ -361,6 +361,10 @@ if (!sidebarJs.includes("event.key !== 'Tab'")) fail('sidebar.js 缺少手機抽
 if (!sidebarJs.includes('function closeMobile(restoreFocus)')) fail('sidebar.js closeMobile 必須支援斷點切換時略過焦點回復');
 if (!sidebarJs.includes('if (!isMobile()) closeMobile(false)')) fail('sidebar.js 跨到平板／桌面斷點時不可聚焦已隱藏的手機開關');
 if (!sidebarCss.includes('@media (prefers-reduced-motion: reduce)') || !sidebarCss.includes('.chi-sidebar {\n    transition: none;')) fail('sidebar.css 必須尊重 prefers-reduced-motion');
+const themeJs = readFileSync(path.join(ROOT, 'dist', 'theme.js'), 'utf8');
+if (!themeJs.includes("button.setAttribute('aria-label', label)")) fail('theme.js 必須同步主題切換按鈕的 aria-label');
+if (!themeJs.includes("button.setAttribute('title', label)")) fail('theme.js 必須同步主題切換按鈕的 title');
+if (!themeJs.includes("'目前色彩模式：' + LABELS[mode] + '，點擊切換'")) fail('theme.js 主題切換標籤必須包含目前模式');
 const sidebarMarkup = readFileSync(path.join(ROOT, 'components', 'sidebar', 'sidebar.html'), 'utf8');
 const baseMarkup = readFileSync(path.join(ROOT, 'templates', 'base.template.html'), 'utf8');
 if (!sidebarMarkup.includes('id="chi-sidebar"')) fail('sidebar.html 缺少穩定 id');
