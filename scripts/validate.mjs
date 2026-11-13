@@ -364,6 +364,14 @@ if (!sidebarHtml.includes('<aside id="chi-sidebar" class="chi-sidebar" aria-labe
 if (!sidebarHtml.includes('<nav class="chi-sidebar__nav" aria-label="本站導覽">')) fail('sidebar 導覽 nav 必須有明確的「本站導覽」名稱');
 if (!headerHtml.includes('<nav class="chi-subnav" aria-label="本站導覽">')) fail('header 副導覽 nav 必須有明確名稱');
 
+// Tabs script is a generated runtime asset and must be loaded by the canonical shell.
+const templateSource = readFileSync(path.join(ROOT, 'templates', 'base.template.html'), 'utf8');
+const tabsSource = readFileSync(path.join(ROOT, 'components', 'tabs', 'tabs.js'), 'utf8');
+if (!templateSource.includes('<script src="../dist/tabs.js" defer></script>')) fail('base template 必須載入 Tabs runtime');
+for (const contract of ["[data-chi-tabs]", "[role=\"tab\"]", "ArrowRight", "ArrowLeft", "Home", "End", "aria-selected", "aria-controls", "tabindex"]) {
+  if (!tabsSource.includes(contract)) fail(`Tabs runtime 缺少必要互動契約：${contract}`);
+}
+
 // Button closed enum 與原生按鈕語意：四種變體各一個示例，全部明確指定 type。
 const buttonHtml = readFileSync(path.join(ROOT, 'components', 'button', 'button.html'), 'utf8');
 const buttonCss = stripComments(readFileSync(path.join(ROOT, 'components', 'button', 'button.css'), 'utf8'));
