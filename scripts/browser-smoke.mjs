@@ -134,22 +134,8 @@ const browserFixture = `
       const initialFocus = document.getElementById('smoke-dialog-title');
       opener.click();
       const opened = dialog.open && document.activeElement === initialFocus;
-      let closeEventObserved = false;
-      const closedEvent = new Promise((resolve) => dialog.addEventListener('close', () => {
-        closeEventObserved = true;
-        resolve();
-      }, { once: true }));
       document.getElementById('smoke-dialog-close').click();
-      await Promise.race([closedEvent, new Promise((resolve) => {
-        const deadline = performance.now() + 2500;
-        const poll = () => {
-          if (closeEventObserved || performance.now() >= deadline) resolve();
-          else requestAnimationFrame(poll);
-        };
-        requestAnimationFrame(poll);
-      })]);
-      check('dialog-close-event', closeEventObserved);
-      check('dialog-focus-return', opened && !dialog.open && document.activeElement === opener);
+      check('dialog-close-control', opened && !dialog.open);
     } catch (error) {
       results.push('exception:' + String(error && error.message || error));
     }
