@@ -178,7 +178,7 @@ const cssFiles = [
   ...readdirSync(path.join(ROOT, 'components'), { recursive: true })
     .filter((file) => file.endsWith('.css'))
     .map((file) => path.join(ROOT, 'components', file)),
-path.join(ROOT, 'dist', 'tokens.css'),
+  path.join(ROOT, 'dist', 'tokens.css'),
   path.join(ROOT, 'dist', 'components.css'),
 ];
 const cssSources = cssFiles.map((file) => [file, stripComments(readFileSync(file, 'utf8'))]);
@@ -268,7 +268,7 @@ for (const f of sites) {
   for (const key of ['name', 'brand', 'description', 'icon']) {
     if (typeof site[key] !== 'string' || !site[key].trim()) {
       fail('網站設定欄位必須是非空字串：' + f + ' ' + key);
-}
+    }
   }
   if (site.layout !== undefined && !['header', 'sidebar'].includes(site.layout)) {
     fail('網站設定 layout 只能是 header 或 sidebar：' + f);
@@ -358,7 +358,7 @@ for (const site of siteRecords) {
     fail('缺少網站建置輸出：dist/sites/' + site.id + '/index.html');
     continue;
   }
-const output = readFileSync(outputPath, 'utf8');
+  const output = readFileSync(outputPath, 'utf8');
   const outputWithoutComments = output.replace(/<!--[\s\S]*?-->/g, '');
   if (/\{\{[^}]+\}\}/.test(outputWithoutComments)) {
     fail('網站建置輸出仍有未填 placeholder：' + site.id);
@@ -448,7 +448,7 @@ if (!themeScript || !sidebarScript || !tabsScript || !dialogScript) {
   for (const [name, script] of [['Tabs', tabsScript], ['Dialog', dialogScript]]) {
     if (!/\bdefer\b/i.test(script.attrs) || /\basync\b/i.test(script.attrs)) {
       fail(name + ' Runtime 必須使用 defer 且不可 async');
-}
+    }
   }
 }
 const tabsSource = readFileSync(path.join(ROOT, 'components', 'tabs', 'tabs.js'), 'utf8');
@@ -537,6 +537,7 @@ for (const name of ['loading', 'empty', 'error', 'success']) {
   if (name !== 'loading' && !state?.contents.includes('class="chi-state__icon"')) fail(`資料狀態 ${name} 必須提供裝飾圖示`);
   if (name === 'error' && !state?.contents.includes('class="chi-state__action"')) fail('Error 狀態必須提供可採取的恢復操作');
 }
+
 const invalidFields = [...examplesHtml.matchAll(/<div\b([^>]*class="[^"]*chi-field[^"]*"[^>]*)>([\s\S]*?)<\/div>/g)];
 for (const [, attrs, contents] of invalidFields) {
   if (/aria-invalid="true"/.test(contents) && !/chi-field--error/.test(attrs)) fail('aria-invalid=true 的欄位必須套用 chi-field--error');
@@ -608,3 +609,4 @@ if (failures.length) {
   console.error(`\n驗證失敗 ${failures.length} 項：\n- ${failures.join('\n- ')}`);
   process.exit(1);
 }
+console.log('\n驗證全部通過。');
