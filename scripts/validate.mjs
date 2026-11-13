@@ -5,7 +5,7 @@
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
-import { buildTokens } from './build-tokens.mjs';
+import { buildTokens, flatten } from './build-tokens.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const failures = [];
@@ -59,7 +59,7 @@ function validateTokenNode(node, file, tokenPath = '') {
       if (opens !== closes || /\{\s*\}/.test(value)) {
         fail('Token 別名格式錯誤：' + file + ' ' + tokenPath);
       }
-      if (node.$type === 'color' && !/^#[0-9a-fA-F]{3,8}$/.test(value) && !/^\{[^{}]+\}$/.test(value)) {
+      if (node.$type === 'color' && !/^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/.test(value) && !/^\{[^{}]+\}$/.test(value)) {
         fail('Color Token 必須是 hex 或單一 Token 別名：' + file + ' ' + tokenPath);
       }
     }
@@ -88,6 +88,36 @@ console.log('Token schema 檢查完成：' + tokenFiles.length + ' 份來源檔'
 // 1. Token 解析（buildTokens 內已做別名解析與循環檢查；未解析會直接拋錯）
 const { resolvedLight, resolvedDark, brands } = buildTokens();
 console.log(`Token 解析通過：淺色 ${Object.keys(resolvedLight).length} 個，深色 ${Object.keys(resolvedDark).length} 個，品牌 ${Object.keys(brands).length} 個`);
+
+// 別名型別必須一致：避免 color 指向 dimension 等可解析但語意錯誤的 Token。
+const tokenSource = (file) => flatten(JSON.parse(readFileSync(path.join(ROOT, 'tokens', file), 'utf8')), '', {});
+const primitiveDefinitions = tokenSource('primitives.tokens.json');
+const lightDefinitions = {
+  ...tokenSource('semantic.tokens.json'),
+  ...tokenSource('components.tokens.json'),
+};
+const darkDefinitions = tokenSource('semantic-dark.tokens.json');
+const layeredDefinitions = { ...primitiveDefinitions, ...lightDefinitions, ...darkDefinitions };
+function validateAliases(definitions, scope) {
+  for (const [name, token] of Object.entries(definitions)) {
+    if (typeof token.$value !== 'string') continue;
+    for (const match of token.$value.matchAll(/\\{([^{}]+)\\}/g)) {
+      const targetName = match[1].trim();
+      const target = definitions[targetName] ?? layeredDefinitions[targetName];
+      if (!target) {
+        fail(`Token 別名不存在：${scope} ${name} → ${targetName}`);
+      } else if (target.$type !== token.$type) {
+        fail(`Token 別名型別不一致：${scope} ${name} (${token.$type}) → ${targetName} (${target.$type})`);
+      }
+    }
+  }
+}
+validateAliases(layeredDefinitions, 'shared');
+const brandDirectory = path.join(ROOT, 'tokens', 'brands');
+for (const file of readdirSync(brandDirectory).filter((name) => name.endsWith('.tokens.json'))) {
+  const brandDefinitions = flatten(JSON.parse(readFileSync(path.join(brandDirectory, file), 'utf8')), '', {});
+  validateAliases(brandDefinitions, file);
+}
 
 // 2. 對比計算：每品牌×淺深色。一般文字 4.5:1、大字與非文字 UI 3:1（WCAG 2.2 AA）。
 const pairs = [
