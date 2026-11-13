@@ -16,6 +16,7 @@
 - 擴充 headless Chrome 測試為真實互動驗收：驗證主題循環、側欄桌機收合／手機抽屜、Tabs 鍵盤切換，以及 Dialog 焦點進入與返回。
 - Chrome 驗收增加桌機／手機斷點版式、側欄定位與頁面水平溢位檢查。
 - Chrome 驗收擴充為預設與減少動態兩種偏好模式，檢查動態偏好媒體查詢、元件轉場／Spinner 動畫停用，以及 Focus-visible 樣式規則仍存在於生成 CSS。
+- 新增獨立 Chrome DevTools Protocol 鍵盤驗收：六站桌機／手機共 12 組情境實際送出 Tab 鍵，確認焦點落點、`:focus-visible` 與計算後的外框樣式。
 
 - 新增 DTCG Token schema 驗證，明確檢查 `$type`、`$value`、別名括號格式。
 - 統一本地與 CI 驗收入口為 `npm run check`。
