@@ -80,7 +80,7 @@ Foundations（原則）→ Tokens（數值）→ Components（元件）→ Patte
 - Header：logo（本身就是首頁連結，不另設首頁按鍵）＋站名＋主題切換＋本站操作；
   導覽不進 header，放 header 下方獨立一列；沒有導覽的站省略整段。
   主題切換在 header 版式放 header，側邊欄版式放側邊欄底部。
-- Footer：站名＋版本識別；不放跨站連結。
+- Footer：使用原生 footer landmark，提供站名＋版本識別；不放跨站連結。
 - Sidebar：站設定 `layout: "sidebar"` 才使用側邊欄版式；適用門檻——本站導覽 ≥5 個頂層區段，或為動態分類；
   否則用 header＋副導覽列。收合開關在側邊欄頂列右側；收合 key 只有一個存放位置
   （引入 sidebar.js 的 `<script data-chi-sidebar-key>`），值

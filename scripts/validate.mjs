@@ -394,6 +394,7 @@ console.log('網站建置輸出檢查通過：' + siteRecords.length + ' 站');
 // 側欄本身是 complementary landmark，內層 nav 才是具名導覽 landmark。
 const headerHtml = readFileSync(path.join(ROOT, 'components', 'header', 'header.html'), 'utf8');
 const sidebarHtml = readFileSync(path.join(ROOT, 'components', 'sidebar', 'sidebar.html'), 'utf8');
+const footerHtml = readFileSync(path.join(ROOT, 'components', 'footer', 'footer.html'), 'utf8');
 for (const [name, source, logoClass] of [
   ['header', headerHtml, 'chi-header__logo'],
   ['sidebar', sidebarHtml, 'chi-sidebar__logo'],
@@ -407,6 +408,9 @@ for (const [name, source, logoClass] of [
 if (!sidebarHtml.includes('<aside id="chi-sidebar" class="chi-sidebar" aria-label="側邊欄">')) fail('sidebar aside 必須使用描述其 landmark 的名稱「側邊欄」');
 if (!sidebarHtml.includes('<nav class="chi-sidebar__nav" aria-label="本站導覽">')) fail('sidebar 導覽 nav 必須有明確的「本站導覽」名稱');
 if (!headerHtml.includes('<nav class="chi-subnav" aria-label="本站導覽">')) fail('header 副導覽 nav 必須有明確名稱');
+if (!headerHtml.includes('<span class="chi-header__name">{{site.name}}</span>')) fail('Header 品牌連結必須以可見站名提供可存取名稱');
+if (!footerHtml.includes('<footer class="chi-footer">') || !footerHtml.includes('<span class="chi-footer__name">{{site.name}}</span>') || !footerHtml.includes('data-chi-version')) fail('Footer 必須使用原生 footer landmark 並提供站名與版本識別');
+if (/<a\b/.test(footerHtml)) fail('Footer 不得加入跨站連結');
 
 // Tabs script is a generated runtime asset and must be loaded by the canonical shell.
 const templateSource = readFileSync(path.join(ROOT, 'templates', 'base.template.html'), 'utf8');
