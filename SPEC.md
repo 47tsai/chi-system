@@ -119,7 +119,7 @@ CI 驗真的渲染依據，不是檔案在不在（舊系統三支腳本全綠�
 
 1. Token schema＋別名解析（每品牌全部 semantic 可解析）
 2. Runtime 生成物與 components/ 來源逐位元一致（Theme／Sidebar／Tabs／Dialog）
-3. 生成物一致（重跑生成，diff 必須為空）
+3. 生成物一致（重跑生成，diff 必須為空；dist 只允許明確列出的生成資產）
 4. 禁硬編碼（元件原始 CSS／模板來源出現未經 Token 管理的色值、尺寸、動效時間、透明度或字重即失敗；斷點由 breakpoints.json 管理；註解除外）
 5. 網站設定 schema（欄位、型別、logo 檔案存在；預覽清單與 sites 一致）
 6. 對比計算（每品牌×淺深色：一般文字 4.5:1、大字與非文字 UI 3:1）

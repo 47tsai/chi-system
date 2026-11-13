@@ -115,3 +115,11 @@ test('Theme, Sidebar, Tabs, and Dialog runtime outputs are generated from compon
     ['../components/dialog/dialog.js', '../dist/dialog.js'],
   ]) assert.equal(read(source), read(output), `${output} must be generated from ${source}`);
 });
+
+
+test('Generated dist inventory is explicit and excludes undeclared files', () => {
+  const validator = read('../scripts/validate.mjs');
+  assert.match(validator, /dist 是純生成目錄/);
+  assert.match(validator, /dist 產物清單缺少預期檔案/);
+  assert.match(validator, /dist 出現未預期的檔案/);
+});
