@@ -121,7 +121,7 @@
     if (firstLink) firstLink.focus();
   }
 
-  function closeMobile() {
+  function closeMobile(restoreFocus) {
     if (!sidebar) return;
     if (!sidebar.classList.contains('mobile-open')) return;
     sidebar.classList.remove('mobile-open');
@@ -129,7 +129,8 @@
     if (scrim) scrim.classList.remove('visible');
     root.classList.remove('chi-sidebar-open');
     updateTriggerLabel();
-    if (lastTrigger && lastTrigger.focus) lastTrigger.focus();
+    // 跨過 768px 斷點時，原本的手機開關會被 CSS 隱藏，不應把焦點送到隱藏控制項。
+    if (restoreFocus !== false && lastTrigger && lastTrigger.focus) lastTrigger.focus();
     lastTrigger = null;
   }
 
@@ -186,7 +187,7 @@
       }
     });
     window.addEventListener('resize', function () {
-      if (!isMobile()) closeMobile();
+      if (!isMobile()) closeMobile(false);
       syncMobileAccessibility();
       updateTriggerLabel();
     });

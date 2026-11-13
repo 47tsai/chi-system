@@ -58,6 +58,11 @@
   outline: var(--chi-focus-width) solid var(--chi-color-focus-ring);
   outline-offset: var(--chi-focus-offset);
 }
+.chi-header__brand:focus-visible,
+.chi-subnav a:focus-visible {
+  outline: var(--chi-focus-width) solid var(--chi-color-focus-ring);
+  outline-offset: var(--chi-focus-offset);
+}
 .chi-subnav {
   display: flex;
   gap: var(--chi-space-4);
@@ -199,6 +204,10 @@ html.chi-sidebar-open body {
   outline: var(--chi-focus-width) solid var(--chi-color-focus-ring);
   outline-offset: var(--chi-focus-offset);
 }
+.chi-sidebar__nav a:focus-visible {
+  outline: var(--chi-focus-width) solid var(--chi-color-focus-ring);
+  outline-offset: var(--chi-focus-offset);
+}
 .chi-sidebar__nav {
   flex: 1;
   overflow-y: auto;
@@ -320,6 +329,14 @@ html.chi-sidebar-open body {
   }
 }
 
+
+/* 偏好減少動態效果時，抽屜狀態仍正常切換，但不播放位移動畫。 */
+@media (prefers-reduced-motion: reduce) {
+  .chi-sidebar {
+    transition: none;
+  }
+}
+
 /* --- button/button.css --- */
 /* chi-system Button — 只引 Token，不寫原始值。 */
 .chi-btn {
@@ -374,6 +391,30 @@ html.chi-sidebar-open body {
   padding: 0 var(--chi-space-3);
 }
 
+/* Disabled 是穩定狀態：不可因 hover／active 顯示可互動的視覺回饋。 */
+.chi-btn--primary:disabled,
+.chi-btn--primary:disabled:hover,
+.chi-btn--primary:disabled:active {
+  background: var(--chi-button-primary-background);
+  border-color: var(--chi-button-primary-background);
+}
+.chi-btn--secondary:disabled,
+.chi-btn--secondary:disabled:hover,
+.chi-btn--secondary:disabled:active {
+  background: var(--chi-button-secondary-background);
+}
+.chi-btn--ghost:disabled,
+.chi-btn--ghost:disabled:hover,
+.chi-btn--ghost:disabled:active {
+  background: var(--chi-button-ghost-background);
+  border-color: transparent;
+}
+.chi-btn--danger:disabled,
+.chi-btn--danger:disabled:hover,
+.chi-btn--danger:disabled:active {
+  background: var(--chi-button-danger-background);
+  border-color: var(--chi-button-danger-background);
+}
 /* --- base/base.css --- */
 /* chi-system base.css — 文件基礎＋表單／Tabs／卡片／清單／表格／徽章／對話框／資料狀態
  * 來源：chi-system-old 的 components.css（HEAD 436f028）第 1–56 行與第 161–719 行，
@@ -410,6 +451,9 @@ html.chi-sidebar-open body {
   .chi-input,
   .chi-select,
   .chi-textarea,
+  .chi-check__input,
+  .chi-radio__input,
+  .chi-switch__input,
   .chi-card,
   .chi-list__item,
   .chi-tab,
@@ -505,7 +549,6 @@ html.chi-sidebar-open body {
 .chi-select:focus,
 .chi-textarea:focus {
   border-color: var(--chi-color-accent);
-  outline: none;
 }
 
 /* placeholder 屬一般文字，同樣須過 AA（SPEC.md 第 11 節） */
@@ -521,8 +564,11 @@ html.chi-sidebar-open body {
 }
 
 .chi-input:disabled,
+.chi-input:disabled:hover,
 .chi-select:disabled,
-.chi-textarea:disabled {
+.chi-select:disabled:hover,
+.chi-textarea:disabled,
+.chi-textarea:disabled:hover {
   background-color: var(--chi-color-surface-sunken);
   color: var(--chi-color-text-disabled);
   cursor: not-allowed;
@@ -546,6 +592,10 @@ html.chi-sidebar-open body {
   width: 100%;
   padding-right: var(--chi-base-form-select-icon-padding);
   cursor: pointer;
+}
+
+.chi-select:disabled {
+  cursor: not-allowed;
 }
 
 .chi-select-wrap .chi-icon {
@@ -617,7 +667,8 @@ html.chi-sidebar-open body {
 }
 
 .chi-check:has(.chi-check__input:disabled),
-.chi-radio:has(.chi-radio__input:disabled) {
+.chi-radio:has(.chi-radio__input:disabled),
+.chi-switch:has(.chi-switch__input:disabled) {
   color: var(--chi-color-text-disabled);
   cursor: not-allowed;
 }
@@ -698,8 +749,13 @@ html.chi-sidebar-open body {
     border-color var(--chi-duration);
 }
 
-.chi-tab:hover {
+.chi-tab:hover:not(:disabled) {
   color: var(--chi-color-text-primary);
+}
+
+.chi-tab:disabled {
+  color: var(--chi-color-text-disabled);
+  cursor: not-allowed;
 }
 
 /* selected：底線、字重與顏色並行，不只靠顏色（SPEC.md 7.7） */

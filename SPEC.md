@@ -4,16 +4,21 @@
 > 設計理由只在 Token 的 `$description` 與本文件原則節，不另開文件。
 > 舊版（47tsai/chi-system-old，HEAD 436f028）唯讀參考，不再改動。
 
-## 0. 優先級（衝突時上層勝，下層照改，絕不反向）
+## 0. 權威來源與優先級
 
-1. 生成物（dist/tokens.css 等，數值）
-2. 元件原始碼＋props 型別（行為）
-3. 元件文件（意圖）
-4. 本文件（理由）
-5. 截圖／示範（僅供說明）
+本系統採「來源檔為權威、生成物為輸出」原則。生成物可用來驗證實際輸出，
+但不得反向覆蓋來源檔；發現差異時，應修正來源並重新生成。
 
-`draft`／`preview` 永遠不覆蓋 `stable`。沒有成熟系統公開發布過優先級階梯，
-這條是本系統自己定的（見研究報告 §1.2）。
+1. 本文件（系統原則、架構與公開契約）
+2. `tokens/*.tokens.json`（Token 數值唯一來源）
+3. `components/`、`templates/*.template.html`、`scripts/`（元件、模板與建置行為的唯一實作來源）
+4. `sites/*.json`、`breakpoints.json`（站點與斷點設定來源）
+5. 生成物（`dist/*`、`templates/base.html`、`preview/sites.json`），只供執行與驗證，不得手改
+6. 文件中的示例、截圖與預覽畫面，只供說明，不覆蓋上述來源
+
+不同領域的來源各自負責其範圍；若跨領域規則衝突，以本文件定義的契約為準，
+並同步修正受影響的來源檔。新增元件仍遵循 draft → preview → stable；
+`draft`／`preview` 永遠不覆蓋 `stable`。
 
 ## 1. 目的
 
@@ -81,10 +86,15 @@ Foundations（原則）→ Tokens（數值）→ Components（元件）→ Patte
   導覽連結寫法：`<a><span class="chi-sidebar__icon">…</span><span class="chi-sidebar__label">…</span></a>`。
 - Button：primary／secondary／ghost／danger 四級 closed enum；
   一個操作情境至多一個 primary；不得自由傳 class。
+- Tabs：容器使用 `data-chi-tabs` 與 `role="tablist"`；每個 tab 使用原生 button、`role="tab"`、唯一 id、`aria-controls`、`aria-selected`、`tabindex`；panel 使用 `role="tabpanel"`、唯一 id、`aria-labelledby`。方向鍵循環切換、Home／End 移至首／末個可用 tab，選取時同步更新 panel hidden；disabled tab 略過。
 - 其他元件（表單、Tabs、卡片、清單／表格、徽章、對話框、資料狀態）：
-  樣式在 components/base/base.css，沿用舊版已核對的段落（見 §10 來源）。
-  已知缺口：對話框焦點管理（移入／限制／返回）只有文字要求、沒有程式，
-  列為 v1.1；日期選擇、檔案上傳、滑桿等未列入基礎示例表的元件，使用前須另行定義。
+  樣式在 components/base/base.css，沿用舊版已核對的段落（見 §10 來源）。 HTML 語意範例集中於 `components/base/examples.html`，作為欄位關聯、Tabs、Card、List、Table 與 Dialog 的可驗證參考。
+  錯誤欄位必須同時設定 `aria-invalid="true"`、`aria-describedby` 指向錯誤文字，並套用 `chi-field--error`。
+  Dialog 使用原生 `<dialog class="chi-dialog">` 與 `showModal()`；必須以 `aria-labelledby` 關聯可見標題。
+  開啟按鈕使用 `data-chi-dialog-open="dialog-id"`，關閉按鈕使用 `data-chi-dialog-close`；
+  可選 `data-chi-dialog-initial-focus`、`autofocus` 與 `data-chi-dialog-backdrop-close`。
+  Runtime 設定初始焦點並於 close 後返回觸發處；焦點限制、Escape 與背景 inert 由原生 modal dialog 提供。
+  日期選擇、檔案上傳、滑桿等未列入基礎示例表的元件，使用前須另行定義。
 
 ## 7. 新增流程
 

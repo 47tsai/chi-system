@@ -102,6 +102,10 @@ html.chi-sidebar-open body {
   outline: var(--chi-focus-width) solid var(--chi-color-focus-ring);
   outline-offset: var(--chi-focus-offset);
 }
+.chi-sidebar__nav a:focus-visible {
+  outline: var(--chi-focus-width) solid var(--chi-color-focus-ring);
+  outline-offset: var(--chi-focus-offset);
+}
 .chi-sidebar__nav {
   flex: 1;
   overflow-y: auto;
@@ -220,5 +224,13 @@ html.chi-sidebar-open body {
   html[data-chi-sidebar-collapsed] .chi-sidebar__nav a {
     justify-content: center;
     padding: 0;
+  }
+}
+
+
+/* 偏好減少動態效果時，抽屜狀態仍正常切換，但不播放位移動畫。 */
+@media (prefers-reduced-motion: reduce) {
+  .chi-sidebar {
+    transition: none;
   }
 }

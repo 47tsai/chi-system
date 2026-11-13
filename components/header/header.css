@@ -55,6 +55,11 @@
   outline: var(--chi-focus-width) solid var(--chi-color-focus-ring);
   outline-offset: var(--chi-focus-offset);
 }
+.chi-header__brand:focus-visible,
+.chi-subnav a:focus-visible {
+  outline: var(--chi-focus-width) solid var(--chi-color-focus-ring);
+  outline-offset: var(--chi-focus-offset);
+}
 .chi-subnav {
   display: flex;
   gap: var(--chi-space-4);
