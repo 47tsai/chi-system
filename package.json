@@ -4,8 +4,9 @@
   "private": true,
   "scripts": {
     "build": "node scripts/build-tokens.mjs && node scripts/build-site.mjs",
-    "check": "npm run build && npm run validate && git diff --exit-code -- dist templates/base.html preview/sites.json",
-    "validate": "node scripts/validate.mjs"
+    "check": "npm run build && npm run validate && npm test && git diff --exit-code -- dist templates/base.html preview/sites.json",
+    "validate": "node scripts/validate.mjs",
+    "test": "node --test"
   },
   "type": "module",
   "version": "1.0.0"
