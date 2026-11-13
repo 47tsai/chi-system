@@ -101,7 +101,7 @@ const layeredDefinitions = { ...primitiveDefinitions, ...lightDefinitions, ...da
 function validateAliases(definitions, scope) {
   for (const [name, token] of Object.entries(definitions)) {
     if (typeof token.$value !== 'string') continue;
-    for (const match of token.$value.matchAll(/\\{([^{}]+)\\}/g)) {
+    for (const match of token.$value.matchAll(/\{([^{}]+)\}/g)) {
       const targetName = match[1].trim();
       const target = definitions[targetName] ?? layeredDefinitions[targetName];
       if (!target) {
