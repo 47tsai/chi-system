@@ -102,6 +102,10 @@ html.chi-sidebar-open body {
   outline: var(--chi-focus-width) solid var(--chi-color-focus-ring);
   outline-offset: var(--chi-focus-offset);
 }
+.chi-sidebar__nav a:focus-visible {
+  outline: var(--chi-focus-width) solid var(--chi-color-focus-ring);
+  outline-offset: var(--chi-focus-offset);
+}
 .chi-sidebar__nav {
   flex: 1;
   overflow-y: auto;
