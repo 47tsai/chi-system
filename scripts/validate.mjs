@@ -39,21 +39,28 @@ const tokenFiles = [
     .map((name) => 'brands/' + name),
 ];
 const TOKEN_METADATA = new Set(['$description', '$type', '$extensions', '$deprecated', '$experimental']);
+const SUPPORTED_TOKEN_TYPES = new Set(['color', 'dimension', 'duration', 'fontFamily', 'fontWeight', 'shadow']);
 function validateTokenNode(node, file, tokenPath = '') {
   if (!node || typeof node !== 'object' || Array.isArray(node)) {
     fail('Token 結構錯誤：' + file + ' ' + (tokenPath || '(root)') + ' 必須是物件');
     return;
   }
   if (Object.prototype.hasOwnProperty.call(node, '$value')) {
-    if (typeof node.$type !== 'string' || !node.$type.trim()) {
-      fail('Token 缺少有效 $type：' + file + ' ' + tokenPath);
+    if (typeof node.$type !== 'string' || !SUPPORTED_TOKEN_TYPES.has(node.$type)) {
+      fail('Token $type 不受目前生成器支援：' + file + ' ' + tokenPath + ' (' + String(node.$type) + ')');
     }
-    if (typeof node.$value === 'string') {
+    // 目前生成器只處理字串型 Token；複合物件值需先擴充序列化器，不能靜默輸出 [object Object]。
+    if (typeof node.$value !== 'string' || !node.$value.trim()) {
+      fail('Token $value 必須是非空字串（目前生成器支援範圍）：' + file + ' ' + tokenPath);
+    } else {
       const value = node.$value;
       const opens = (value.match(/\{/g) || []).length;
       const closes = (value.match(/\}/g) || []).length;
       if (opens !== closes || /\{\s*\}/.test(value)) {
         fail('Token 別名格式錯誤：' + file + ' ' + tokenPath);
+      }
+      if (node.$type === 'color' && !/^#[0-9a-fA-F]{3,8}$/.test(value) && !/^\{[^{}]+\}$/.test(value)) {
+        fail('Color Token 必須是 hex 或單一 Token 別名：' + file + ' ' + tokenPath);
       }
     }
     return;
@@ -166,6 +173,7 @@ const REQUIRED = ['id', 'name', 'url', 'brand', 'logoLight', 'logoDark', 'descri
 const ALLOWED_SITE_KEYS = new Set([...REQUIRED, 'layout']);
 const sites = readdirSync(path.join(ROOT, 'sites')).filter((f) => f.endsWith('.json'));
 const siteRecords = [];
+const siteIds = new Set();
 if (sites.length === 0) fail('sites/ 沒有任何網站設定');
 for (const f of sites) {
   let site;
@@ -180,6 +188,8 @@ for (const f of sites) {
     continue;
   }
   siteRecords.push(site);
+  if (siteIds.has(site.id)) fail('網站設定 id 重複：' + site.id);
+  siteIds.add(site.id);
   for (const k of REQUIRED) {
     if (!(k in site)) fail('網站設定缺欄位：' + f + ' 缺 ' + k);
   }
@@ -199,6 +209,7 @@ for (const f of sites) {
     fail('網站設定 layout 只能是 header 或 sidebar：' + f);
   }
   if (!brands[site.brand]) fail('網站設定品牌不存在：' + f + ' brand=' + site.brand);
+  if (site.brand !== site.id) fail('目前站點契約要求 brand 與 site id 一致：' + f);
   if (typeof site.url !== 'string') {
     fail('網站設定 url 必須是字串：' + f);
   } else {
