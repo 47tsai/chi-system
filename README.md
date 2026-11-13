@@ -11,8 +11,10 @@
 
 ## 規範
 
-唯一規範是 [SPEC.md](SPEC.md)。數值唯一來源是 `tokens/*.tokens.json`（DTCG 格式），
-生成的 `dist/tokens.css` 絕不手改。優先級：生成物 ＞ 元件原始碼 ＞ 元件文件 ＞ SPEC.md ＞ 截圖。
+系統原則與公開契約以 [SPEC.md](SPEC.md) 為準。Token 數值唯一來源是
+`tokens/*.tokens.json`（DTCG 格式）；元件、模板、建置器與站點設定分別以其來源檔為準。
+`dist/*`、`templates/base.html`、`preview/sites.json` 都是生成物，只供執行與驗證，
+絕不手改；發現輸出錯誤時，應修正來源檔後重新建置。
 
 ## 版面
 
