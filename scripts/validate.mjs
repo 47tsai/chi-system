@@ -175,16 +175,190 @@ for (const dir of ['components']) {
 
 // CSS 自訂屬性引用完整性：元件與生成 CSS 的 var(--chi-*) 必須有定義，或明確提供 fallback。
 const cssFiles = [
-  ...readdirSync(path.join(ROOT, 'components'), { recursiv
-[... 9040 bytes omitted ...]
-際站點產物：每份 sites/*.json 都必須有完整、無未填變數的可部署 index.html。
+  ...readdirSync(path.join(ROOT, 'components'), { recursive: true })
+    .filter((file) => file.endsWith('.css'))
+    .map((file) => path.join(ROOT, 'components', file)),
+path.join(ROOT, 'dist', 'tokens.css'),
+  path.join(ROOT, 'dist', 'components.css'),
+];
+const cssSources = cssFiles.map((file) => [file, stripComments(readFileSync(file, 'utf8'))]);
+const componentCss = readdirSync(path.join(ROOT, 'components'), { recursive: true })
+  .filter((file) => file.endsWith('.css'))
+  .map((file) => stripComments(readFileSync(path.join(ROOT, 'components', file), 'utf8'))).join('\n');
+for (const name of Object.keys(tokenSource('components.tokens.json'))) {
+  const variable = `var(--chi-${name.replaceAll('.', '-')})`;
+  if (!componentCss.includes(variable)) fail(`元件 Token 未被任何元件 CSS 使用：${name}`);
+}
+const semanticDefinitions = tokenSource('semantic.tokens.json');
+const componentDefinitions = tokenSource('components.tokens.json');
+const componentAliasReferences = new Set(Object.values(componentDefinitions).flatMap((token) =>
+  typeof token.$value === 'string'
+    ? [...token.$value.matchAll(/\{([^{}]+)\}/g)].map(([, name]) => name.trim())
+    : [],
+));
+for (const name of Object.keys(semanticDefinitions)) {
+  const variable = `var(--chi-${name.replaceAll('.', '-')})`;
+  if (!componentCss.includes(variable) && !componentAliasReferences.has(name)) fail(`Semantic Token 未被元件 CSS 或元件 Token 使用：${name}`);
+}
+const definedProperties = new Set();
+for (const [, source] of cssSources) {
+  for (const match of source.matchAll(/(^|[;{\s])(--[\w-]+)\s*:/gm)) definedProperties.add(match[2]);
+}
+const unresolvedProperties = new Map();
+for (const [file, source] of cssSources) {
+  for (const match of source.matchAll(/var\(\s*(--[\w-]+)\s*(,)?/g)) {
+    const name = match[1];
+    if (!definedProperties.has(name) && !match[2]) {
+      if (!unresolvedProperties.has(name)) unresolvedProperties.set(name, new Set());
+      unresolvedProperties.get(name).add(path.relative(ROOT, file));
+    }
+  }
+}
+for (const [name, files] of unresolvedProperties) {
+  fail(`CSS Token 未定義：${name}，引用位置：${[...files].join('、')}`);
+}
+
+const template = stripComments(readFileSync(path.join(ROOT, 'templates', 'base.template.html'), 'utf8'));
+if (/#[0-9a-fA-F]{3,8}\b/.test(template)) fail('硬編碼色值：templates/base.template.html 出現 hex');
+const layoutAttributeCount = (template.match(/\bdata-chi-layout=/g) || []).length;
+if (layoutAttributeCount !== 1) fail('模板來源必須且只能有一個 data-chi-layout，實際：' + layoutAttributeCount);
+if (/<div\b[^>]*\bdata-chi-layout=/.test(template)) fail('data-chi-layout 必須由根 html 元素統一管理，不可在內層重複設定');
+
+// 預覽必須操作與正式模板相同的根層版式契約，不能再修改內層 shell。
+const previewSource = readFileSync(path.join(ROOT, 'preview', 'index.html'), 'utf8');
+if (!previewSource.includes("root.setAttribute('data-chi-layout', layout)")) {
+  fail('preview/index.html 必須將版式設定到 document.documentElement');
+}
+if (previewSource.includes("body.replace('data-chi-layout=\\\"header\\\"'")) {
+  fail('preview/index.html 不可再修改內層 body shell 的 data-chi-layout');
+}
+
+// 4. 網站設定 schema：欄位、型別、品牌檔存在、logo 檔案存在；不寫死站數。
+const REQUIRED = ['id', 'name', 'url', 'brand', 'logoLight', 'logoDark', 'description', 'icon'];
+const ALLOWED_SITE_KEYS = new Set([...REQUIRED, 'layout']);
+const sites = readdirSync(path.join(ROOT, 'sites')).filter((f) => f.endsWith('.json'));
+const siteRecords = [];
+const siteIds = new Set();
+if (sites.length === 0) fail('sites/ 沒有任何網站設定');
+for (const f of sites) {
+  let site;
+  try {
+    site = JSON.parse(readFileSync(path.join(ROOT, 'sites', f), 'utf8'));
+  } catch (error) {
+    fail('網站設定 JSON 無法解析：' + f + '：' + error.message);
+    continue;
+  }
+  if (!site || typeof site !== 'object' || Array.isArray(site)) {
+    fail('網站設定必須是 JSON object：' + f);
+    continue;
+  }
+  siteRecords.push(site);
+  if (siteIds.has(site.id)) fail('網站設定 id 重複：' + site.id);
+  siteIds.add(site.id);
+  for (const k of REQUIRED) {
+    if (!(k in site)) fail('網站設定缺欄位：' + f + ' 缺 ' + k);
+  }
+  for (const k of Object.keys(site)) {
+    if (!ALLOWED_SITE_KEYS.has(k)) fail('網站設定含未知欄位：' + f + ' ' + k);
+  }
+  if (site.id !== f.replace('.json', '')) fail('網站設定 id 與檔名不符：' + f);
+  if (typeof site.id !== 'string' || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(site.id)) {
+    fail('網站設定 id 格式不合法：' + f);
+  }
+  for (const key of ['name', 'brand', 'description', 'icon']) {
+    if (typeof site[key] !== 'string' || !site[key].trim()) {
+      fail('網站設定欄位必須是非空字串：' + f + ' ' + key);
+}
+  }
+  if (site.layout !== undefined && !['header', 'sidebar'].includes(site.layout)) {
+    fail('網站設定 layout 只能是 header 或 sidebar：' + f);
+  }
+  if (!brands[site.brand]) fail('網站設定品牌不存在：' + f + ' brand=' + site.brand);
+  if (site.brand !== site.id) fail('目前站點契約要求 brand 與 site id 一致：' + f);
+  if (typeof site.url !== 'string') {
+    fail('網站設定 url 必須是字串：' + f);
+  } else {
+    try {
+      if (new URL(site.url).protocol !== 'https:') fail('網站設定 url 必須使用 HTTPS：' + f);
+    } catch {
+      fail('網站設定 url 格式不合法：' + f);
+    }
+  }
+  for (const key of ['logoLight', 'logoDark']) {
+    const logo = site[key];
+    if (typeof logo !== 'string' || !logo.trim()) {
+      fail('網站設定 logo 必須是非空路徑：' + f + ' ' + key);
+      continue;
+    }
+    const resolved = path.resolve(ROOT, logo);
+    if (!resolved.startsWith(ROOT + path.sep)) {
+      fail('網站設定 logo 不可離開 repo 根目錄：' + f + ' ' + key);
+    } else if (!existsSync(resolved)) {
+      fail('網站設定 logo 不存在：' + f + ' ' + logo);
+    }
+  }
+}
+console.log('網站設定 schema 通過：' + siteRecords.length + ' 站');
+
+// 4b. 預覽清單、模板 placeholder 與每站模板填值必須一致。
+const previewSites = JSON.parse(readFileSync(path.join(ROOT, 'preview', 'sites.json'), 'utf8'));
+const previewById = new Map(previewSites.map((site) => [site.id, site]));
+if (previewSites.length !== siteRecords.length) fail('preview/sites.json 與 sites/*.json 站數不一致');
+for (const site of siteRecords) {
+  const preview = previewById.get(site.id);
+  if (!preview || preview.name !== site.name) fail('preview/sites.json 缺少或名稱不一致：' + site.id);
+}
+const generatedTemplate = stripComments(readFileSync(path.join(ROOT, 'templates', 'base.html'), 'utf8')).replace(/<!--[\s\S]*?-->/g, '');
+const allowedPlaceholders = new Set([
+  '{{site.brand}}', '{{site.id}}', '{{site.url}}', '{{site.name}}',
+  '{{site.logoLight}}', '{{site.logoDark}}', '{{site.layout}}', '{{version}}',
+  '{{slots.actions}}', '{{slots.subnav}}', '{{slots.nav}}',
+]);
+const foundPlaceholders = generatedTemplate.match(/\{\{[^}]+\}\}/g) || [];
+for (const placeholder of foundPlaceholders) {
+  if (!allowedPlaceholders.has(placeholder)) fail('模板含未定義 placeholder：' + placeholder);
+}
+const packageVersion = JSON.parse(readFileSync(path.join(ROOT, 'package.json'), 'utf8')).version;
+const sampleSlots = {
+  '{{slots.actions}}': '<button type="button">操作</button>',
+  '{{slots.subnav}}': '<a href="#">連結一</a>',
+  '{{slots.nav}}': '<a href="#"><span class="chi-sidebar__icon">1</span><span class="chi-sidebar__label">連結一</span></a>',
+};
+for (const site of siteRecords) {
+  const values = {
+    '{{site.brand}}': site.brand,
+    '{{site.id}}': site.id,
+    '{{site.url}}': site.url,
+    '{{site.name}}': site.name,
+    '{{site.logoLight}}': '../' + site.logoLight,
+    '{{site.logoDark}}': '../' + site.logoDark,
+    '{{site.layout}}': site.layout === 'sidebar' ? 'sidebar' : 'header',
+    '{{version}}': 'v' + packageVersion,
+    ...sampleSlots,
+  };
+  let rendered = generatedTemplate;
+  for (const [placeholder, value] of Object.entries(values)) rendered = rendered.split(placeholder).join(value);
+  if (/\{\{[^}]+\}\}/.test(rendered)) fail('網站模板仍有未填 placeholder：' + site.id);
+  if (!rendered.includes('data-chi-brand="' + site.brand + '"')) fail('網站模板未套用品牌：' + site.id);
+  if (!rendered.includes('data-chi-layout="' + (site.layout === 'sidebar' ? 'sidebar' : 'header') + '"')) {
+    fail('網站模板未套用指定版式：' + site.id);
+  }
+  for (const logo of [site.logoLight, site.logoDark]) {
+    if (!rendered.includes('../' + logo)) fail('網站模板未輸出 logo：' + site.id + ' ' + logo);
+  }
+  for (const selector of ['class="chi-header"', 'class="chi-sidebar"', 'class="chi-footer"']) {
+    if (!rendered.includes(selector)) fail('網站模板缺少共用殼元件：' + site.id + ' ' + selector);
+  }
+}
+console.log('模板靜態煙霧測試通過：' + siteRecords.length + ' 站，placeholder 全數可填');
+// 4c. 實際站點產物：每份 sites/*.json 都必須有完整、無未填變數的可部署 index.html。
 for (const site of siteRecords) {
   const outputPath = path.join(ROOT, 'dist', 'sites', site.id, 'index.html');
   if (!existsSync(outputPath)) {
     fail('缺少網站建置輸出：dist/sites/' + site.id + '/index.html');
     continue;
   }
-  const output = readFileSync(outputPath, 'utf8');
+const output = readFileSync(outputPath, 'utf8');
   const outputWithoutComments = output.replace(/<!--[\s\S]*?-->/g, '');
   if (/\{\{[^}]+\}\}/.test(outputWithoutComments)) {
     fail('網站建置輸出仍有未填 placeholder：' + site.id);
@@ -274,7 +448,7 @@ if (!themeScript || !sidebarScript || !tabsScript || !dialogScript) {
   for (const [name, script] of [['Tabs', tabsScript], ['Dialog', dialogScript]]) {
     if (!/\bdefer\b/i.test(script.attrs) || /\basync\b/i.test(script.attrs)) {
       fail(name + ' Runtime 必須使用 defer 且不可 async');
-    }
+}
   }
 }
 const tabsSource = readFileSync(path.join(ROOT, 'components', 'tabs', 'tabs.js'), 'utf8');
@@ -363,7 +537,6 @@ for (const name of ['loading', 'empty', 'error', 'success']) {
   if (name !== 'loading' && !state?.contents.includes('class="chi-state__icon"')) fail(`資料狀態 ${name} 必須提供裝飾圖示`);
   if (name === 'error' && !state?.contents.includes('class="chi-state__action"')) fail('Error 狀態必須提供可採取的恢復操作');
 }
-
 const invalidFields = [...examplesHtml.matchAll(/<div\b([^>]*class="[^"]*chi-field[^"]*"[^>]*)>([\s\S]*?)<\/div>/g)];
 for (const [, attrs, contents] of invalidFields) {
   if (/aria-invalid="true"/.test(contents) && !/chi-field--error/.test(attrs)) fail('aria-invalid=true 的欄位必須套用 chi-field--error');
@@ -435,4 +608,3 @@ if (failures.length) {
   console.error(`\n驗證失敗 ${failures.length} 項：\n- ${failures.join('\n- ')}`);
   process.exit(1);
 }
-console.log('\n驗證全部通過。');
