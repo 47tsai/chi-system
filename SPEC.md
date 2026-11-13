@@ -124,7 +124,7 @@ CI 驗真的渲染依據，不是檔案在不在（舊系統三支腳本全綠�
 5. 網站設定 schema（欄位、型別、logo 檔案存在；預覽清單與 sites 一致）
 6. 對比計算（每品牌×淺深色：一般文字 4.5:1、大字與非文字 UI 3:1）
 7. 斷點一致（768／1024 在 JSON、CSS、JS 三處一致）
-8. 站點輸出煙霧測試（每份站設定都產生完整 index.html；placeholder 全數填入、品牌與 Logo 路徑正確、共用 CSS／JS 路徑存在）。瀏覽器 console 與實際 404 驗收列為 v1.1 Playwright 工作。
+8. 站點輸出煙霧測試（每份站設定都產生完整 index.html；placeholder 全數填入、品牌與 Logo 路徑正確且都位於 dist 根目錄內、共用 CSS／JS 路徑存在）。瀏覽器 console 與實際 404 驗收列為 v1.1 Playwright 工作。
 9. axe／Playwright 計算樣式／視覺回歸：列為 v1.1（Storybook 未引入前，以上 8 道為 v1.0 門檻）
 
 ## 9. 版本

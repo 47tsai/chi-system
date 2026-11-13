@@ -1,6 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import path from 'node:path';
 
 const read = path => readFileSync(new URL(path, import.meta.url), 'utf8');
 const buttonHtml = read('../components/button/button.html');
@@ -122,4 +124,20 @@ test('Generated dist inventory is explicit and excludes undeclared files', () =>
   assert.match(validator, /dist 是純生成目錄/);
   assert.match(validator, /dist 產物清單缺少預期檔案/);
   assert.match(validator, /dist 出現未預期的檔案/);
+});
+
+
+test('Every generated site asset resolves inside the standalone dist root', () => {
+  const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+  const distRoot = path.join(root, 'dist');
+  for (const site of ['chi', 'fg', 'h', 'merch', 'nav', 'status']) {
+    const siteRoot = path.join(distRoot, 'sites', site);
+    const html = readFileSync(path.join(siteRoot, 'index.html'), 'utf8');
+    for (const [, asset] of html.matchAll(/(?:src|href)="([^"]+)"/g)) {
+      if (/^(?:https?:|#|data:|mailto:|tel:)/i.test(asset)) continue;
+      const resolved = path.resolve(siteRoot, asset);
+      assert.ok(resolved.startsWith(distRoot + path.sep), `${site} asset escapes dist: ${asset}`);
+      assert.ok(existsSync(resolved), `${site} asset does not exist in dist: ${asset}`);
+    }
+  }
 });
