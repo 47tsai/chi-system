@@ -359,7 +359,7 @@ for (const site of siteRecords) {
   if (!output.includes('data-chi-layout="' + expectedLayout + '"')) {
     fail('網站建置輸出未套用版式：' + site.id + ' expected=' + expectedLayout);
   }
-  for (const asset of ['../../tokens.css', '../../components.css', '../../theme.js', '../../sidebar.js']) {
+  for (const asset of ['../../tokens.css', '../../components.css', '../../theme.js', '../../sidebar.js', '../../tabs.js', '../../dialog.js']) {
     if (!output.includes(asset)) fail('網站建置輸出缺少共用資產路徑：' + site.id + ' ' + asset);
   }
   for (const logo of [site.logoLight, site.logoDark]) {
@@ -368,6 +368,22 @@ for (const site of siteRecords) {
     if (!existsSync(path.join(ROOT, logo))) fail('網站建置輸出引用不存在的品牌 Logo：' + site.id + ' ' + logo);
   }
 }
+// dist 是純生成目錄：除了建置器明確產生的資產，不得殘留舊檔或手動檔案。
+function collectDistFiles(directory, prefix = '') {
+  return readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
+    const relative = prefix + entry.name;
+    return entry.isDirectory()
+      ? collectDistFiles(path.join(directory, entry.name), relative + '/')
+      : [relative];
+  });
+}
+const expectedDistFiles = new Set([
+  'components.css', 'dialog.js', 'sidebar.js', 'tabs.js', 'theme.js', 'tokens.css',
+  ...siteRecords.map((site) => 'sites/' + site.id + '/index.html'),
+]);
+const actualDistFiles = collectDistFiles(path.join(ROOT, 'dist'));
+for (const file of expectedDistFiles) if (!actualDistFiles.includes(file)) fail('dist 產物清單缺少預期檔案：' + file);
+for (const file of actualDistFiles) if (!expectedDistFiles.has(file)) fail('dist 出現未預期的檔案：' + file);
 console.log('網站建置輸出檢查通過：' + siteRecords.length + ' 站');
 
 // 4d. 共用殼的語意契約：品牌文字已提供可讀名稱，Logo 圖片只作視覺識別；
