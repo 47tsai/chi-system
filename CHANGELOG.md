@@ -12,6 +12,7 @@
 - 補足 Header 品牌可存取名稱與 Footer landmark／站名／版本的語意合約。
 - 新增無依賴 headless Chrome smoke test，於可用環境驗證六站桌機／手機載入與 console。
 - Semantic Token 必須實際被元件 CSS 或元件 Token 別名使用，避免語意層出現無消費者的孤兒 Token。
+- 修正共用殼 Runtime 載入順序：Theme／Sidebar 移至樣式表前同步載入，Tabs／Dialog 保持 `defer`；新增驗證防止回歸。
 
 - 新增 DTCG Token schema 驗證，明確檢查 `$type`、`$value`、別名括號格式。
 - 統一本地與 CI 驗收入口為 `npm run check`。
