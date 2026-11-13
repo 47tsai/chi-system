@@ -1,0 +1,63 @@
+<!-- Canonical semantic examples. These are reference markup, not rendered site content. -->
+<section aria-labelledby="example-form-title">
+  <h2 id="example-form-title">表單範例</h2>
+  <form>
+    <div class="chi-field">
+      <label class="chi-field__label" for="example-email">電子郵件</label>
+      <input class="chi-input" id="example-email" name="email" type="email" autocomplete="email" aria-describedby="example-email-hint example-email-error" aria-invalid="true">
+      <p class="chi-field__hint" id="example-email-hint">請輸入可接收通知的電子郵件地址。</p>
+      <p class="chi-field__error" id="example-email-error">電子郵件格式不正確。</p>
+    </div>
+    <fieldset>
+      <legend>通知方式</legend>
+      <label class="chi-check"><input class="chi-check__input" type="checkbox" name="notice" value="email">電子郵件</label>
+    </fieldset>
+    <button class="chi-btn chi-btn--primary" type="submit">送出</button>
+  </form>
+</section>
+
+<section aria-labelledby="example-tabs-title">
+  <h2 id="example-tabs-title">Tabs 範例</h2>
+  <div data-chi-tabs>
+    <div role="tablist" aria-label="帳戶資訊">
+      <button class="chi-tab" id="example-tab-profile" type="button" role="tab" aria-controls="example-panel-profile" aria-selected="true" tabindex="0">個人資料</button>
+      <button class="chi-tab" id="example-tab-security" type="button" role="tab" aria-controls="example-panel-security" aria-selected="false" tabindex="-1">安全性</button>
+    </div>
+    <section id="example-panel-profile" role="tabpanel" aria-labelledby="example-tab-profile" tabindex="0">
+      <h3>個人資料</h3>
+      <p>管理帳戶的基本資訊。</p>
+    </section>
+    <section id="example-panel-security" role="tabpanel" aria-labelledby="example-tab-security" tabindex="0" hidden>
+      <h3>安全性</h3>
+      <p>管理登入與驗證設定。</p>
+    </section>
+  </div>
+</section>
+
+<section aria-labelledby="example-card-title">
+  <h2 id="example-card-title">卡片範例</h2>
+  <article class="chi-card" aria-labelledby="example-card-heading">
+    <h3 class="chi-card__title" id="example-card-heading">帳戶摘要</h3>
+    <div class="chi-card__body"><p>顯示與帳戶相關的摘要資訊。</p></div>
+    <div class="chi-card__actions"><a href="#account">查看帳戶</a></div>
+  </article>
+</section>
+
+<section aria-labelledby="example-list-title">
+  <h2 id="example-list-title">清單範例</h2>
+  <ul class="chi-list" aria-label="最近活動">
+    <li class="chi-list__item">已更新個人資料</li>
+    <li class="chi-list__item">已啟用雙重驗證</li>
+  </ul>
+</section>
+
+<section aria-labelledby="example-table-title">
+  <h2 id="example-table-title">表格範例</h2>
+  <div class="chi-table-wrap">
+    <table class="chi-table">
+      <caption>最近登入紀錄</caption>
+      <thead><tr><th scope="col">日期</th><th scope="col">裝置</th></tr></thead>
+      <tbody><tr><th scope="row">2026-11-13</th><td>行動裝置</td></tr></tbody>
+    </table>
+  </div>
+</section>

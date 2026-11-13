@@ -372,6 +372,58 @@ for (const contract of ["[data-chi-tabs]", "[role=\"tab\"]", "ArrowRight", "Arro
   if (!tabsSource.includes(contract)) fail(`Tabs runtime 缺少必要互動契約：${contract}`);
 }
 
+// 基礎元件語意範例：驗證實際 HTML 關聯，而不只檢查 CSS class 是否存在。
+const examplesHtml = readFileSync(path.join(ROOT, 'components', 'base', 'examples.html'), 'utf8');
+const exampleIds = [...examplesHtml.matchAll(/\bid="([^"]+)"/g)].map(([, id]) => id);
+const exampleIdSet = new Set(exampleIds);
+if (exampleIds.length !== exampleIdSet.size) fail('基礎元件範例含重複 id');
+const hasElementId = (tag, id) => new RegExp(`<${tag}\\b[^>]*\\bid="${id.replace(/[.*+?^${}()|[\\]\\]/g, '\\$&')}"`).test(examplesHtml);
+for (const [, target] of examplesHtml.matchAll(/<label\b[^>]*\bfor="([^"]+)"/g)) {
+  if (!['input', 'select', 'textarea'].some((tag) => hasElementId(tag, target))) fail(`表單 label for 找不到對應控制項：${target}`);
+}
+for (const [, references] of examplesHtml.matchAll(/\baria-describedby="([^"]+)"/g)) {
+  for (const id of references.trim().split(/\s+/)) if (!exampleIdSet.has(id)) fail(`aria-describedby 找不到目標：${id}`);
+}
+for (const [, references] of examplesHtml.matchAll(/\baria-labelledby="([^"]+)"/g)) {
+  for (const id of references.trim().split(/\s+/)) if (!exampleIdSet.has(id)) fail(`aria-labelledby 找不到目標：${id}`);
+}
+const tablists = [...examplesHtml.matchAll(/<([a-z][\w-]*)\b([^>]*\brole="tablist"[^>]*)>([\s\S]*?)<\/\1>/g)];
+if (tablists.length !== 1) fail('Tabs 範例必須且只能有一個 tablist');
+for (const [, , attrs, contents] of tablists) {
+  if (!/\baria-label="[^" ]/.test(attrs) && !/\baria-labelledby="[^" ]/.test(attrs)) fail('tablist 必須有可存取名稱');
+  const tabs = [...contents.matchAll(/<button\b([^>]*\brole="tab"[^>]*)>/g)];
+  if (tabs.length < 2) fail('Tabs 範例至少需要兩個原生 button tab');
+  let selectedCount = 0;
+  for (const [, tabAttrs] of tabs) {
+    const id = tabAttrs.match(/\bid="([^"]+)"/)?.[1];
+    const panelId = tabAttrs.match(/\baria-controls="([^"]+)"/)?.[1];
+    const selected = tabAttrs.match(/\baria-selected="(true|false)"/)?.[1];
+    const tabindex = tabAttrs.match(/\btabindex="(-?\d+)"/)?.[1];
+    if (!id || !panelId || !selected || tabindex === undefined) fail('每個 tab 都必須有 id、aria-controls、aria-selected 與 tabindex');
+    if (!/\btype="button"/.test(tabAttrs)) fail('Tab 必須明確使用 type="button"');
+    if (selected === 'true') selectedCount++;
+    if (tabindex !== (selected === 'true' ? '0' : '-1')) fail(`Tab ${id || '(unknown)'} tabindex 必須與 aria-selected 同步`);
+    const panel = [...examplesHtml.matchAll(new RegExp(`<([a-z][\\w-]*)\\b([^>]*\\bid="${panelId || '__missing__'}"[^>]*)>`, 'g'))][0];
+    if (!panel || !/\brole="tabpanel"/.test(panel[2]) || !new RegExp(`\\baria-labelledby="${id || '__missing__'}"`).test(panel[2])) {
+      fail(`Tab ${id || '(unknown)'} 的 panel 必須有 role=tabpanel 並以 aria-labelledby 回指`);
+    } else {
+      const selectedPanel = selected === 'true';
+      if (selectedPanel === /\bhidden(?:\s|>|$)/.test(panel[2])) fail(`Tab ${id} 與 panel hidden 狀態不一致`);
+    }
+  }
+  if (selectedCount !== 1) fail('Tabs 範例必須且只能有一個 aria-selected=true');
+}
+const card = examplesHtml.match(/<article\b([^>]*\bclass="[^"]*chi-card[^"]*"[^>]*)>([\s\S]*?)<\/article>/);
+if (!card || !/\baria-labelledby="([^"]+)"/.test(card[1])) fail('Card 範例必須使用 article 並以 aria-labelledby 關聯標題');
+else {
+  const headingId = card[1].match(/\baria-labelledby="([^"]+)"/)[1];
+  if (!new RegExp(`<h[1-6]\\b[^>]*\\bid="${headingId}"`).test(card[2])) fail('Card aria-labelledby 必須指向卡片內的標題');
+}
+if (!/<ul\b[^>]*class="[^"]*chi-list[^"]*"[^>]*>[\s\S]*?<li\b/.test(examplesHtml)) fail('清單範例必須使用原生 ul／li 語意');
+const table = examplesHtml.match(/<table\b[^>]*class="[^"]*chi-table[^"]*"[^>]*>([\s\S]*?)<\/table>/);
+if (!table || !/<caption\b/.test(table[1])) fail('表格必須提供 caption');
+if (!/<th\b[^>]*\bscope="col"/.test(table?.[1] || '') || !/<th\b[^>]*\bscope="row"/.test(table?.[1] || '')) fail('表格範例必須示範 scope=col 與 scope=row');
+
 // Button closed enum 與原生按鈕語意：四種變體各一個示例，全部明確指定 type。
 const buttonHtml = readFileSync(path.join(ROOT, 'components', 'button', 'button.html'), 'utf8');
 const buttonCss = stripComments(readFileSync(path.join(ROOT, 'components', 'button', 'button.css'), 'utf8'));
