@@ -346,45 +346,9 @@ html.chi-sidebar-open body {
   gap: var(--chi-space-2);
   min-height: var(--chi-size-control);
   padding: 0 var(--chi-space-4);
-  font-size: var(--chi-font-size-body-small);
-  font-weight: var(--chi-font-weight-label);
-  line-height: var(--chi-font-line-height-body-small);
-  border: var(--chi-base-border-default-width) solid var(--chi-color-border-subtle);
-  border-radius: var(--chi-radius-md);
-  cursor: pointer;
-}
-.chi-btn:focus-visible {
-  outline: var(--chi-focus-width) solid var(--chi-color-focus-ring);
-  outline-offset: var(--chi-focus-offset);
-}
-.chi-btn:disabled {
-  color: var(--chi-color-text-disabled);
-  cursor: not-allowed;
-}
-.chi-btn--primary {
-  background: var(--chi-button-primary-background);
-  color: var(--chi-button-primary-text);
-  border-color: var(--chi-button-primary-background);
-}
-.chi-btn--primary:hover {
-  background: var(--chi-button-primary-background-hover);
-}
-.chi-btn--primary:active {
-  background: var(--chi-button-primary-background-active);
-}
-.chi-btn--secondary {
-  background: var(--chi-button-secondary-background);
-  color: var(--chi-button-secondary-text);
-}
-.chi-btn--ghost {
-  background: var(--chi-button-ghost-background);
-  color: var(--chi-button-ghost-text);
-  border-color: transparent;
-}
-.chi-btn--danger {
-  background: var(--chi-button-danger-background);
-  color: var(--chi-button-danger-text);
-  border-color: var(--chi-button-danger-background);
+  font-size: va
+[... 1235 bytes omitted ...]
+chi-button-danger-background);
 }
 .chi-btn--sm {
   min-height: var(--chi-size-control-compact);
@@ -451,6 +415,9 @@ html.chi-sidebar-open body {
   .chi-input,
   .chi-select,
   .chi-textarea,
+  .chi-check__input,
+  .chi-radio__input,
+  .chi-switch__input,
   .chi-card,
   .chi-list__item,
   .chi-tab,
@@ -546,7 +513,6 @@ html.chi-sidebar-open body {
 .chi-select:focus,
 .chi-textarea:focus {
   border-color: var(--chi-color-accent);
-  outline: none;
 }
 
 /* placeholder 屬一般文字，同樣須過 AA（SPEC.md 第 11 節） */
@@ -562,8 +528,11 @@ html.chi-sidebar-open body {
 }
 
 .chi-input:disabled,
+.chi-input:disabled:hover,
 .chi-select:disabled,
-.chi-textarea:disabled {
+.chi-select:disabled:hover,
+.chi-textarea:disabled,
+.chi-textarea:disabled:hover {
   background-color: var(--chi-color-surface-sunken);
   color: var(--chi-color-text-disabled);
   cursor: not-allowed;
@@ -587,6 +556,10 @@ html.chi-sidebar-open body {
   width: 100%;
   padding-right: var(--chi-base-form-select-icon-padding);
   cursor: pointer;
+}
+
+.chi-select:disabled {
+  cursor: not-allowed;
 }
 
 .chi-select-wrap .chi-icon {
@@ -658,7 +631,8 @@ html.chi-sidebar-open body {
 }
 
 .chi-check:has(.chi-check__input:disabled),
-.chi-radio:has(.chi-radio__input:disabled) {
+.chi-radio:has(.chi-radio__input:disabled),
+.chi-switch:has(.chi-switch__input:disabled) {
   color: var(--chi-color-text-disabled);
   cursor: not-allowed;
 }
@@ -739,8 +713,13 @@ html.chi-sidebar-open body {
     border-color var(--chi-duration);
 }
 
-.chi-tab:hover {
+.chi-tab:hover:not(:disabled) {
   color: var(--chi-color-text-primary);
+}
+
+.chi-tab:disabled {
+  color: var(--chi-color-text-disabled);
+  cursor: not-allowed;
 }
 
 /* selected：底線、字重與顏色並行，不只靠顏色（SPEC.md 7.7） */
