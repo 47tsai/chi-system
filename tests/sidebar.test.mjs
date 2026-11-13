@@ -10,6 +10,7 @@ class Element {
     this.tagName = tag;
     this.attrs = new Map();
     this.listeners = new Map();
+    this.listenerCounts = new Map();
     this.classes = new Set();
     this.children = [];
     this.classList = {
@@ -23,7 +24,11 @@ class Element {
   setAttribute(k, v) { this.attrs.set(k, String(v)); }
   getAttribute(k) { return this.attrs.get(k) ?? null; }
   removeAttribute(k) { this.attrs.delete(k); }
-  addEventListener(type, fn) { this.listeners.set(type, fn); }
+  addEventListener(type, fn) {
+    this.listenerCounts.set(type, (this.listenerCounts.get(type) || 0) + 1);
+    const prior = this.listeners.get(type);
+    this.listeners.set(type, prior ? event => { prior(event); fn(event); } : fn);
+  }
   dispatch(type, event = {}) { this.listeners.get(type)?.(event); }
   querySelector() { return this.children[0] ?? null; }
   querySelectorAll() { return this.children; }
@@ -140,4 +145,17 @@ test('Command/Ctrl+B toggles sidebar but does not intercept text inputs', () => 
   ctx.docListeners.get('keydown')({ key: 'b', metaKey: true, target: { tagName: 'BODY' }, preventDefault() { prevented = true; } });
   assert.equal(prevented, true);
   assert.equal(ctx.api.isCollapsed(), true);
+});
+
+test('public bind is idempotent and does not duplicate trigger or global listeners', () => {
+  const ctx = createSidebar();
+  const triggerClicks = ctx.trigger.listenerCounts.get('click') || 0;
+  const documentKeys = ctx.document.addEventListener;
+  ctx.api.bind();
+  ctx.api.bind();
+  assert.equal(ctx.trigger.listenerCounts.get('click'), triggerClicks);
+  assert.equal(ctx.scrim.listenerCounts.get('click'), 1);
+  ctx.api.openMobile();
+  ctx.trigger.dispatch('click');
+  assert.equal(ctx.sidebar.classList.contains('mobile-open'), false);
 });

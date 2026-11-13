@@ -84,7 +84,7 @@ Foundations（原則）→ Tokens（數值）→ Components（元件）→ Patte
 - Sidebar：站設定 `layout: "sidebar"` 才使用側邊欄版式；適用門檻——本站導覽 ≥5 個頂層區段，或為動態分類；
   否則用 header＋副導覽列。收合開關在側邊欄頂列右側；收合 key 只有一個存放位置
   （引入 sidebar.js 的 `<script data-chi-sidebar-key>`），值
-  `chi-<站點>-sidebar-collapsed`；手機版為抽屜，開關只在 <768px 顯示；抽屜關閉時須退出 Tab 順序並對輔助科技隱藏，開啟時限制 Tab 焦點於抽屜內，關閉後焦點返回觸發按鈕。
+  `chi-<站點>-sidebar-collapsed`；手機版為抽屜，開關只在 <768px 顯示；抽屜關閉時須退出 Tab 順序並對輔助科技隱藏，開啟時限制 Tab 焦點於抽屜內，關閉後焦點返回觸發按鈕；公開 `bind()` 可重複呼叫，重複綁定不得增加事件監聽器。
   導覽連結寫法：`<a><span class="chi-sidebar__icon">…</span><span class="chi-sidebar__label">…</span></a>`。
 - Button：primary／secondary／ghost／danger 四級 closed enum；
   一個操作情境至多一個 primary；不得自由傳 class。
