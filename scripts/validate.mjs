@@ -175,9 +175,164 @@ for (const dir of ['components']) {
 
 // CSS 自訂屬性引用完整性：元件與生成 CSS 的 var(--chi-*) 必須有定義，或明確提供 fallback。
 const cssFiles = [
-  ...readdirSync(path.join(ROOT, 'components'), { recursiv
-[... 7988 bytes omitted ...]
- foundPlaceholders) {
+  ...readdirSync(path.join(ROOT, 'components'), { recursive: true })
+    .filter((file) => file.endsWith('.css'))
+    .map((file) => path.join(ROOT, 'components', file)),
+  path.join(ROOT, 'dist', 'tokens.css'),
+  path.join(ROOT, 'dist', 'components.css'),
+];
+const cssSources = cssFiles.map((file) => [file, stripComments(readFileSync(file, 'utf8'))]);
+const componentCss = readdirSync(path.join(ROOT, 'components'), { recursive: true })
+  .filter((file) => file.endsWith('.css'))
+  .map((file) => stripComments(readFileSync(path.join(ROOT, 'components', file), 'utf8'))).join('\n');
+for (const name of Object.keys(tokenSource('components.tokens.json'))) {
+  const variable = `var(--chi-${name.replaceAll('.', '-')})`;
+  if (!componentCss.includes(variable)) fail(`元件 Token 未被任何元件 CSS 使用：${name}`);
+}
+const definedProperties = new Set();
+for (const [, source] of cssSources) {
+  for (const match of source.matchAll(/(^|[;{\s])(--[\w-]+)\s*:/gm)) definedProperties.add(match[2]);
+}
+const unresolvedProperties = new Map();
+for (const [file, source] of cssSources) {
+  for (const match of source.matchAll(/var\(\s*(--[\w-]+)\s*(,)?/g)) {
+    const name = match[1];
+    if (!definedProperties.has(name) && !match[2]) {
+      if (!unresolvedProperties.has(name)) unresolvedProperties.set(name, new Set());
+      unresolvedProperties.get(name).add(path.relative(ROOT, file));
+    }
+  }
+}
+for (const [name, files] of unresolvedProperties) {
+  fail(`CSS Token 未定義：${name}，引用位置：${[...files].join('、')}`);
+}
+
+const template = stripComments(readFileSync(path.join(ROOT, 'templates', 'base.template.html'), 'utf8'));
+if (/#[0-9a-fA-F]{3,8}\b/.test(template)) fail('硬編碼色值：templates/base.template.html 出現 hex');
+const layoutAttributeCount = (template.match(/\bdata-chi-layout=/g) || []).length;
+if (layoutAttributeCount !== 1) fail('模板來源必須且只能有一個 data-chi-layout，實際：' + layoutAttributeCount);
+if (/<div\b[^>]*\bdata-chi-layout=/.test(template)) fail('data-chi-layout 必須由根 html 元素統一管理，不可在內層重複設定');
+
+// Runtime 載入時序：Theme／Sidebar 必須在首次繪製前同步執行；Tabs／Dialog
+// 依賴完整 DOM，使用 defer，且不得 async 造成時序不確定。
+const runtimeScripts = [...template.matchAll(/<script\b([^>]*)><\/script>/gi)].map((match) => ({
+  attrs: match[1],
+  src: (match[1].match(/\bsrc=["']([^"']+)["']/i) || [])[1] || '',
+  index: match.index,
+}));
+const runtime = (name) => runtimeScripts.find((script) => script.src.endsWith('/' + name + '.js'));
+const themeScript = runtime('theme');
+const sidebarScript = runtime('sidebar');
+const tabsScript = runtime('tabs');
+const dialogScript = runtime('dialog');
+const firstStylesheet = template.indexOf('<link rel="stylesheet"');
+if (!themeScript || !sidebarScript || !tabsScript || !dialogScript) {
+  fail('模板必須載入 Theme／Sidebar／Tabs／Dialog 四個 Runtime');
+} else {
+  for (const [name, script] of [['Theme', themeScript], ['Sidebar', sidebarScript]]) {
+    if (/\b(?:defer|async)\b/i.test(script.attrs)) fail(name + ' Runtime 必須同步載入，避免首次繪製閃爍');
+    if (script.index > firstStylesheet) fail(name + ' Runtime 必須在樣式表之前載入');
+  }
+  if (themeScript.index > sidebarScript.index) fail('Theme Runtime 必須先於 Sidebar Runtime');
+  for (const [name, script] of [['Tabs', tabsScript], ['Dialog', dialogScript]]) {
+    if (!/\bdefer\b/i.test(script.attrs) || /\basync\b/i.test(script.attrs)) {
+      fail(name + ' Runtime 必須使用 defer 且不可 async');
+    }
+  }
+}
+
+// 預覽必須操作與正式模板相同的根層版式契約，不能再修改內層 shell。
+const previewSource = readFileSync(path.join(ROOT, 'preview', 'index.html'), 'utf8');
+if (!previewSource.includes("root.setAttribute('data-chi-layout', layout)")) {
+  fail('preview/index.html 必須將版式設定到 document.documentElement');
+}
+if (previewSource.includes("body.replace('data-chi-layout=\\\"header\\\"'")) {
+  fail('preview/index.html 不可再修改內層 body shell 的 data-chi-layout');
+}
+
+// 4. 網站設定 schema：欄位、型別、品牌檔存在、logo 檔案存在；不寫死站數。
+const REQUIRED = ['id', 'name', 'url', 'brand', 'logoLight', 'logoDark', 'description', 'icon'];
+const ALLOWED_SITE_KEYS = new Set([...REQUIRED, 'layout']);
+const sites = readdirSync(path.join(ROOT, 'sites')).filter((f) => f.endsWith('.json'));
+const siteRecords = [];
+const siteIds = new Set();
+if (sites.length === 0) fail('sites/ 沒有任何網站設定');
+for (const f of sites) {
+  let site;
+  try {
+    site = JSON.parse(readFileSync(path.join(ROOT, 'sites', f), 'utf8'));
+  } catch (error) {
+    fail('網站設定 JSON 無法解析：' + f + '：' + error.message);
+    continue;
+  }
+  if (!site || typeof site !== 'object' || Array.isArray(site)) {
+    fail('網站設定必須是 JSON object：' + f);
+    continue;
+  }
+  siteRecords.push(site);
+  if (siteIds.has(site.id)) fail('網站設定 id 重複：' + site.id);
+  siteIds.add(site.id);
+  for (const k of REQUIRED) {
+    if (!(k in site)) fail('網站設定缺欄位：' + f + ' 缺 ' + k);
+  }
+  for (const k of Object.keys(site)) {
+    if (!ALLOWED_SITE_KEYS.has(k)) fail('網站設定含未知欄位：' + f + ' ' + k);
+  }
+  if (site.id !== f.replace('.json', '')) fail('網站設定 id 與檔名不符：' + f);
+  if (typeof site.id !== 'string' || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(site.id)) {
+    fail('網站設定 id 格式不合法：' + f);
+  }
+  for (const key of ['name', 'brand', 'description', 'icon']) {
+    if (typeof site[key] !== 'string' || !site[key].trim()) {
+      fail('網站設定欄位必須是非空字串：' + f + ' ' + key);
+    }
+  }
+  if (site.layout !== undefined && !['header', 'sidebar'].includes(site.layout)) {
+    fail('網站設定 layout 只能是 header 或 sidebar：' + f);
+  }
+  if (!brands[site.brand]) fail('網站設定品牌不存在：' + f + ' brand=' + site.brand);
+  if (site.brand !== site.id) fail('目前站點契約要求 brand 與 site id 一致：' + f);
+  if (typeof site.url !== 'string') {
+    fail('網站設定 url 必須是字串：' + f);
+  } else {
+    try {
+      if (new URL(site.url).protocol !== 'https:') fail('網站設定 url 必須使用 HTTPS：' + f);
+    } catch {
+      fail('網站設定 url 格式不合法：' + f);
+    }
+  }
+  for (const key of ['logoLight', 'logoDark']) {
+    const logo = site[key];
+    if (typeof logo !== 'string' || !logo.trim()) {
+      fail('網站設定 logo 必須是非空路徑：' + f + ' ' + key);
+      continue;
+    }
+    const resolved = path.resolve(ROOT, logo);
+    if (!resolved.startsWith(ROOT + path.sep)) {
+      fail('網站設定 logo 不可離開 repo 根目錄：' + f + ' ' + key);
+    } else if (!existsSync(resolved)) {
+      fail('網站設定 logo 不存在：' + f + ' ' + logo);
+    }
+  }
+}
+console.log('網站設定 schema 通過：' + siteRecords.length + ' 站');
+
+// 4b. 預覽清單、模板 placeholder 與每站模板填值必須一致。
+const previewSites = JSON.parse(readFileSync(path.join(ROOT, 'preview', 'sites.json'), 'utf8'));
+const previewById = new Map(previewSites.map((site) => [site.id, site]));
+if (previewSites.length !== siteRecords.length) fail('preview/sites.json 與 sites/*.json 站數不一致');
+for (const site of siteRecords) {
+  const preview = previewById.get(site.id);
+  if (!preview || preview.name !== site.name) fail('preview/sites.json 缺少或名稱不一致：' + site.id);
+}
+const generatedTemplate = stripComments(readFileSync(path.join(ROOT, 'templates', 'base.html'), 'utf8')).replace(/<!--[\s\S]*?-->/g, '');
+const allowedPlaceholders = new Set([
+  '{{site.brand}}', '{{site.id}}', '{{site.url}}', '{{site.name}}',
+  '{{site.logoLight}}', '{{site.logoDark}}', '{{site.layout}}', '{{version}}',
+  '{{slots.actions}}', '{{slots.subnav}}', '{{slots.nav}}',
+]);
+const foundPlaceholders = generatedTemplate.match(/\{\{[^}]+\}\}/g) || [];
+for (const placeholder of foundPlaceholders) {
   if (!allowedPlaceholders.has(placeholder)) fail('模板含未定義 placeholder：' + placeholder);
 }
 const packageVersion = JSON.parse(readFileSync(path.join(ROOT, 'package.json'), 'utf8')).version;
@@ -267,6 +422,7 @@ console.log('網站建置輸出檢查通過：' + siteRecords.length + ' 站');
 // 側欄本身是 complementary landmark，內層 nav 才是具名導覽 landmark。
 const headerHtml = readFileSync(path.join(ROOT, 'components', 'header', 'header.html'), 'utf8');
 const sidebarHtml = readFileSync(path.join(ROOT, 'components', 'sidebar', 'sidebar.html'), 'utf8');
+const footerHtml = readFileSync(path.join(ROOT, 'components', 'footer', 'footer.html'), 'utf8');
 for (const [name, source, logoClass] of [
   ['header', headerHtml, 'chi-header__logo'],
   ['sidebar', sidebarHtml, 'chi-sidebar__logo'],
@@ -280,6 +436,9 @@ for (const [name, source, logoClass] of [
 if (!sidebarHtml.includes('<aside id="chi-sidebar" class="chi-sidebar" aria-label="側邊欄">')) fail('sidebar aside 必須使用描述其 landmark 的名稱「側邊欄」');
 if (!sidebarHtml.includes('<nav class="chi-sidebar__nav" aria-label="本站導覽">')) fail('sidebar 導覽 nav 必須有明確的「本站導覽」名稱');
 if (!headerHtml.includes('<nav class="chi-subnav" aria-label="本站導覽">')) fail('header 副導覽 nav 必須有明確名稱');
+if (!headerHtml.includes('<span class="chi-header__name">{{site.name}}</span>')) fail('Header 品牌連結必須以可見站名提供可存取名稱');
+if (!footerHtml.includes('<footer class="chi-footer">') || !footerHtml.includes('<span class="chi-footer__name">{{site.name}}</span>') || !footerHtml.includes('data-chi-version')) fail('Footer 必須使用原生 footer landmark 並提供站名與版本識別');
+if (/<a\b/.test(footerHtml)) fail('Footer 不得加入跨站連結');
 
 // Tabs script is a generated runtime asset and must be loaded by the canonical shell.
 const templateSource = readFileSync(path.join(ROOT, 'templates', 'base.template.html'), 'utf8');
@@ -441,4 +600,3 @@ if (failures.length) {
   console.error(`\n驗證失敗 ${failures.length} 項：\n- ${failures.join('\n- ')}`);
   process.exit(1);
 }
-console.log('\n驗證全部通過。');
