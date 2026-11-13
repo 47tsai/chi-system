@@ -49,3 +49,17 @@ test('Semantic examples are documented as the reference contract', () => {
   assert.ok(spec.includes('components/base/examples.html'));
   assert.ok(validator.includes('基礎元件語意範例'));
 });
+
+test('Form error styling and ARIA state are represented consistently', () => {
+  assert.match(examples, /class="chi-field chi-field--error"/);
+  assert.match(examples, /aria-invalid="true"/);
+  assert.match(examples, /aria-describedby="example-email-hint example-email-error"/);
+  assert.match(readFileSync(new URL('../components/base/base.css', import.meta.url), 'utf8'), /\.chi-field--error \.chi-input/);
+});
+
+test('Dialog example has a named native dialog and matching open/close controls', () => {
+  assert.match(examples, /<dialog class="chi-dialog" id="example-dialog" aria-labelledby="example-dialog-title">/);
+  assert.match(examples, /data-chi-dialog-open="example-dialog"/);
+  assert.match(examples, /data-chi-dialog-close/);
+  assert.match(examples, /id="example-dialog-title"/);
+});

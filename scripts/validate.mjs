@@ -186,20 +186,9 @@ for (const [name, files] of unresolvedProperties) {
 const template = stripComments(readFileSync(path.join(ROOT, 'templates', 'base.template.html'), 'utf8'));
 if (/#[0-9a-fA-F]{3,8}\b/.test(template)) fail('硬編碼色值：templates/base.template.html 出現 hex');
 const layoutAttributeCount = (template.match(/\bdata-chi-layout=/g) || []).length;
-if (layoutAttributeCount !== 1) fail('模板來源必須且只能有一個 data-chi-layout，實際：' + layoutAttributeCount);
-if (/<div\b[^>]*\bdata-chi-layout=/.test(template)) fail('data-chi-layout 必須由根 html 元素統一管理，不可在內層重複設定');
-
-// 預覽必須操作與正式模板相同的根層版式契約，不能再修改內層 shell。
-const previewSource = readFileSync(path.join(ROOT, 'preview', 'index.html'), 'utf8');
-if (!previewSource.includes("root.setAttribute('data-chi-layout', layout)")) {
-  fail('preview/index.html 必須將版式設定到 document.documentElement');
-}
-if (previewSource.includes("body.replace('data-chi-layout=\\\"header\\\"'")) {
-  fail('preview/index.html 不可再修改內層 body shell 的 data-chi-layout');
-}
-
-// 4. 網站設定 schema：欄位、型別、品牌檔存在、logo 檔案存在；不寫死站數。
-const REQUIRED = ['id', 'name', 'url', 'brand', 'logoLight', 'logoDark', 'description', 'icon'];
+if (layoutAttributeCount !== 1) fail('模板來源必須且只能有一個 data-chi-layout，
+[... 877 bytes omitted ...]
+n', 'icon'];
 const ALLOWED_SITE_KEYS = new Set([...REQUIRED, 'layout']);
 const sites = readdirSync(path.join(ROOT, 'sites')).filter((f) => f.endsWith('.json'));
 const siteRecords = [];
@@ -420,6 +409,22 @@ else {
   if (!new RegExp(`<h[1-6]\\b[^>]*\\bid="${headingId}"`).test(card[2])) fail('Card aria-labelledby 必須指向卡片內的標題');
 }
 if (!/<ul\b[^>]*class="[^"]*chi-list[^"]*"[^>]*>[\s\S]*?<li\b/.test(examplesHtml)) fail('清單範例必須使用原生 ul／li 語意');
+const dialogExample = examplesHtml.match(/<dialog\b([^>]*)>([\s\S]*?)<\/dialog>/);
+if (!dialogExample) fail('Dialog 語意範例必須使用原生 dialog');
+else {
+  const dialogId = dialogExample[1].match(/\bid="([^"]+)"/)?.[1];
+  const labelledBy = dialogExample[1].match(/\baria-labelledby="([^"]+)"/)?.[1];
+  if (!dialogId || !labelledBy || !exampleIdSet.has(labelledBy)) fail('Dialog 必須有 id 並以 aria-labelledby 關聯可見標題');
+  if (!new RegExp(`<h[1-6]\\b[^>]*\\bid="${labelledBy || '__missing__'}"`).test(dialogExample[2])) fail('Dialog aria-labelledby 必須指向對話框內的標題');
+  if (!new RegExp(`data-chi-dialog-open="${dialogId || '__missing__'}"`).test(examplesHtml)) fail('Dialog 必須有對應的開啟控制項');
+  if (!/data-chi-dialog-close/.test(dialogExample[2])) fail('Dialog 必須有關閉控制項');
+}
+const invalidFields = [...examplesHtml.matchAll(/<div\b([^>]*class="[^"]*chi-field[^"]*"[^>]*)>([\s\S]*?)<\/div>/g)];
+for (const [, attrs, contents] of invalidFields) {
+  if (/aria-invalid="true"/.test(contents) && !/chi-field--error/.test(attrs)) fail('aria-invalid=true 的欄位必須套用 chi-field--error');
+  if (/chi-field--error/.test(attrs) && (!/aria-invalid="true"/.test(contents) || !/chi-field__error/.test(contents))) fail('錯誤欄位必須同時提供 aria-invalid 與可見錯誤文字');
+}
+
 const table = examplesHtml.match(/<table\b[^>]*class="[^"]*chi-table[^"]*"[^>]*>([\s\S]*?)<\/table>/);
 if (!table || !/<caption\b/.test(table[1])) fail('表格必須提供 caption');
 if (!/<th\b[^>]*\bscope="col"/.test(table?.[1] || '') || !/<th\b[^>]*\bscope="row"/.test(table?.[1] || '')) fail('表格範例必須示範 scope=col 與 scope=row');

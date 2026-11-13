@@ -88,7 +88,8 @@ Foundations（原則）→ Tokens（數值）→ Components（元件）→ Patte
   一個操作情境至多一個 primary；不得自由傳 class。
 - Tabs：容器使用 `data-chi-tabs` 與 `role="tablist"`；每個 tab 使用原生 button、`role="tab"`、唯一 id、`aria-controls`、`aria-selected`、`tabindex`；panel 使用 `role="tabpanel"`、唯一 id、`aria-labelledby`。方向鍵循環切換、Home／End 移至首／末個可用 tab，選取時同步更新 panel hidden；disabled tab 略過。
 - 其他元件（表單、Tabs、卡片、清單／表格、徽章、對話框、資料狀態）：
-  樣式在 components/base/base.css，沿用舊版已核對的段落（見 §10 來源）。 HTML 語意範例集中於 `components/base/examples.html`，作為欄位關聯、Tabs、Card、List 與 Table 的可驗證參考。
+  樣式在 components/base/base.css，沿用舊版已核對的段落（見 §10 來源）。 HTML 語意範例集中於 `components/base/examples.html`，作為欄位關聯、Tabs、Card、List、Table 與 Dialog 的可驗證參考。
+  錯誤欄位必須同時設定 `aria-invalid="true"`、`aria-describedby` 指向錯誤文字，並套用 `chi-field--error`。
   Dialog 使用原生 `<dialog class="chi-dialog">` 與 `showModal()`；必須以 `aria-labelledby` 關聯可見標題。
   開啟按鈕使用 `data-chi-dialog-open="dialog-id"`，關閉按鈕使用 `data-chi-dialog-close`；
   可選 `data-chi-dialog-initial-focus`、`autofocus` 與 `data-chi-dialog-backdrop-close`。

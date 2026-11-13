@@ -2,7 +2,7 @@
 <section aria-labelledby="example-form-title">
   <h2 id="example-form-title">表單範例</h2>
   <form>
-    <div class="chi-field">
+    <div class="chi-field chi-field--error">
       <label class="chi-field__label" for="example-email">電子郵件</label>
       <input class="chi-input" id="example-email" name="email" type="email" autocomplete="email" aria-describedby="example-email-hint example-email-error" aria-invalid="true">
       <p class="chi-field__hint" id="example-email-hint">請輸入可接收通知的電子郵件地址。</p>
@@ -60,4 +60,13 @@
       <tbody><tr><th scope="row">2026-11-13</th><td>行動裝置</td></tr></tbody>
     </table>
   </div>
+</section>
+<section aria-labelledby="example-dialog-section-title">
+  <h2 id="example-dialog-section-title">Dialog 範例</h2>
+  <button class="chi-btn chi-btn--secondary" type="button" data-chi-dialog-open="example-dialog">開啟說明</button>
+  <dialog class="chi-dialog" id="example-dialog" aria-labelledby="example-dialog-title">
+    <h3 class="chi-dialog__title" id="example-dialog-title" tabindex="-1">帳戶說明</h3>
+    <p>這是一個使用原生 modal dialog 的範例。</p>
+    <button class="chi-btn chi-btn--primary" type="button" data-chi-dialog-close>關閉</button>
+  </dialog>
 </section>

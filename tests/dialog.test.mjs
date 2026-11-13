@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
+import vm from 'node:vm';
 
 const read = path => readFileSync(new URL(path, import.meta.url), 'utf8');
 const runtime = read('../components/dialog.js');
@@ -40,4 +41,65 @@ test('Dialog contract documents accessible title association and focus options',
   for (const contract of ['aria-labelledby', 'data-chi-dialog-open', 'data-chi-dialog-close', 'data-chi-dialog-initial-focus', 'data-chi-dialog-backdrop-close']) {
     assert.ok(spec.includes(contract), contract);
   }
+});
+function createDialogHarness() {
+  const documentListeners = {};
+  const dialogListeners = {};
+  const document = {
+    activeElement: null,
+    addEventListener(type, callback) { documentListeners[type] = callback; },
+    querySelectorAll() { return [dialog]; },
+    getElementById(id) { return id === 'test-dialog' ? dialog : null; },
+  };
+  const opener = { isConnected: true, focusCount: 0, focus() { this.focusCount++; document.activeElement = this; } };
+  const target = { focusCount: 0, focus() { this.focusCount++; document.activeElement = this; } };
+  const dialog = {
+    open: false, attributes: {}, listeners: dialogListeners,
+    matches(selector) { return selector === 'dialog.chi-dialog'; },
+    hasAttribute(name) { return Object.hasOwn(this.attributes, name); },
+    setAttribute(name, value) { this.attributes[name] = value; },
+    querySelector(selector) { return selector.includes('autofocus') || selector.includes('data-chi-dialog-initial-focus') ? target : null; },
+    addEventListener(type, callback) { (dialogListeners[type] ||= []).push(callback); },
+    showModal() { this.open = true; },
+    close(value) { this.open = false; this.returnValue = value; for (const callback of dialogListeners.close || []) callback(); },
+  };
+  const window = {};
+  vm.runInNewContext(runtime, { document, window, WeakMap, WeakSet });
+  return { api: window.ChiDialog, document, dialog, opener, target, documentListeners };
+}
+
+test('Dialog runtime moves focus in, closes, and restores focus to the opener', () => {
+  const h = createDialogHarness();
+  h.document.activeElement = h.opener;
+  assert.equal(h.api.open(h.dialog, h.opener), true);
+  assert.equal(h.dialog.open, true);
+  assert.equal(h.document.activeElement, h.target);
+  assert.equal(h.target.focusCount, 1);
+  assert.equal(h.api.close(h.dialog, 'confirmed'), true);
+  assert.equal(h.dialog.open, false);
+  assert.equal(h.dialog.returnValue, 'confirmed');
+  assert.equal(h.document.activeElement, h.opener);
+  assert.equal(h.opener.focusCount, 1);
+});
+
+test('Dialog init is idempotent and safely handles missing or already-open dialogs', () => {
+  const h = createDialogHarness();
+  h.api.init(h.dialog);
+  h.api.init(h.dialog);
+  assert.equal(h.dialog.listeners.close.length, 1);
+  assert.equal(h.api.open(null), false);
+  h.dialog.open = true;
+  assert.equal(h.api.open(h.dialog, h.opener), false);
+  assert.equal(h.api.close(h.dialog), true);
+});
+
+test('Dialog backdrop close is opt-in and close restores focus', () => {
+  const h = createDialogHarness();
+  h.dialog.attributes['data-chi-dialog-backdrop-close'] = '';
+  h.api.open(h.dialog, h.opener);
+  const click = h.dialog.listeners.click[0];
+  click({ target: h.dialog });
+  assert.equal(h.dialog.open, false);
+  assert.equal(h.dialog.returnValue, 'backdrop');
+  assert.equal(h.document.activeElement, h.opener);
 });
