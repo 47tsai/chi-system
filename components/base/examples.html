@@ -70,3 +70,39 @@
     <button class="chi-btn chi-btn--primary" type="button" data-chi-dialog-close>關閉</button>
   </dialog>
 </section>
+
+<section aria-labelledby="example-badges-title">
+  <h2 id="example-badges-title">徽章範例</h2>
+  <div aria-label="作業狀態">
+    <span class="chi-badge chi-badge--success"><span class="chi-badge__dot" aria-hidden="true"></span>已完成</span>
+    <span class="chi-badge chi-badge--warning"><span class="chi-badge__dot" aria-hidden="true"></span>待處理</span>
+    <span class="chi-badge chi-badge--danger"><span class="chi-badge__dot" aria-hidden="true"></span>失敗</span>
+    <span class="chi-badge chi-badge--info"><span class="chi-badge__dot" aria-hidden="true"></span>資訊</span>
+  </div>
+</section>
+
+<section aria-labelledby="example-data-states-title">
+  <h2 id="example-data-states-title">資料狀態範例</h2>
+  <section class="chi-state" role="status" aria-labelledby="example-state-loading-title" aria-busy="true">
+    <div class="chi-spinner" aria-hidden="true"></div>
+    <h3 class="chi-state__title" id="example-state-loading-title">資料載入中</h3>
+    <p class="chi-state__desc">正在取得最新資料，請稍候。</p>
+    <div class="chi-skeleton" aria-hidden="true"></div>
+  </section>
+  <section class="chi-state" role="status" aria-labelledby="example-state-empty-title">
+    <svg class="chi-state__icon" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><circle cx="24" cy="24" r="17"/><path d="M16 24h16"/></svg>
+    <h3 class="chi-state__title" id="example-state-empty-title">目前沒有資料</h3>
+    <p class="chi-state__desc">新增第一筆資料後，就會顯示在這裡。</p>
+  </section>
+  <section class="chi-state" role="alert" aria-labelledby="example-state-error-title">
+    <svg class="chi-state__icon" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><circle cx="24" cy="24" r="17"/><path d="M24 14v12m0 6v2"/></svg>
+    <h3 class="chi-state__title" id="example-state-error-title">資料載入失敗</h3>
+    <p class="chi-state__desc">目前無法連線，請稍後再試。</p>
+    <div class="chi-state__action"><button class="chi-btn chi-btn--secondary" type="button">重新載入</button></div>
+  </section>
+  <section class="chi-state" role="status" aria-labelledby="example-state-success-title">
+    <svg class="chi-state__icon" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><circle cx="24" cy="24" r="17"/><path d="m15 24 6 6 12-13"/></svg>
+    <h3 class="chi-state__title" id="example-state-success-title">儲存成功</h3>
+    <p class="chi-state__desc">變更已安全儲存。</p>
+  </section>
+</section>
