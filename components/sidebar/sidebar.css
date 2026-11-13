@@ -222,3 +222,11 @@ html.chi-sidebar-open body {
     padding: 0;
   }
 }
+
+
+/* 偏好減少動態效果時，抽屜狀態仍正常切換，但不播放位移動畫。 */
+@media (prefers-reduced-motion: reduce) {
+  .chi-sidebar {
+    transition: none;
+  }
+}
