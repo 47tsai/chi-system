@@ -33,6 +33,9 @@
   .chi-input,
   .chi-select,
   .chi-textarea,
+  .chi-check__input,
+  .chi-radio__input,
+  .chi-switch__input,
   .chi-card,
   .chi-list__item,
   .chi-tab,
@@ -128,7 +131,6 @@
 .chi-select:focus,
 .chi-textarea:focus {
   border-color: var(--chi-color-accent);
-  outline: none;
 }
 
 /* placeholder 屬一般文字，同樣須過 AA（SPEC.md 第 11 節） */
@@ -144,8 +146,11 @@
 }
 
 .chi-input:disabled,
+.chi-input:disabled:hover,
 .chi-select:disabled,
-.chi-textarea:disabled {
+.chi-select:disabled:hover,
+.chi-textarea:disabled,
+.chi-textarea:disabled:hover {
   background-color: var(--chi-color-surface-sunken);
   color: var(--chi-color-text-disabled);
   cursor: not-allowed;
@@ -169,6 +174,10 @@
   width: 100%;
   padding-right: var(--chi-base-form-select-icon-padding);
   cursor: pointer;
+}
+
+.chi-select:disabled {
+  cursor: not-allowed;
 }
 
 .chi-select-wrap .chi-icon {
@@ -240,7 +249,8 @@
 }
 
 .chi-check:has(.chi-check__input:disabled),
-.chi-radio:has(.chi-radio__input:disabled) {
+.chi-radio:has(.chi-radio__input:disabled),
+.chi-switch:has(.chi-switch__input:disabled) {
   color: var(--chi-color-text-disabled);
   cursor: not-allowed;
 }
@@ -321,8 +331,13 @@
     border-color var(--chi-duration);
 }
 
-.chi-tab:hover {
+.chi-tab:hover:not(:disabled) {
   color: var(--chi-color-text-primary);
+}
+
+.chi-tab:disabled {
+  color: var(--chi-color-text-disabled);
+  cursor: not-allowed;
 }
 
 /* selected：底線、字重與顏色並行，不只靠顏色（SPEC.md 7.7） */
