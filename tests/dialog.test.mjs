@@ -42,7 +42,7 @@ test('Dialog contract documents accessible title association and focus options',
     assert.ok(spec.includes(contract), contract);
   }
 });
-function createDialogHarness() {
+function createDialogHarness({ disabledInitialFocus = false, connected = true } = {}) {
   const dialogListeners = {};
   const document = {
     activeElement: null,
@@ -51,20 +51,25 @@ function createDialogHarness() {
     getElementById(id) { return id === 'test-dialog' ? dialog : null; },
   };
   const opener = { isConnected: true, focusCount: 0, focus() { this.focusCount++; document.activeElement = this; } };
-  const target = { focusCount: 0, focus() { this.focusCount++; document.activeElement = this; } };
+  const target = { disabled: disabledInitialFocus, isConnected: true, focusCount: 0, focus() { this.focusCount++; document.activeElement = this; } };
+  const fallback = { disabled: false, focusCount: 0, focus() { this.focusCount++; document.activeElement = this; } };
   const dialog = {
-    open: false, attributes: {}, listeners: dialogListeners,
+    open: false, isConnected: connected, attributes: {}, listeners: dialogListeners,
     matches(selector) { return selector === 'dialog.chi-dialog'; },
     hasAttribute(name) { return Object.hasOwn(this.attributes, name); },
     setAttribute(name, value) { this.attributes[name] = value; },
-    querySelector(selector) { return selector.includes('autofocus') || selector.includes('data-chi-dialog-initial-focus') ? target : null; },
+    querySelector(selector) {
+      if (selector.includes('autofocus') || selector.includes('data-chi-dialog-initial-focus')) return target.disabled || target.isConnected === false ? null : target;
+      if (selector.includes('button:not(:disabled)')) return fallback;
+      return null;
+    },
     addEventListener(type, callback) { (dialogListeners[type] ||= []).push(callback); },
     showModal() { this.open = true; },
     close(value) { this.open = false; this.returnValue = value; for (const callback of dialogListeners.close || []) callback(); },
   };
   const window = {};
   vm.runInNewContext(runtime, { document, window, WeakMap, WeakSet });
-  return { api: window.ChiDialog, document, dialog, opener, target };
+  return { api: window.ChiDialog, document, dialog, opener, target, fallback };
 }
 
 test('Dialog runtime moves focus in, closes, and restores focus to the opener', () => {
@@ -100,4 +105,52 @@ test('Dialog backdrop close is opt-in and close restores focus', () => {
   assert.equal(h.dialog.open, false);
   assert.equal(h.dialog.returnValue, 'backdrop');
   assert.equal(h.document.activeElement, h.opener);
+});
+
+
+test('Dialog skips a disabled initial-focus target and uses the next enabled control', () => {
+  const h = createDialogHarness({ disabledInitialFocus: true });
+  assert.equal(h.api.open(h.dialog, h.opener), true);
+  assert.equal(h.target.focusCount, 0);
+  assert.equal(h.fallback.focusCount, 1);
+  assert.equal(h.document.activeElement, h.fallback);
+});
+
+test('Dialog refuses a disconnected element without leaving stale return focus', () => {
+  const h = createDialogHarness({ connected: false });
+  assert.equal(h.api.open(h.dialog, h.opener), false);
+  assert.equal(h.dialog.open, false);
+  assert.equal(h.api.close(h.dialog), false);
+});
+
+
+test('Dialog delegated controls open the matching dialog and close only their parent', () => {
+  const h = createDialogHarness();
+  const listeners = {};
+  h.document.addEventListener = (type, callback) => { listeners[type] = callback; };
+  // Re-evaluate with the listener-capturing document used by the runtime.
+  const runtimeContext = { document: h.document, window: {}, WeakMap, WeakSet };
+  vm.runInNewContext(runtime, runtimeContext);
+  const openControl = {
+    getAttribute(name) { return name === 'data-chi-dialog-open' ? 'test-dialog' : null; },
+    closest(selector) { return selector === '[data-chi-dialog-open]' ? this : null; },
+  };
+  let prevented = false;
+  listeners.click({ target: openControl, preventDefault() { prevented = true; } });
+  assert.equal(prevented, true);
+  assert.equal(h.dialog.open, true);
+
+  const closeControl = {
+    getAttribute() { return 'saved'; },
+    closest(selector) {
+      if (selector === '[data-chi-dialog-close]') return this;
+      if (selector === 'dialog.chi-dialog') return h.dialog;
+      return null;
+    },
+  };
+  prevented = false;
+  listeners.click({ target: closeControl, preventDefault() { prevented = true; } });
+  assert.equal(prevented, true);
+  assert.equal(h.dialog.open, false);
+  assert.equal(h.dialog.returnValue, 'saved');
 });

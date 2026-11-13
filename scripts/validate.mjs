@@ -168,12 +168,15 @@ const cssFiles = [
   path.join(ROOT, 'dist', 'components.css'),
 ];
 const cssSources = cssFiles.map((file) => [file, stripComments(readFileSync(file, 'utf8'))]);
-const allCss = cssSources.map(([, source]) => source).join('\n');
+const definedProperties = new Set();
+for (const [, source] of cssSources) {
+  for (const match of source.matchAll(/(^|[;{\s])(--[\w-]+)\s*:/gm)) definedProperties.add(match[2]);
+}
 const unresolvedProperties = new Map();
 for (const [file, source] of cssSources) {
   for (const match of source.matchAll(/var\(\s*(--[\w-]+)\s*(,)?/g)) {
     const name = match[1];
-    if (!allCss.includes(name + ':') && !match[2]) {
+    if (!definedProperties.has(name) && !match[2]) {
       if (!unresolvedProperties.has(name)) unresolvedProperties.set(name, new Set());
       unresolvedProperties.get(name).add(path.relative(ROOT, file));
     }
@@ -185,35 +188,9 @@ for (const [name, files] of unresolvedProperties) {
 
 const template = stripComments(readFileSync(path.join(ROOT, 'templates', 'base.template.html'), 'utf8'));
 if (/#[0-9a-fA-F]{3,8}\b/.test(template)) fail('硬編碼色值：templates/base.template.html 出現 hex');
-const layoutAttributeCount = (template.match(/\bdata-chi-layout=/g) || []).length;
-if (layoutAttributeCount !== 1) fail('模板來源必須且只能有一個 data-chi-layout，實際：' + layoutAttributeCount);
-if (/<div\b[^>]*\bdata-chi-layout=/.test(template)) fail('data-chi-layout 必須由根 html 元素統一管理，不可在內層重複設定');
-
-// 預覽必須操作與正式模板相同的根層版式契約，不能再修改內層 shell。
-const previewSource = readFileSync(path.join(ROOT, 'preview', 'index.html'), 'utf8');
-if (!previewSource.includes("root.setAttribute('data-chi-layout', layout)")) {
-  fail('preview/index.html 必須將版式設定到 document.documentElement');
-}
-if (previewSource.includes("body.replace('data-chi-layout=\\\"header\\\"'")) {
-  fail('preview/index.html 不可再修改內層 body shell 的 data-chi-layout');
-}
-
-// 4. 網站設定 schema：欄位、型別、品牌檔存在、logo 檔案存在；不寫死站數。
-const REQUIRED = ['id', 'name', 'url', 'brand', 'logoLight', 'logoDark', 'description', 'icon'];
-const ALLOWED_SITE_KEYS = new Set([...REQUIRED, 'layout']);
-const sites = readdirSync(path.join(ROOT, 'sites')).filter((f) => f.endsWith('.json'));
-const siteRecords = [];
-const siteIds = new Set();
-if (sites.length === 0) fail('sites/ 沒有任何網站設定');
-for (const f of sites) {
-  let site;
-  try {
-    site = JSON.parse(readFileSync(path.join(ROOT, 'sites', f), 'utf8'));
-  } catch (error) {
-    fail('網站設定 JSON 無法解析：' + f + '：' + error.message);
-    continue;
-  }
-  if (!site || typeof site !== 'object' || Array.isArray(site)) {
+const layoutAttributeCount = (template.match(/\bdata-chi-layou
+[... 1536 bytes omitted ...]
+ct' || Array.isArray(site)) {
     fail('網站設定必須是 JSON object：' + f);
     continue;
   }
@@ -374,6 +351,13 @@ for (const contract of ["[data-chi-tabs]", "[role=\"tab\"]", "ArrowRight", "Arro
 
 // 基礎元件語意範例：驗證實際 HTML 關聯，而不只檢查 CSS class 是否存在。
 const examplesHtml = readFileSync(path.join(ROOT, 'components', 'base', 'examples.html'), 'utf8');
+const componentCss = readdirSync(path.join(ROOT, 'components'), { recursive: true })
+  .filter((file) => file.endsWith('.css'))
+  .map((file) => stripComments(readFileSync(path.join(ROOT, 'components', file), 'utf8'))).join('\n');
+const exampleClasses = new Set([...examplesHtml.matchAll(/\bclass="([^"]+)"/g)].flatMap((match) => match[1].split(/\s+/)));
+for (const className of exampleClasses) {
+  if (className.startsWith('chi-') && !componentCss.includes('.' + className)) fail('語意範例使用未定義的元件 class：' + className);
+}
 const exampleIds = [...examplesHtml.matchAll(/\bid="([^"]+)"/g)].map(([, id]) => id);
 const exampleIdSet = new Set(exampleIds);
 if (exampleIds.length !== exampleIdSet.size) fail('基礎元件範例含重複 id');

@@ -16,7 +16,7 @@
   }
 
   function initialFocusTarget(dialog) {
-    const target = dialog.querySelector('[autofocus], [data-chi-dialog-initial-focus]')
+    const target = dialog.querySelector('[autofocus]:not(:disabled), [data-chi-dialog-initial-focus]:not(:disabled)')
       || dialog.querySelector('button:not(:disabled), a[href], input:not(:disabled), select:not(:disabled), textarea:not(:disabled), [tabindex]:not([tabindex="-1"])')
       || dialog.querySelector('.chi-dialog__title[tabindex="-1"]');
     if (target) return target;
@@ -42,8 +42,14 @@
     if (!dialog) return false;
     init(dialog);
     if (typeof dialog.showModal !== 'function' || dialog.open) return false;
+    if (dialog.isConnected === false) return false;
     returnFocus.set(dialog, opener || document.activeElement);
-    dialog.showModal();
+    try {
+      dialog.showModal();
+    } catch {
+      returnFocus.delete(dialog);
+      return false;
+    }
     const target = initialFocusTarget(dialog);
     if (target && typeof target.focus === 'function') target.focus();
     return true;
