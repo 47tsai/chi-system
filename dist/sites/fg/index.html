@@ -25,16 +25,16 @@
      收合開關在側邊欄頂列右側；收合 key 只有一個存放位置：引入 sidebar.js 的
      <script data-chi-sidebar-key="chi-<站點>-sidebar-collapsed">，<aside> 上不寫 key。
      佔位符：https://fg.chi.qzz.io/ Free Game ../../../logo/fg-b.png ../../../logo/fg-w.png；<a href="#" aria-current="page"><span class="chi-sidebar__icon" aria-hidden="true">◆</span><span class="chi-sidebar__label">連結一</span></a><a href="#"><span class="chi-sidebar__icon" aria-hidden="true">◆</span><span class="chi-sidebar__label">連結二</span></a><a href="#"><span class="chi-sidebar__icon" aria-hidden="true">◆</span><span class="chi-sidebar__label">連結三</span></a> 為本站導覽連結。 -->
-<aside id="chi-sidebar" class="chi-sidebar" aria-label="本站導覽">
+<aside id="chi-sidebar" class="chi-sidebar" aria-label="側邊欄">
   <div class="chi-sidebar__top">
     <a class="chi-sidebar__brand" href="https://fg.chi.qzz.io/">
-      <img class="chi-sidebar__logo chi-sidebar__logo--light" src="../../../logo/fg-b.png" alt="Free Game" width="32" height="32">
-      <img class="chi-sidebar__logo chi-sidebar__logo--dark" src="../../../logo/fg-w.png" alt="Free Game" width="32" height="32">
+      <img class="chi-sidebar__logo chi-sidebar__logo--light" src="../../../logo/fg-b.png" alt="" width="32" height="32">
+      <img class="chi-sidebar__logo chi-sidebar__logo--dark" src="../../../logo/fg-w.png" alt="" width="32" height="32">
       <span class="chi-sidebar__name">Free Game</span>
     </a>
     <button class="chi-sidebar__trigger" type="button" data-chi-sidebar-toggle aria-controls="chi-sidebar" aria-expanded="true" aria-label="收合側邊欄" title="收合側邊欄">‹</button>
   </div>
-  <nav class="chi-sidebar__nav"><a href="#" aria-current="page"><span class="chi-sidebar__icon" aria-hidden="true">◆</span><span class="chi-sidebar__label">連結一</span></a><a href="#"><span class="chi-sidebar__icon" aria-hidden="true">◆</span><span class="chi-sidebar__label">連結二</span></a><a href="#"><span class="chi-sidebar__icon" aria-hidden="true">◆</span><span class="chi-sidebar__label">連結三</span></a></nav>
+  <nav class="chi-sidebar__nav" aria-label="本站導覽"><a href="#" aria-current="page"><span class="chi-sidebar__icon" aria-hidden="true">◆</span><span class="chi-sidebar__label">連結一</span></a><a href="#"><span class="chi-sidebar__icon" aria-hidden="true">◆</span><span class="chi-sidebar__label">連結二</span></a><a href="#"><span class="chi-sidebar__icon" aria-hidden="true">◆</span><span class="chi-sidebar__label">連結三</span></a></nav>
   <div class="chi-sidebar__bottom">
     <button class="chi-sidebar__theme" type="button" data-chi-theme-toggle aria-label="切換主題" title="切換主題">◐</button>
     <span class="chi-sidebar__version" data-chi-version>版本 v1.0.0</span>
@@ -52,8 +52,8 @@
      導覽不進 header，放 header 下方獨立一列（slots.subnav），沒有導覽的站省略整段。 -->
 <header class="chi-header">
   <a class="chi-header__brand" href="https://fg.chi.qzz.io/">
-    <img class="chi-header__logo chi-header__logo--light" src="../../../logo/fg-b.png" alt="Free Game" width="32" height="32">
-    <img class="chi-header__logo chi-header__logo--dark" src="../../../logo/fg-w.png" alt="Free Game" width="32" height="32">
+    <img class="chi-header__logo chi-header__logo--light" src="../../../logo/fg-b.png" alt="" width="32" height="32">
+    <img class="chi-header__logo chi-header__logo--dark" src="../../../logo/fg-w.png" alt="" width="32" height="32">
     <span class="chi-header__name">Free Game</span>
   </a>
   <div class="chi-header__actions">
