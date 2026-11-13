@@ -39,7 +39,7 @@ const tokenFiles = [
     .map((name) => 'brands/' + name),
 ];
 const TOKEN_METADATA = new Set(['$description', '$type', '$extensions', '$deprecated', '$experimental']);
-const SUPPORTED_TOKEN_TYPES = new Set(['color', 'dimension', 'duration', 'fontFamily', 'fontWeight', 'shadow']);
+const SUPPORTED_TOKEN_TYPES = new Set(['color', 'dimension', 'duration', 'fontFamily', 'fontWeight', 'number', 'shadow']);
 function validateTokenNode(node, file, tokenPath = '') {
   if (!node || typeof node !== 'object' || Array.isArray(node)) {
     fail('Token 結構錯誤：' + file + ' ' + (tokenPath || '(root)') + ' 必須是物件');
@@ -61,6 +61,12 @@ function validateTokenNode(node, file, tokenPath = '') {
       }
       if (node.$type === 'color' && !/^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/.test(value) && !/^\{[^{}]+\}$/.test(value)) {
         fail('Color Token 必須是 hex 或單一 Token 別名：' + file + ' ' + tokenPath);
+      }
+      if (node.$type === 'number' && !/^\{[^{}]+\}$/.test(value) && !Number.isFinite(Number(value))) {
+        fail('Number Token 必須是有限數值：' + file + ' ' + tokenPath);
+      }
+      if (node.$type === 'duration' && !/^\d+(?:\.\d+)?(?:ms|s)$/.test(value) && !/^\{[^{}]+\}$/.test(value)) {
+        fail('Duration Token 必須使用 ms 或 s：' + file + ' ' + tokenPath);
       }
     }
     return;
@@ -156,6 +162,14 @@ for (const dir of ['components']) {
     const dimensionSource = src.replace(/min-width:\s*\d+px/g, '');
     const dimensionHits = dimensionSource.match(/(?<![\w-])-?\d+(?:\.\d+)?px\b/g);
     if (dimensionHits) fail(`硬編碼尺寸：${dir}/${f} 出現 ${[...new Set(dimensionHits)].join('、')}，請改用 Token`);
+    const rawTiming = src.match(/(?:animation|transition):[^;{}]*\b\d+(?:\.\d+)?(?:ms|s)\b/g);
+    if (rawTiming) fail(`硬編碼動效時間：${dir}/${f} 出現 ${[...new Set(rawTiming)].join('、')}，請改用 Duration Token`);
+    const rawOpacity = src.match(/opacity:\s*(?:0(?:\.\d+)?|1(?:\.0+)?)\b/g);
+    if (rawOpacity) fail(`硬編碼透明度：${dir}/${f} 出現 ${[...new Set(rawOpacity)].join('、')}，請改用 Number Token`);
+    const rawWeight = src.match(/font-weight:\s*(?:[1-9]00|normal|bold)\b/g);
+    if (rawWeight) fail(`硬編碼字重：${dir}/${f} 出現 ${[...new Set(rawWeight)].join('、')}，請改用 FontWeight Token`);
+    const rawColorFunction = src.match(/(?:background(?:-color)?|color):\s*rgba?\(/g);
+    if (rawColorFunction) fail(`硬編碼顏色函式：${dir}/${f} 出現 ${[...new Set(rawColorFunction)].join('、')}，請改用 Color Token`);
   }
 }
 

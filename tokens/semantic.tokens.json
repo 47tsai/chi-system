@@ -47,6 +47,10 @@
       "$type": "color",
       "$value": "{color.accent.light}"
     },
+    "backdrop": {
+      "$type": "color",
+      "$value": "#00000080"
+    },
     "info": {
       "$type": "color",
       "$value": "{color.semantic.info-light}"

@@ -20,8 +20,10 @@
   --chi-base-icon-sm: 16px;
   --chi-base-skeleton-min-height: 16px;
   --chi-base-spinner-border-width: 3px;
+  --chi-base-spinner-duration: 800ms;
   --chi-base-spinner-size: 24px;
   --chi-base-state-description-max-width: 420px;
+  --chi-base-state-disabled-opacity: 0.5;
   --chi-base-state-icon-size: 48px;
   --chi-base-switch-height: 24px;
   --chi-base-switch-thumb-inset: 3px;
@@ -43,6 +45,7 @@
   --chi-color-accent: #2563EB;
   --chi-color-accent-active: #1E40AF;
   --chi-color-accent-hover: #1D4ED8;
+  --chi-color-backdrop: #00000080;
   --chi-color-border-strong: #C6CDD6;
   --chi-color-border-subtle: #E2E6EC;
   --chi-color-brand: #4A88FC;
@@ -119,6 +122,7 @@
   --chi-sidebar-active-indicator-width: 3px;
   --chi-sidebar-background: #FFFFFF;
   --chi-sidebar-logo-size: 32px;
+  --chi-sidebar-scrim-opacity: 0.6;
   --chi-sidebar-text-active: #2563EB;
   --chi-size-control: 40px;
   --chi-size-control-compact: 36px;
@@ -153,6 +157,7 @@
   --chi-color-accent: #6B9BFF;
   --chi-color-accent-active: #4A88FC;
   --chi-color-accent-hover: #84ADFF;
+  --chi-color-backdrop: #00000099;
   --chi-color-border-strong: #3D434E;
   --chi-color-border-subtle: #2A2F38;
   --chi-color-canvas: #131519;

@@ -66,6 +66,10 @@
     "active-indicator-width": {
       "$type": "dimension",
       "$value": "{base.border.indicator-width}"
+    },
+    "scrim-opacity": {
+      "$type": "number",
+      "$value": "0.6"
     }
   },
   "base": {
@@ -181,6 +185,10 @@
       "description-max-width": {
         "$type": "dimension",
         "$value": "420px"
+      },
+      "disabled-opacity": {
+        "$type": "number",
+        "$value": "0.5"
       }
     },
     "spinner": {
@@ -191,6 +199,10 @@
       "border-width": {
         "$type": "dimension",
         "$value": "3px"
+      },
+      "duration": {
+        "$type": "duration",
+        "$value": "800ms"
       }
     },
     "skeleton": {

@@ -135,7 +135,7 @@
   z-index: 30;
   display: none;
   background: var(--chi-color-surface-sunken);
-  opacity: 0.6;
+  opacity: var(--chi-sidebar-scrim-opacity);
 }
 .chi-sidebar__scrim.visible {
   display: block;
@@ -421,7 +421,7 @@ html.chi-sidebar-open body {
  *   舊全量盤點已核對：這些段落全部只引 Token、無其他寫死值，認為沒問題，直接搬用。
  * 不搬的部分：舊第 57–160 行按鈕段 — v2 components/button/button.css 已按
  *   component token 重寫（舊段有 2 處寫死 #ffffff，見舊報告 A17）。
- * 唯一改動：Switch 滑鈕底色 #ffffff → var(--chi-color-surface)；註解中的舊文件名改為 SPEC.md。
+ * 舊版樣式經盤點後作為起點；後續 Token 化、狀態與無障礙修正，以本檔案及 SPEC.md 為準。
  * 參考架構：GOV.UK／Carbon 的元件分層（元件樣式與文件基礎分開，見研究報告 §3、§6）。
  */
 /* chi-system components.css — 元件樣式唯一來源（SPEC.md §6、第 15 節第 6 步）
@@ -662,7 +662,7 @@ html.chi-sidebar-open body {
 
 .chi-check__input:disabled,
 .chi-radio__input:disabled {
-  opacity: 0.5;
+  opacity: var(--chi-base-state-disabled-opacity);
   cursor: not-allowed;
 }
 
@@ -718,7 +718,7 @@ html.chi-sidebar-open body {
 }
 
 .chi-switch__input:disabled {
-  opacity: 0.5;
+  opacity: var(--chi-base-state-disabled-opacity);
   cursor: not-allowed;
 }
 
@@ -761,7 +761,7 @@ html.chi-sidebar-open body {
 /* selected：底線、字重與顏色並行，不只靠顏色（SPEC.md 7.7） */
 .chi-tab[aria-selected="true"] {
   color: var(--chi-color-text-primary);
-  font-weight: 700;
+  font-weight: var(--chi-font-weight-section-title);
   border-bottom-color: var(--chi-color-accent);
 }
 
@@ -907,7 +907,7 @@ html.chi-sidebar-open body {
   border-radius: var(--chi-radius-full);
   font-size: var(--chi-font-size-caption);
   line-height: var(--chi-line-height-caption);
-  font-weight: 600;
+  font-weight: var(--chi-font-weight-label);
   white-space: nowrap;
 }
 
@@ -970,11 +970,7 @@ html.chi-sidebar-open body {
 }
 
 .chi-dialog::backdrop {
-  background-color: rgb(0 0 0 / 0.5);
-}
-
-[data-chi-theme="dark"] .chi-dialog::backdrop {
-  background-color: rgb(0 0 0 / 0.6);
+  background-color: var(--chi-color-backdrop);
 }
 
 .chi-dialog__title {
@@ -1039,7 +1035,7 @@ html.chi-sidebar-open body {
   border: var(--chi-base-spinner-border-width) solid var(--chi-color-border-subtle);
   border-top-color: var(--chi-color-accent);
   border-radius: var(--chi-radius-full);
-  animation: chi-spin 0.8s linear infinite;
+  animation: chi-spin var(--chi-base-spinner-duration) linear infinite;
 }
 
 @keyframes chi-spin {
