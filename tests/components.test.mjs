@@ -10,6 +10,7 @@ const sidebarHtml = read('../components/sidebar/sidebar.html');
 const headerCss = read('../components/header/header.css');
 const sidebarCss = read('../components/sidebar/sidebar.css');
 const baseTemplate = read('../templates/base.html');
+const baseCss = read('../components/base/base.css');
 
 test('Button exposes exactly the four documented closed-enum variants', () => {
   const variants = ['primary', 'secondary', 'ghost', 'danger'];
@@ -58,4 +59,32 @@ test('Complete base template gives every button an explicit non-submit type', ()
   const buttons = [...baseTemplate.matchAll(/<button([^>]*)>/g)];
   assert.ok(buttons.length >= 6);
   for (const [, attrs] of buttons) assert.ok(attrs.includes('type="button"'));
+});
+
+test('Form controls retain visible keyboard focus outlines', () => {
+  const focusRule = baseCss.match(/:where\([^}]+\):focus-visible\s*\{([^}]+)\}/s);
+  assert.ok(focusRule, 'shared focus-visible rule exists');
+  assert.match(focusRule[1], /outline:\s*var\(--chi-focus-width\)/);
+  const inputFocusRule = baseCss.match(/\.chi-input:focus,[\s\S]*?\.chi-textarea:focus\s*\{([^}]+)\}/);
+  assert.ok(inputFocusRule);
+  assert.doesNotMatch(inputFocusRule[1], /outline:\s*none/);
+});
+
+test('Disabled form controls keep stable feedback and disabled labels', () => {
+  for (const selector of [
+    '.chi-input:disabled:hover', '.chi-select:disabled:hover', '.chi-textarea:disabled:hover',
+    '.chi-select:disabled', '.chi-check:has(.chi-check__input:disabled)',
+    '.chi-radio:has(.chi-radio__input:disabled)', '.chi-switch:has(.chi-switch__input:disabled)',
+  ]) assert.ok(baseCss.includes(selector), `${selector} is defined`);
+  assert.match(baseCss, /\.chi-switch__input:disabled\s*\{[^}]*cursor:\s*not-allowed/s);
+});
+
+test('Tabs disabled state and reduced-motion cover all choice controls', () => {
+  assert.ok(baseCss.includes('.chi-tab:hover:not(:disabled)'));
+  assert.ok(baseCss.includes('.chi-tab:disabled'));
+  const reducedMotion = baseCss.match(/@media \(prefers-reduced-motion: reduce\)\s*\{([\s\S]*?)\n\}/);
+  assert.ok(reducedMotion);
+  for (const selector of ['.chi-check__input', '.chi-radio__input', '.chi-switch__input']) {
+    assert.ok(reducedMotion[1].includes(selector), `${selector} transition is disabled`);
+  }
 });
