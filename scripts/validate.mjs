@@ -361,11 +361,14 @@ for (const site of siteRecords) {
   }
   for (const asset of ['../../tokens.css', '../../components.css', '../../theme.js', '../../sidebar.js', '../../tabs.js', '../../dialog.js']) {
     if (!output.includes(asset)) fail('網站建置輸出缺少共用資產路徑：' + site.id + ' ' + asset);
+    const resolved = path.resolve(ROOT, 'dist', 'sites', site.id, asset);
+    if (!resolved.startsWith(path.join(ROOT, 'dist') + path.sep) || !existsSync(resolved)) fail('網站建置輸出引用不存在或越界的共用資產：' + site.id + ' ' + asset);
   }
   for (const logo of [site.logoLight, site.logoDark]) {
-    const logoPath = '../../../' + logo;
+    const logoPath = '../../' + logo;
     if (!output.includes(logoPath)) fail('網站建置輸出缺少品牌 Logo 路徑：' + site.id + ' ' + logoPath);
-    if (!existsSync(path.join(ROOT, logo))) fail('網站建置輸出引用不存在的品牌 Logo：' + site.id + ' ' + logo);
+    const resolvedLogo = path.resolve(ROOT, 'dist', 'sites', site.id, logoPath);
+    if (!existsSync(path.join(ROOT, logo)) || !resolvedLogo.startsWith(path.join(ROOT, 'dist') + path.sep) || !existsSync(resolvedLogo)) fail('網站建置輸出引用不存在的品牌 Logo：' + site.id + ' ' + logoPath);
   }
 }
 // dist 是純生成目錄：除了建置器明確產生的資產，不得殘留舊檔或手動檔案。
@@ -380,6 +383,7 @@ function collectDistFiles(directory, prefix = '') {
 const expectedDistFiles = new Set([
   'components.css', 'dialog.js', 'sidebar.js', 'tabs.js', 'theme.js', 'tokens.css',
   ...siteRecords.map((site) => 'sites/' + site.id + '/index.html'),
+  ...siteRecords.flatMap((site) => [site.logoLight, site.logoDark]),
 ]);
 const actualDistFiles = collectDistFiles(path.join(ROOT, 'dist'));
 for (const file of expectedDistFiles) if (!actualDistFiles.includes(file)) fail('dist 產物清單缺少預期檔案：' + file);

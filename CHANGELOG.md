@@ -7,6 +7,7 @@
 - 補齊 Badge 四種狀態與 Loading／Empty／Error／Success 語意範例及驗證。
 - 元件 Token 必須被 CSS 使用；透明度、動效時間、字重與遮罩色改由 Token 管理，禁止硬編碼檢查同步擴充。
 - 驗證器鎖定 `dist/` 允許的生成檔清單，並檢查每站輸出引用的所有共用 runtime 資產。
+- 每站所需 Logo 複製至 `dist/logo/`，相對路徑不再逃出部署根目錄；新增靜態資產解析測試。
 
 - 新增 DTCG Token schema 驗證，明確檢查 `$type`、`$value`、別名括號格式。
 - 統一本地與 CI 驗收入口為 `npm run check`。

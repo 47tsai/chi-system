@@ -48,6 +48,19 @@ export function buildSite() {
   // 站點功能內容仍由各站自行提供；此輸出只負責一致的共用殼與預設佔位導覽。
   const outputRoot = path.join(ROOT, 'dist', 'sites');
   rmSync(outputRoot, { recursive: true, force: true });
+  // dist 可作獨立部署根目錄：複製所有站點實際引用的 Logo，不依賴 repo root。
+  const distLogoRoot = path.join(ROOT, 'dist', 'logo');
+  rmSync(distLogoRoot, { recursive: true, force: true });
+  const logoFiles = new Set(sites.flatMap((entry) => {
+    const site = JSON.parse(readFileSync(path.join(ROOT, 'sites', entry.id + '.json'), 'utf8'));
+    return [site.logoLight, site.logoDark];
+  }));
+  for (const logo of logoFiles) {
+    const source = path.join(ROOT, logo);
+    const destination = path.join(ROOT, 'dist', logo);
+    mkdirSync(path.dirname(destination), { recursive: true });
+    writeFileSync(destination, readFileSync(source));
+  }
   for (const entry of sites) {
     const site = JSON.parse(readFileSync(path.join(ROOT, 'sites', entry.id + '.json'), 'utf8'));
     const escapeHtml = (value) => String(value).replaceAll('&', '&amp;').replaceAll('"', '&quot;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
@@ -62,8 +75,8 @@ export function buildSite() {
       '{{site.id}}': escapeHtml(site.id),
       '{{site.url}}': escapeHtml(site.url),
       '{{site.name}}': escapeHtml(site.name),
-      '{{site.logoLight}}': '../../../' + escapeHtml(site.logoLight),
-      '{{site.logoDark}}': '../../../' + escapeHtml(site.logoDark),
+      '{{site.logoLight}}': '../../' + escapeHtml(site.logoLight),
+      '{{site.logoDark}}': '../../' + escapeHtml(site.logoDark),
       '{{version}}': 'v' + VERSION,
       ...slots,
     };
@@ -87,5 +100,5 @@ export function buildSite() {
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const r = buildSite();
-  console.log(`base.html、components.css、preview/sites.json、dist/sites/*/index.html 已生成（版本 v${r.version}，${r.sites} 站）`);
+  console.log(`base.html、components.css、preview/sites.json、dist/logo/、dist/sites/*/index.html 已生成（版本 v${r.version}，${r.sites} 站）`);
 }

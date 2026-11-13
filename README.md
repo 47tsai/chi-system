@@ -27,7 +27,7 @@ sites/<站>.json
 components/<header|footer|sidebar|button|tabs|base|theme|dialog>/（base/examples.html 為語意範例；Theme／Sidebar／Tabs／Dialog JS 皆有來源檔）
 templates/base.template.html  →  templates/base.html（生成物）
 dist/tokens.css  dist/components.css  dist/theme.js  dist/sidebar.js  dist/tabs.js  dist/dialog.js
-dist/sites/<站>/index.html（建置產物）
+dist/sites/<站>/index.html（建置產物）  dist/logo/（站點引用 Logo 的部署副本）
 scripts/build-tokens.mjs  scripts/build-site.mjs  scripts/validate.mjs
 preview/index.html  preview/sites.json（生成物）
 logo/
@@ -37,7 +37,7 @@ logo/
 ## 用法
 
 ```sh
-npm run build     # 產生 Token／元件 CSS、共用模板、預覽清單與 dist/sites/<站>/index.html
+npm run build     # 產生 Token／元件 CSS、共用模板、預覽清單、dist/logo 與 dist/sites/<站>/index.html
 npm run validate  # Token schema／解析、對比、硬編碼、站設定、模板與站點輸出、dist 產物清單、斷點
 npm run test      # Node.js 行為、Theme／Sidebar／Tabs／Dialog、Button／表單、HTML 語意契約與鍵盤焦點回歸測試
 npm run check     # build + validate + test + 生成物 diff 必須為空
