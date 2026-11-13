@@ -364,6 +364,27 @@ if (!sidebarHtml.includes('<aside id="chi-sidebar" class="chi-sidebar" aria-labe
 if (!sidebarHtml.includes('<nav class="chi-sidebar__nav" aria-label="本站導覽">')) fail('sidebar 導覽 nav 必須有明確的「本站導覽」名稱');
 if (!headerHtml.includes('<nav class="chi-subnav" aria-label="本站導覽">')) fail('header 副導覽 nav 必須有明確名稱');
 
+// Button closed enum 與原生按鈕語意：四種變體各一個示例，全部明確指定 type。
+const buttonHtml = readFileSync(path.join(ROOT, 'components', 'button', 'button.html'), 'utf8');
+const buttonCss = stripComments(readFileSync(path.join(ROOT, 'components', 'button', 'button.css'), 'utf8'));
+const buttonTags = [...buttonHtml.matchAll(/<button[^>]*>/g)].map(([tag]) => tag);
+for (const variant of ['primary', 'secondary', 'ghost', 'danger']) {
+  const matches = buttonTags.filter((tag) => tag.includes('class="chi-btn chi-btn--' + variant + '"'));
+  if (matches.length !== 1) fail(`Button ${variant} 變體示例必須且只能有一個，實際：${matches.length}`);
+  else if (!matches[0].includes('type="button"')) fail(`Button ${variant} 必須明確指定 type="button"`);
+  for (const state of [':disabled', ':disabled:hover', ':disabled:active']) {
+    if (!buttonCss.includes('.chi-btn--' + variant + state)) fail(`Button ${variant} 缺少 disabled ${state} 穩定狀態`);
+  }
+}
+if (buttonTags.length !== 4) fail('Button 範例不得引入 closed enum 以外的按鈕或變體');
+if (!buttonCss.includes('.chi-btn:focus-visible')) fail('Button 必須提供鍵盤 focus-visible 樣式');
+if (!buttonCss.includes('.chi-btn:disabled')) fail('Button 必須提供 disabled 樣式');
+for (const [name, source] of [['header', headerHtml], ['sidebar', sidebarHtml]]) {
+  for (const [tag] of source.matchAll(/<button[^>]*>/g)) {
+    if (!tag.includes('type="button"')) fail(`${name} 所有操作控制都必須明確指定 type="button"`);
+  }
+}
+
 // 5. 斷點一致：768／1024 在 JSON、CSS、JS 三處一致；不得用 max-width 反向寫法。
 const bp = JSON.parse(readFileSync(path.join(ROOT, 'breakpoints.json'), 'utf8'));
 const widths = bp.breakpoints.map((b) => b.minWidth);
