@@ -382,8 +382,6 @@ html.chi-sidebar-open body {
   padding: 0 var(--chi-space-3);
 }
 
-
-
 /* Disabled 是穩定狀態：不可因 hover／active 顯示可互動的視覺回饋。 */
 .chi-btn--primary:disabled,
 .chi-btn--primary:disabled:hover,
@@ -408,7 +406,6 @@ html.chi-sidebar-open body {
   background: var(--chi-button-danger-background);
   border-color: var(--chi-button-danger-background);
 }
-
 /* --- base/base.css --- */
 /* chi-system base.css — 文件基礎＋表單／Tabs／卡片／清單／表格／徽章／對話框／資料狀態
  * 來源：chi-system-old 的 components.css（HEAD 436f028）第 1–56 行與第 161–719 行，
