@@ -346,9 +346,45 @@ html.chi-sidebar-open body {
   gap: var(--chi-space-2);
   min-height: var(--chi-size-control);
   padding: 0 var(--chi-space-4);
-  font-size: va
-[... 1235 bytes omitted ...]
-chi-button-danger-background);
+  font-size: var(--chi-font-size-body-small);
+  font-weight: var(--chi-font-weight-label);
+  line-height: var(--chi-font-line-height-body-small);
+  border: var(--chi-base-border-default-width) solid var(--chi-color-border-subtle);
+  border-radius: var(--chi-radius-md);
+  cursor: pointer;
+}
+.chi-btn:focus-visible {
+  outline: var(--chi-focus-width) solid var(--chi-color-focus-ring);
+  outline-offset: var(--chi-focus-offset);
+}
+.chi-btn:disabled {
+  color: var(--chi-color-text-disabled);
+  cursor: not-allowed;
+}
+.chi-btn--primary {
+  background: var(--chi-button-primary-background);
+  color: var(--chi-button-primary-text);
+  border-color: var(--chi-button-primary-background);
+}
+.chi-btn--primary:hover {
+  background: var(--chi-button-primary-background-hover);
+}
+.chi-btn--primary:active {
+  background: var(--chi-button-primary-background-active);
+}
+.chi-btn--secondary {
+  background: var(--chi-button-secondary-background);
+  color: var(--chi-button-secondary-text);
+}
+.chi-btn--ghost {
+  background: var(--chi-button-ghost-background);
+  color: var(--chi-button-ghost-text);
+  border-color: transparent;
+}
+.chi-btn--danger {
+  background: var(--chi-button-danger-background);
+  color: var(--chi-button-danger-text);
+  border-color: var(--chi-button-danger-background);
 }
 .chi-btn--sm {
   min-height: var(--chi-size-control-compact);
