@@ -28,6 +28,87 @@ if (!browser) {
   process.exit(0);
 }
 
+const browserFixture = `
+<div id="chi-browser-smoke-fixture" style="position:fixed;left:0;top:0;opacity:0.01;z-index:2147483647">
+  <div data-chi-tabs id="smoke-tabs">
+    <div role="tablist" aria-label="Smoke tabs">
+      <button id="smoke-tab-one" type="button" role="tab" aria-controls="smoke-panel-one" aria-selected="true" tabindex="0">One</button>
+      <button id="smoke-tab-two" type="button" role="tab" aria-controls="smoke-panel-two" aria-selected="false" tabindex="-1">Two</button>
+    </div>
+    <section id="smoke-panel-one" role="tabpanel" aria-labelledby="smoke-tab-one">One panel</section>
+    <section id="smoke-panel-two" role="tabpanel" aria-labelledby="smoke-tab-two" hidden>Two panel</section>
+  </div>
+  <button id="smoke-dialog-opener" type="button" data-chi-dialog-open="smoke-dialog">Open dialog</button>
+  <dialog id="smoke-dialog" class="chi-dialog" aria-labelledby="smoke-dialog-title">
+    <h2 id="smoke-dialog-title" class="chi-dialog__title" tabindex="-1" data-chi-dialog-initial-focus>Smoke dialog</h2>
+    <button id="smoke-dialog-close" type="button" data-chi-dialog-close>Close dialog</button>
+  </dialog>
+</div>
+<script>
+(() => {
+  const results = [];
+  const check = (name, ok) => results.push(name + ':' + (ok ? 'PASS' : 'FAIL'));
+  const run = async () => {
+    try {
+      const themeButton = document.querySelector('[data-chi-theme-toggle]');
+      const oldMode = window.ChiTheme && window.ChiTheme.getMode();
+      if (themeButton && window.ChiTheme) {
+        themeButton.click();
+        const nextMode = window.ChiTheme.getMode();
+        check('theme-cycle', nextMode !== oldMode && themeButton.getAttribute('aria-label').includes('目前色彩模式'));
+      } else check('theme-cycle', false);
+
+      const root = document.documentElement;
+      const originalLayout = root.getAttribute('data-chi-layout');
+      root.setAttribute('data-chi-layout', 'sidebar');
+      const sidebar = document.querySelector('.chi-sidebar');
+      const mobile = window.innerWidth < 768;
+      const trigger = mobile
+        ? document.querySelector('.chi-mobile-header [data-chi-sidebar-toggle]')
+        : document.querySelector('.chi-sidebar__top [data-chi-sidebar-toggle]');
+      if (sidebar && trigger && window.ChiSidebar) {
+        trigger.focus();
+        if (mobile) {
+          trigger.click();
+          const opened = sidebar.classList.contains('mobile-open') && trigger.getAttribute('aria-expanded') === 'true' && sidebar.getAttribute('aria-hidden') === 'false';
+          document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+          check('sidebar-drawer', opened && !sidebar.classList.contains('mobile-open') && document.activeElement === trigger);
+        } else {
+          const before = window.ChiSidebar.isCollapsed();
+          trigger.click();
+          const after = window.ChiSidebar.isCollapsed();
+          const toggled = after !== before && trigger.getAttribute('aria-expanded') === String(!after);
+          trigger.click();
+          check('sidebar-collapse', toggled && window.ChiSidebar.isCollapsed() === before);
+        }
+      } else check(mobile ? 'sidebar-drawer' : 'sidebar-collapse', false);
+      root.setAttribute('data-chi-layout', originalLayout || 'header');
+
+      const firstTab = document.getElementById('smoke-tab-one');
+      const secondTab = document.getElementById('smoke-tab-two');
+      firstTab.focus();
+      firstTab.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true, cancelable: true }));
+      check('tabs-keyboard', secondTab.getAttribute('aria-selected') === 'true' && !document.getElementById('smoke-panel-two').hidden && document.activeElement === secondTab);
+
+      const opener = document.getElementById('smoke-dialog-opener');
+      const dialog = document.getElementById('smoke-dialog');
+      const initialFocus = document.getElementById('smoke-dialog-title');
+      opener.click();
+      const opened = dialog.open && document.activeElement === initialFocus;
+      const closedEvent = new Promise((resolve) => dialog.addEventListener('close', resolve, { once: true }));
+      document.getElementById('smoke-dialog-close').click();
+      await closedEvent;
+      check('dialog-focus-return', opened && !dialog.open && document.activeElement === opener);
+    } catch (error) {
+      results.push('exception:' + String(error && error.message || error));
+    }
+    document.documentElement.setAttribute('data-chi-browser-smoke', results.join(';'));
+  };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => setTimeout(run, 0), { once: true });
+  else setTimeout(run, 0);
+})();
+</script>`;
+
 const server = createServer((request, response) => {
   const pathname = decodeURIComponent(new URL(request.url, 'http://localhost').pathname);
   let target = path.resolve(DIST, '.' + pathname);
@@ -38,7 +119,11 @@ const server = createServer((request, response) => {
   try {
     if (statSync(target).isDirectory()) target = path.join(target, 'index.html');
     response.setHeader('content-type', mimeTypes[path.extname(target)] || 'application/octet-stream');
-    response.end(readFileSync(target));
+    let body = readFileSync(target);
+    if (path.extname(target) === '.html' && target.startsWith(path.join(DIST, 'sites') + path.sep)) {
+      body = Buffer.from(body.toString('utf8').replace('</body>', browserFixture + '</body>'));
+    }
+    response.end(body);
   } catch {
     response.writeHead(404).end();
   }
@@ -69,7 +154,7 @@ try {
       const child = spawn(browser, [
         '--headless=new', '--no-sandbox', '--disable-gpu', '--disable-dev-shm-usage',
         '--no-first-run', '--no-default-browser-check', '--enable-logging=stderr',
-        '--log-level=0', '--virtual-time-budget=1800', `--window-size=${viewport.size}`,
+        '--log-level=0', '--virtual-time-budget=2500', `--window-size=${viewport.size}`,
         '--dump-dom', url,
       ], { env: { ...process.env, DISPLAY: '' } });
       let stdout = '';
@@ -85,22 +170,25 @@ try {
       });
 
       const layout = stdout.match(/<html\b[^>]*data-chi-layout="([^"]+)"/)?.[1];
+      const interaction = stdout.match(/data-chi-browser-smoke="([^"]*)"/)?.[1];
       const browserErrors = stderr.split('\n').filter((line) => /ERROR:CONSOLE|Failed to load resource|net::ERR_/i.test(line));
       const issues = [];
       if (exitCode !== 0) issues.push(`Chrome exited with ${exitCode}`);
       if (!stdout.includes('</html>')) issues.push('DOM did not finish loading');
       if (layout !== expectedLayout) issues.push(`expected layout ${expectedLayout}, received ${layout || 'missing'}`);
+      if (!interaction) issues.push('browser interaction harness did not finish');
+      else issues.push(...interaction.split(';').filter((result) => !result.endsWith(':PASS')).map((result) => `interaction ${result}`));
       if (browserErrors.length) issues.push(...browserErrors);
       if (issues.length) failures.push({ site: siteId, viewport: viewport.name, issues });
       else passed++;
-      console.log(`${issues.length ? 'FAIL' : 'PASS'} ${siteId} ${viewport.name}`);
+      console.log(`${issues.length ? 'FAIL' : 'PASS'} ${siteId} ${viewport.name}${interaction ? ` [${interaction}]` : ''}`);
     }
   }
 } finally {
   await new Promise((resolve) => server.close(resolve));
 }
 
-console.log(`Chrome smoke: ${passed}/${sites.length * viewports.length} site/viewport combinations passed.`);
+console.log(`Chrome interaction smoke: ${passed}/${sites.length * viewports.length} site/viewport combinations passed (theme, sidebar, tabs, dialog).`);
 if (failures.length) {
   for (const failure of failures) console.error(JSON.stringify(failure));
   process.exitCode = 1;

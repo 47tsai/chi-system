@@ -40,8 +40,8 @@ logo/
 npm run build     # 產生 Token／元件 CSS、共用模板、預覽清單、dist/logo 與 dist/sites/<站>/index.html
 npm run validate  # Token schema／解析、對比、硬編碼、站設定、模板與站點輸出、dist 產物清單、斷點
 npm run test      # Node.js 行為、Theme／Sidebar／Tabs／Dialog、Header／Footer、Button／表單與 HTML 語意測試
-npm run test:browser # Chrome 可用時，六站桌機／手機 headless smoke test
-npm run check     # build + validate + test + browser smoke + 生成物 diff
+npm run test:browser # Chrome 可用時，六站桌機／手機載入與 Theme／Sidebar／Tabs／Dialog 互動測試
+npm run check     # build + validate + unit tests + browser interaction smoke + 生成物 diff
 ```
 
 新站起步：新增 `tokens/brands/<站>.tokens.json` 與 `sites/<站>.json`，再執行 `npm run build`。站設定可選 `"layout": "header"` 或 `"layout": "sidebar"`，省略時預設 `header`。

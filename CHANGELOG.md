@@ -13,6 +13,7 @@
 - 新增無依賴 headless Chrome smoke test，於可用環境驗證六站桌機／手機載入與 console。
 - Semantic Token 必須實際被元件 CSS 或元件 Token 別名使用，避免語意層出現無消費者的孤兒 Token。
 - 修正共用殼 Runtime 載入順序：Theme／Sidebar 移至樣式表前同步載入，Tabs／Dialog 保持 `defer`；新增驗證防止回歸。
+- 擴充 headless Chrome 測試為真實互動驗收：驗證主題循環、側欄桌機收合／手機抽屜、Tabs 鍵盤切換，以及 Dialog 焦點進入與返回。
 
 - 新增 DTCG Token schema 驗證，明確檢查 `$type`、`$value`、別名括號格式。
 - 統一本地與 CI 驗收入口為 `npm run check`。
