@@ -137,7 +137,7 @@ for (const [, source] of cssSources) {
 }
 const unresolvedProperties = new Map();
 for (const [file, source] of cssSources) {
-  for (const match of source.matchAll(/var\\(\\s*(--[\\w-]+)\\s*(,)?/g)) {
+  for (const match of source.matchAll(/var\(\s*(--[\w-]+)\s*(,)?/g)) {
     if (!customProperties.has(match[1]) && !match[2]) {
       if (!unresolvedProperties.has(match[1])) unresolvedProperties.set(match[1], new Set());
       unresolvedProperties.get(match[1]).add(path.relative(ROOT, file));
