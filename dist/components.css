@@ -345,9 +345,26 @@ html.chi-sidebar-open body {
   cursor: pointer;
 }
 .chi-btn:focus-visible {
-  outline: var(--chi-focus-
-[... 579 bytes omitted ...]
-background);
+  outline: var(--chi-focus-width) solid var(--chi-color-focus-ring);
+  outline-offset: var(--chi-focus-offset);
+}
+.chi-btn:disabled {
+  color: var(--chi-color-text-disabled);
+  cursor: not-allowed;
+}
+.chi-btn--primary {
+  background: var(--chi-button-primary-background);
+  color: var(--chi-button-primary-text);
+  border-color: var(--chi-button-primary-background);
+}
+.chi-btn--primary:hover {
+  background: var(--chi-button-primary-background-hover);
+}
+.chi-btn--primary:active {
+  background: var(--chi-button-primary-background-active);
+}
+.chi-btn--secondary {
+  background: var(--chi-button-secondary-background);
   color: var(--chi-button-secondary-text);
 }
 .chi-btn--ghost {
@@ -364,6 +381,7 @@ background);
   min-height: var(--chi-size-control-compact);
   padding: 0 var(--chi-space-3);
 }
+
 
 /* Disabled 是穩定狀態：不可因 hover／active 顯示可互動的視覺回饋。 */
 .chi-btn--primary:disabled,
