@@ -4,16 +4,21 @@
 > 設計理由只在 Token 的 `$description` 與本文件原則節，不另開文件。
 > 舊版（47tsai/chi-system-old，HEAD 436f028）唯讀參考，不再改動。
 
-## 0. 優先級（衝突時上層勝，下層照改，絕不反向）
+## 0. 權威來源與優先級
 
-1. 生成物（dist/tokens.css 等，數值）
-2. 元件原始碼＋props 型別（行為）
-3. 元件文件（意圖）
-4. 本文件（理由）
-5. 截圖／示範（僅供說明）
+本系統採「來源檔為權威、生成物為輸出」原則。生成物可用來驗證實際輸出，
+但不得反向覆蓋來源檔；發現差異時，應修正來源並重新生成。
 
-`draft`／`preview` 永遠不覆蓋 `stable`。沒有成熟系統公開發布過優先級階梯，
-這條是本系統自己定的（見研究報告 §1.2）。
+1. 本文件（系統原則、架構與公開契約）
+2. `tokens/*.tokens.json`（Token 數值唯一來源）
+3. `components/`、`templates/*.template.html`、`scripts/`（元件、模板與建置行為的唯一實作來源）
+4. `sites/*.json`、`breakpoints.json`（站點與斷點設定來源）
+5. 生成物（`dist/*`、`templates/base.html`、`preview/sites.json`），只供執行與驗證，不得手改
+6. 文件中的示例、截圖與預覽畫面，只供說明，不覆蓋上述來源
+
+不同領域的來源各自負責其範圍；若跨領域規則衝突，以本文件定義的契約為準，
+並同步修正受影響的來源檔。新增元件仍遵循 draft → preview → stable；
+`draft`／`preview` 永遠不覆蓋 `stable`。
 
 ## 1. 目的
 
