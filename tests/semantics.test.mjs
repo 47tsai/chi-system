@@ -63,3 +63,19 @@ test('Dialog example has a named native dialog and matching open/close controls'
   assert.match(examples, /data-chi-dialog-close/);
   assert.match(examples, /id="example-dialog-title"/);
 });
+
+
+test('Badge variants and all four data states have semantic examples', () => {
+  for (const variant of ['success', 'warning', 'danger', 'info']) {
+    assert.match(examples, new RegExp(`class="chi-badge chi-badge--${variant}"`));
+  }
+  for (const state of ['loading', 'empty', 'error', 'success']) {
+    assert.match(examples, new RegExp(`id="example-state-${state}-title"`));
+  }
+  assert.match(examples, /class="chi-spinner" aria-hidden="true"/);
+  assert.match(examples, /class="chi-skeleton" aria-hidden="true"/);
+  assert.match(examples, /class="chi-state" role="alert" aria-labelledby="example-state-error-title"/);
+  assert.match(read('../components/base/base.css'), /\\.chi-spinner\\s*\\{\\s*animation:\\s*none/s);
+  assert.match(validator, /徽章範例必須涵蓋四種語意狀態/);
+  assert.match(validator, /資料狀態範例必須涵蓋 loading、empty、error、success/);
+});

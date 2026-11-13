@@ -445,6 +445,24 @@ else {
   if (!new RegExp(`data-chi-dialog-open="${dialogId || '__missing__'}"`).test(examplesHtml)) fail('Dialog 必須有對應的開啟控制項');
   if (!/data-chi-dialog-close/.test(dialogExample[2])) fail('Dialog 必須有關閉控制項');
 }
+const badgeExamples = [...examplesHtml.matchAll(/<span class="chi-badge chi-badge--(success|warning|danger|info)"><span class="chi-badge__dot" aria-hidden="true"><\/span>([^<]+)<\/span>/g)];
+if (badgeExamples.length !== 4 || new Set(badgeExamples.map(([, variant]) => variant)).size !== 4 || badgeExamples.some(([, , label]) => !label.trim())) fail('徽章範例必須涵蓋四種語意狀態，並提供裝飾性 dot 與可見文字');
+const stateExamples = [...examplesHtml.matchAll(/<section class="chi-state"([^>]*)>([\s\S]*?)<\/section>/g)];
+if (stateExamples.length !== 4) fail('資料狀態範例必須涵蓋 loading、empty、error、success');
+const stateByName = new Map(stateExamples.map(([, attrs, contents]) => {
+  const name = contents.match(/id="example-state-(loading|empty|error|success)-title"/)?.[1];
+  return [name, { attrs, contents }];
+}));
+for (const name of ['loading', 'empty', 'error', 'success']) {
+  const state = stateByName.get(name);
+  const role = name === 'error' ? 'alert' : 'status';
+  if (!state || !state.attrs.includes(`role="${role}"`) || !state.attrs.includes(`aria-labelledby="example-state-${name}-title"`)) fail(`資料狀態 ${name} 必須有正確的 role 與可存取標題`);
+  if (state && (!state.contents.includes('class="chi-state__title"') || !state.contents.includes('class="chi-state__desc"'))) fail(`資料狀態 ${name} 必須提供標題與描述`);
+  if (name === 'loading' && (!state?.attrs.includes('aria-busy="true"') || !state.contents.includes('class="chi-spinner"') || !state.contents.includes('class="chi-skeleton"'))) fail('Loading 狀態必須標示 aria-busy 並提供 spinner／skeleton');
+  if (name !== 'loading' && !state?.contents.includes('class="chi-state__icon"')) fail(`資料狀態 ${name} 必須提供裝飾圖示`);
+  if (name === 'error' && !state?.contents.includes('class="chi-state__action"')) fail('Error 狀態必須提供可採取的恢復操作');
+}
+
 const invalidFields = [...examplesHtml.matchAll(/<div\b([^>]*class="[^"]*chi-field[^"]*"[^>]*)>([\s\S]*?)<\/div>/g)];
 for (const [, attrs, contents] of invalidFields) {
   if (/aria-invalid="true"/.test(contents) && !/chi-field--error/.test(attrs)) fail('aria-invalid=true 的欄位必須套用 chi-field--error');
