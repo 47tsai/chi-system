@@ -88,10 +88,10 @@
     for (var i = 0; i < buttons.length; i++) {
       var button = buttons[i];
       setIcon(button, mode);
-      button.setAttribute(
-        'aria-label',
-        '目前色彩模式：' + LABELS[mode] + '，點擊切換'
-      );
+      var label = '目前色彩模式：' + LABELS[mode] + '，點擊切換';
+      button.setAttribute('aria-label', label);
+      // 原生 title 也同步，避免滑鼠提示仍停留在初始的泛用文案。
+      button.setAttribute('title', label);
     }
   }
 
