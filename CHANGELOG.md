@@ -18,6 +18,7 @@
 - Chrome 驗收擴充為預設與減少動態兩種偏好模式，檢查動態偏好媒體查詢、元件轉場／Spinner 動畫停用，以及 Focus-visible 樣式規則仍存在於生成 CSS。
 - 新增獨立 Chrome DevTools Protocol 鍵盤驗收：六站桌機／手機共 12 組情境實際送出 Tab、ArrowRight、Escape，確認焦點落點、`:focus-visible`、Tabs 選取／面板同步，以及 Dialog 關閉與焦點返回。
 - Dialog 的瀏覽器 close-control smoke 改為檢查同步關閉結果；原生 Escape、close event 與焦點返回由獨立 CDP 鍵盤測試驗證。
+- 新增 Sidebar 手機抽屜真實鍵盤驗收：六站逐一以 Tab／Shift+Tab 測試焦點循環、抽屜外焦點回收與 Escape 關閉／焦點返回。
 
 - 新增 DTCG Token schema 驗證，明確檢查 `$type`、`$value`、別名括號格式。
 - 統一本地與 CI 驗收入口為 `npm run check`。

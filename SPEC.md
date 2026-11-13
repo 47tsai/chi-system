@@ -125,7 +125,7 @@ CI 驗真的渲染依據，不是檔案在不在（舊系統三支腳本全綠�
 5. 網站設定 schema（欄位、型別、logo 檔案存在；預覽清單與 sites 一致）
 6. 對比計算（每品牌×淺深色：一般文字 4.5:1、大字與非文字 UI 3:1）
 7. 斷點一致（768／1024 在 JSON、CSS、JS 三處一致）
-8. 站點輸出煙霧測試（每份站設定都產生完整 index.html；placeholder 全數填入、品牌與 Logo 路徑正確且都位於 dist 根目錄內、共用 CSS／JS 路徑存在）。所有本機 CSS／JS／Logo 路徑須通過靜態 HTTP 200 與 MIME smoke test；Chrome 可用時另以 headless 桌機／手機載入六站並檢查 console；Chrome 可用時，另驗證預設／減少動態偏好、Focus-visible CSS 合約與元件互動；另以 Chrome DevTools Protocol 注入真實 Tab、ArrowRight、Escape 鍵，於六站桌機／手機共 12 組情境確認焦點落點、`:focus-visible`、Tabs 選取與面板同步，以及 Dialog 關閉和焦點返回。完整元件鍵盤流程及視覺回歸仍列為 v1.1 工作。
+8. 站點輸出煙霧測試（每份站設定都產生完整 index.html；placeholder 全數填入、品牌與 Logo 路徑正確且都位於 dist 根目錄內、共用 CSS／JS 路徑存在）。所有本機 CSS／JS／Logo 路徑須通過靜態 HTTP 200 與 MIME smoke test；Chrome 可用時另以 headless 桌機／手機載入六站並檢查 console；Chrome 可用時，另驗證預設／減少動態偏好、Focus-visible CSS 合約與元件互動；另以 Chrome DevTools Protocol 注入真實 Tab、ArrowRight、Escape 鍵，於六站桌機／手機共 12 組情境確認焦點落點、`:focus-visible`、Tabs 選取與面板同步，以及 Dialog 關閉和焦點返回；另於六站手機版實際驗證 Sidebar 抽屜的 Tab／Shift+Tab 焦點循環、外部焦點回收與 Escape 關閉。完整元件鍵盤流程及視覺回歸仍列為 v1.1 工作。
 9. axe／Playwright 計算樣式／視覺回歸：列為 v1.1（Storybook 未引入前，以上 8 道為 v1.0 門檻）
 
 ## 9. 版本
