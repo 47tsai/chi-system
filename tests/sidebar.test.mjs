@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import vm from 'node:vm';
 
-const source = readFileSync(new URL('../dist/sidebar.js', import.meta.url), 'utf8');
+const source = readFileSync(new URL('../components/sidebar/sidebar.js', import.meta.url), 'utf8');
 
 class Element {
   constructor(tag = 'DIV') {

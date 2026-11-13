@@ -24,7 +24,7 @@ tokens/primitives.tokens.json  tokens/semantic.tokens.json
 tokens/semantic-dark.tokens.json  tokens/components.tokens.json
 tokens/brands/<站>.tokens.json
 sites/<站>.json
-components/<header|footer|sidebar|button|tabs|base>/（base/examples.html 為語意範例）
+components/<header|footer|sidebar|button|tabs|base|theme|dialog>/（base/examples.html 為語意範例；Theme／Sidebar／Tabs／Dialog JS 皆有來源檔）
 templates/base.template.html  →  templates/base.html（生成物）
 dist/tokens.css  dist/components.css  dist/theme.js  dist/sidebar.js  dist/tabs.js  dist/dialog.js
 dist/sites/<站>/index.html（建置產物）
@@ -39,7 +39,7 @@ logo/
 ```sh
 npm run build     # 產生 Token／元件 CSS、共用模板、預覽清單與 dist/sites/<站>/index.html
 npm run validate  # Token schema／解析、對比、硬編碼、站設定、模板與站點輸出、斷點
-npm run test      # Node.js 行為、Button／表單／Tabs／Dialog、HTML 語意契約與鍵盤焦點回歸測試
+npm run test      # Node.js 行為、Theme／Sidebar／Tabs／Dialog、Button／表單、HTML 語意契約與鍵盤焦點回歸測試
 npm run check     # build + validate + test + 生成物 diff 必須為空
 ```
 

@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import vm from 'node:vm';
 
-const source = readFileSync(new URL('../dist/theme.js', import.meta.url), 'utf8');
+const source = readFileSync(new URL('../components/theme/theme.js', import.meta.url), 'utf8');
 
 function createTheme({ stored = null, dark = false, storageThrows = false, loading = false } = {}) {
   const attrs = new Map();

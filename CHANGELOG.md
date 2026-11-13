@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- Theme／Sidebar runtime 來源收回 `components/`，由建置器產生 `dist/`；CI 驗證 Theme／Sidebar／Tabs／Dialog 四份 runtime 來源與輸出一致。
+- Dialog 使用原生 modal dialog，管理初始焦點與關閉後焦點返回；補足 Tabs 鍵盤行為與表單／元件語意回歸測試。
+- 補齊 Badge 四種狀態與 Loading／Empty／Error／Success 語意範例及驗證。
+- 元件 Token 必須被 CSS 使用；透明度、動效時間、字重與遮罩色改由 Token 管理，禁止硬編碼檢查同步擴充。
+
 - 新增 DTCG Token schema 驗證，明確檢查 `$type`、`$value`、別名括號格式。
 - 統一本地與 CI 驗收入口為 `npm run check`。
 - 新增每站共用殼起始頁生成：`dist/sites/<站>/index.html`，並驗證 placeholder、品牌、Logo 與共用資產路徑。
@@ -29,5 +34,4 @@
 - CI：Token 解析、對比計算（每品牌×淺深色）、禁硬編碼、網站設定 schema、斷點一致、生成物 diff。
 - 定案值沿用舊版：六站識別色、語意色（Adobe Spectrum 900 階）、斷點 768／1024、
   主題 key chi-theme-mode、logo 站點 ID 命名、範本佔位規則。
-- 已知缺口（v1.1）：對話框焦點管理程式、axe／Playwright 計算樣式／視覺回歸、
-  日期選擇等未列入基礎示例表的元件。
+- 已知缺口（v1.1）：axe／Playwright 計算樣式／視覺回歸、日期選擇等未列入基礎示例表的元件。

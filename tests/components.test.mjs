@@ -105,3 +105,13 @@ test('CSS design-state values are tokenized instead of hard-coded', () => {
   assert.match(read('../scripts/validate.mjs'), /Number Token 必須是有限數值/);
   assert.match(read('../scripts/validate.mjs'), /Duration Token 必須使用 ms 或 s/);
 });
+
+
+test('Theme, Sidebar, Tabs, and Dialog runtime outputs are generated from component sources', () => {
+  for (const [source, output] of [
+    ['../components/theme/theme.js', '../dist/theme.js'],
+    ['../components/sidebar/sidebar.js', '../dist/sidebar.js'],
+    ['../components/tabs/tabs.js', '../dist/tabs.js'],
+    ['../components/dialog/dialog.js', '../dist/dialog.js'],
+  ]) assert.equal(read(source), read(output), `${output} must be generated from ${source}`);
+});
