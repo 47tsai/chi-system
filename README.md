@@ -39,7 +39,7 @@ logo/
 ```sh
 npm run build     # 產生 Token／元件 CSS、共用模板、預覽清單與 dist/sites/<站>/index.html
 npm run validate  # Token schema／解析、對比、硬編碼、站設定、模板與站點輸出、斷點
-npm run test      # Node.js 行為與元件契約回歸測試
+npm run test      # Node.js 行為、Button 狀態、導覽鍵盤焦點與元件契約回歸測試
 npm run check     # build + validate + test + 生成物 diff 必須為空
 ```
 
