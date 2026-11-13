@@ -36,7 +36,7 @@
   </div>
   <nav class="chi-sidebar__nav" aria-label="本站導覽">{{slots.nav}}</nav>
   <div class="chi-sidebar__bottom">
-    <button class="chi-sidebar__theme" type="button" data-chi-theme-toggle aria-label="切換主題" title="切換主題">◐</button>
+    <button class="chi-sidebar__theme" type="button" data-chi-theme-toggle aria-label="切換主題" title="切換主題"><span aria-hidden="true" data-chi-theme-icon>◐</span></button>
     <span class="chi-sidebar__version" data-chi-version>版本 {{version}}</span>
   </div>
 </aside>
@@ -59,7 +59,7 @@
   <div class="chi-header__actions">
     {{slots.actions}}
     <button class="chi-header__theme" type="button" data-chi-theme-toggle aria-label="切換主題" title="切換主題">
-      <span aria-hidden="true">◐</span>
+      <span aria-hidden="true" data-chi-theme-icon>◐</span>
     </button>
   </div>
 </header>
