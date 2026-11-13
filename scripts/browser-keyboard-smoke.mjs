@@ -96,6 +96,33 @@ try {
           button.style.left = '8px';
           button.style.top = '8px';
           document.body.prepend(button);
+          const tabs = document.createElement('div');
+          tabs.id = 'chi-cdp-tabs';
+          tabs.setAttribute('data-chi-tabs', '');
+          const tablist = document.createElement('div');
+          tablist.setAttribute('role', 'tablist');
+          tablist.setAttribute('aria-label', 'Keyboard tabs');
+          for (const [id, panelId, label, selected] of [['chi-cdp-tab-one', 'chi-cdp-panel-one', 'One', true], ['chi-cdp-tab-two', 'chi-cdp-panel-two', 'Two', false]]) {
+            const tab = document.createElement('button');
+            tab.id = id; tab.type = 'button'; tab.setAttribute('role', 'tab');
+            tab.setAttribute('aria-controls', panelId); tab.setAttribute('aria-selected', String(selected));
+            tab.tabIndex = selected ? 0 : -1; tab.textContent = label; tablist.append(tab);
+            const panel = document.createElement('section');
+            panel.id = panelId; panel.setAttribute('role', 'tabpanel'); panel.setAttribute('aria-labelledby', id);
+            panel.hidden = !selected; panel.textContent = label + ' panel'; tabs.append(panel);
+          }
+          tabs.prepend(tablist);
+          document.body.append(tabs);
+          window.ChiTabs?.init(tabs);
+          const dialogOpener = document.createElement('button');
+          dialogOpener.id = 'chi-cdp-dialog-opener'; dialogOpener.type = 'button'; dialogOpener.textContent = 'Open dialog';
+          const dialog = document.createElement('dialog');
+          dialog.id = 'chi-cdp-dialog'; dialog.className = 'chi-dialog';
+          dialog.setAttribute('aria-labelledby', 'chi-cdp-dialog-title');
+          const title = document.createElement('h2'); title.id = 'chi-cdp-dialog-title'; title.tabIndex = -1; title.textContent = 'Keyboard dialog';
+          const closeButton = document.createElement('button'); closeButton.type = 'button'; closeButton.textContent = 'Close';
+          dialog.append(title, closeButton); document.body.append(dialogOpener, dialog);
+          window.ChiDialog?.init(dialog);
           for (const item of document.querySelectorAll('a[href], button, input, select, textarea, [tabindex]')) {
             if (item !== button) item.setAttribute('tabindex', '-1');
           }
@@ -105,25 +132,55 @@ try {
         if (!setup.result.value) throw new Error('Could not install keyboard fixture');
         await send('Input.dispatchKeyEvent', { type: 'keyDown', key: 'Tab', code: 'Tab', windowsVirtualKeyCode: 9, nativeVirtualKeyCode: 9 });
         await send('Input.dispatchKeyEvent', { type: 'keyUp', key: 'Tab', code: 'Tab', windowsVirtualKeyCode: 9, nativeVirtualKeyCode: 9 });
-        const check = await send('Runtime.evaluate', { expression: `(() => {
+        const focusCheck = await send('Runtime.evaluate', { expression: `(() => {
+          const target = document.getElementById('chi-cdp-keyboard-target');
+          const style = getComputedStyle(target);
+          return { focused: document.activeElement === target, focusVisible: target.matches(':focus-visible'), outlineStyle: style.outlineStyle, outlineWidth: style.outlineWidth, outlineColor: style.outlineColor };
+        })()`, returnByValue: true });
+        await send('Runtime.evaluate', { expression: `document.getElementById('chi-cdp-tab-one').focus()` });
+        await send('Input.dispatchKeyEvent', { type: 'keyDown', key: 'ArrowRight', code: 'ArrowRight', windowsVirtualKeyCode: 39, nativeVirtualKeyCode: 39 });
+        await send('Input.dispatchKeyEvent', { type: 'keyUp', key: 'ArrowRight', code: 'ArrowRight', windowsVirtualKeyCode: 39, nativeVirtualKeyCode: 39 });
+        const tabsCheck = await send('Runtime.evaluate', { expression: `(() => ({
+          tabsFocused: document.activeElement?.id === 'chi-cdp-tab-two',
+          tabsSelected: document.getElementById('chi-cdp-tab-two')?.getAttribute('aria-selected') === 'true',
+          tabsPanelVisible: !document.getElementById('chi-cdp-panel-two')?.hidden
+        }))()`, returnByValue: true });
+        await send('Runtime.evaluate', { expression: `window.ChiDialog.open(document.getElementById('chi-cdp-dialog'), document.getElementById('chi-cdp-dialog-opener'))` });
+        await send('Input.dispatchKeyEvent', { type: 'keyDown', key: 'Escape', code: 'Escape', windowsVirtualKeyCode: 27, nativeVirtualKeyCode: 27 });
+        await send('Input.dispatchKeyEvent', { type: 'keyUp', key: 'Escape', code: 'Escape', windowsVirtualKeyCode: 27, nativeVirtualKeyCode: 27 });
+        const closeCheck = await send('Runtime.evaluate', { expression: `(() => {
+          const dialog = document.getElementById('chi-cdp-dialog');
+          return new Promise((resolve) => {
+            let frames = 0;
+            const poll = () => {
+              if (!dialog.open && document.activeElement.id === 'chi-cdp-dialog-opener') resolve(true);
+              else if (frames++ >= 180) resolve(false);
+              else requestAnimationFrame(poll);
+            };
+            requestAnimationFrame(poll);
+            setTimeout(() => resolve(false), 5000);
+          });
+        })()`, awaitPromise: true, returnByValue: true });
+        const dialogFocusRestored = closeCheck.result.value;
+        const details = await send('Runtime.evaluate', { expression: `(() => {
           const target = document.getElementById('chi-cdp-keyboard-target');
           const style = getComputedStyle(target);
           return {
-            focused: document.activeElement === target,
+            focused: document.activeElement === document.getElementById('chi-cdp-dialog-opener'),
             focusVisible: target.matches(':focus-visible'),
             outlineStyle: style.outlineStyle,
             outlineWidth: style.outlineWidth,
             outlineColor: style.outlineColor,
             activeId: document.activeElement?.id,
-            activeTag: document.activeElement?.tagName,
-            href: location.href
+            href: location.href,
+            dialogClosed: !document.getElementById('chi-cdp-dialog')?.open
           };
         })()`, returnByValue: true });
-        const result = check.result.value;
-        const ok = result.focused && result.focusVisible && result.outlineStyle !== 'none' && result.outlineWidth !== '0px';
+        const result = { ...details.result.value, ...tabsCheck.result.value, ...focusCheck.result.value, dialogFocusRestored };
+        const ok = result.focused && result.focusVisible && result.outlineStyle !== 'none' && result.outlineWidth !== '0px' && result.tabsFocused && result.tabsSelected && result.tabsPanelVisible && result.dialogClosed && result.dialogFocusRestored;
         if (ok) passed++;
         else failures.push({ site: siteId, viewport: viewport.name, result, stderr: stderr.slice(-1500) });
-        console.log(`${ok ? 'PASS' : 'FAIL'} ${siteId} ${viewport.name} real Tab → :focus-visible ${JSON.stringify(result)}`);
+        console.log(`${ok ? 'PASS' : 'FAIL'} ${siteId} ${viewport.name} real Tab / ArrowRight / Escape → focus-visible + Tabs + Dialog ${JSON.stringify(result)}`);
       } catch (error) {
         failures.push({ site: siteId, viewport: viewport.name, error: String(error), stderr: stderr.slice(-1500) });
         console.log(`FAIL ${siteId} ${viewport.name} ${String(error)}`);
@@ -138,7 +195,7 @@ try {
 } finally {
   await new Promise((resolve) => server.close(resolve));
 }
-console.log(`Chrome real-keyboard focus smoke: ${passed}/${sites.length * viewports.length} site/viewport combinations passed.`);
+console.log(`Chrome real-keyboard interaction smoke: ${passed}/${sites.length * viewports.length} site/viewport combinations passed.`);
 if (failures.length) {
   for (const failure of failures) console.error(JSON.stringify(failure));
   process.exitCode = 1;
