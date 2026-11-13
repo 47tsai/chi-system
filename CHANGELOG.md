@@ -11,6 +11,7 @@
 - 加入 Node 原生 HTTP 部署 smoke test，逐一請求六站入口與所有本機 CSS／JS／Logo，驗證 200 與 MIME。
 - 補足 Header 品牌可存取名稱與 Footer landmark／站名／版本的語意合約。
 - 新增無依賴 headless Chrome smoke test，於可用環境驗證六站桌機／手機載入與 console。
+- Semantic Token 必須實際被元件 CSS 或元件 Token 別名使用，避免語意層出現無消費者的孤兒 Token。
 
 - 新增 DTCG Token schema 驗證，明確檢查 `$type`、`$value`、別名括號格式。
 - 統一本地與 CI 驗收入口為 `npm run check`。

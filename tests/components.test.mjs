@@ -156,3 +156,9 @@ test('Header brand and Footer expose the documented shell semantics', () => {
   assert.match(footerCss, /border-top:\s*var\(--chi-base-border-default-width\)/);
   assert.match(read('../scripts/validate.mjs'), /Footer 不得加入跨站連結/);
 });
+
+
+test('Every semantic token is consumed by component CSS or a component-token alias', () => {
+  assert.match(read('../scripts/validate.mjs'), /Semantic Token 未被元件 CSS 或元件 Token 使用/);
+  assert.match(read('../scripts/validate.mjs'), /componentAliasReferences/);
+});

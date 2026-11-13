@@ -39,7 +39,7 @@ Foundations（原則）→ Tokens（數值）→ Components（元件）→ Patte
 
 - 三層：primitive → semantic → component。元件只讀 semantic／component，
   絕不讀 primitive、絕不寫 hex。參考：DTCG 2025.10、Material 3、Atlassian。
-  `tokens/components.tokens.json` 的每個元件 Token 都必須被元件 CSS 實際使用；未使用的元件 Token 不得保留。
+  `tokens/components.tokens.json` 的每個元件 Token 都必須被元件 CSS 實際使用；`tokens/semantic.tokens.json` 的每個 Semantic Token 都必須被元件 CSS 或元件 Token 別名使用；未使用的 Token 不得保留。
 - 支援型別：color、dimension、duration、fontFamily、fontWeight、number、shadow；number 必須是有限數值，duration 使用 ms 或 s。
 - 原始來源：tokens/*.tokens.json（DTCG 格式，`$value`／`$type` 必填，別名 `{…}`）。
   DTCG 是 Community Group Report，不是 W3C 正式標準，文件裡不稱它為「W3C 標準」。
