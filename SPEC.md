@@ -62,7 +62,7 @@ Foundations（原則）→ Tokens（數值）→ Components（元件）→ Patte
 | SPEC.md | 唯一規範 | 寫數值副本、寫修訂歷史 |
 | tokens/*.tokens.json | 數值唯一來源 | 放元件名、站名、散文理由 |
 | dist/*、templates/base.html、preview/sites.json | 生成物 | 手改 |
-| components/<Name>/ | 元件唯一實作（.html＋.css） | 站名、原始色值、複製到站裡改 |
+| components/<Name>/ | 元件唯一實作（.html／.css／.js，依元件需要） | 站名、原始色值、複製到站裡改 |
 | sites/*.json | 站設定：id、名稱、網址、品牌、logo、描述、圖示；版式 `layout` 可選 `header`／`sidebar`，預設 `header` | 設計數值、未知欄位 |
 | preview/index.html | 一個參數化預覽（?site=&theme=&layout=） | 每站一頁、示範區放真實內文 |
 
@@ -95,7 +95,7 @@ Foundations（原則）→ Tokens（數值）→ Components（元件）→ Patte
   Dialog 使用原生 `<dialog class="chi-dialog">` 與 `showModal()`；必須以 `aria-labelledby` 關聯可見標題。
   開啟按鈕使用 `data-chi-dialog-open="dialog-id"`，關閉按鈕使用 `data-chi-dialog-close`；
   可選 `data-chi-dialog-initial-focus`、`autofocus` 與 `data-chi-dialog-backdrop-close`。
-  Runtime 設定初始焦點並於 close 後返回觸發處；焦點限制、Escape 與背景 inert 由原生 modal dialog 提供。
+  Runtime 來源為 `components/dialog/dialog.js`，建置後輸出 `dist/dialog.js`；設定初始焦點並於 close 後返回觸發處；焦點限制、Escape 與背景 inert 由原生 modal dialog 提供。
   日期選擇、檔案上傳、滑桿等未列入基礎示例表的元件，使用前須另行定義。
 
 ## 7. 新增流程
@@ -118,13 +118,14 @@ Foundations（原則）→ Tokens（數值）→ Components（元件）→ Patte
 CI 驗真的渲染依據，不是檔案在不在（舊系統三支腳本全綠仍是亂的）：
 
 1. Token schema＋別名解析（每品牌全部 semantic 可解析）
-2. 生成物一致（重跑生成，diff 必須為空）
-3. 禁硬編碼（元件原始 CSS／模板來源出現未經 Token 管理的色值、尺寸、動效時間、透明度或字重即失敗；斷點由 breakpoints.json 管理；註解除外）
-4. 網站設定 schema（欄位、型別、logo 檔案存在；預覽清單與 sites 一致）
-5. 對比計算（每品牌×淺深色：一般文字 4.5:1、大字與非文字 UI 3:1）
-6. 斷點一致（768／1024 在 JSON、CSS、JS 三處一致）
-7. 站點輸出煙霧測試（每份站設定都產生完整 index.html；placeholder 全數填入、品牌與 Logo 路徑正確、共用 CSS／JS 路徑存在）。瀏覽器 console 與實際 404 驗收列為 v1.1 Playwright 工作。
-8. axe／Playwright 計算樣式／視覺回歸：列為 v1.1（Storybook 未引入前，以上 7 道為 v1.0 門檻）
+2. Runtime 生成物與 components/ 來源逐位元一致（Theme／Sidebar／Tabs／Dialog）
+3. 生成物一致（重跑生成，diff 必須為空）
+4. 禁硬編碼（元件原始 CSS／模板來源出現未經 Token 管理的色值、尺寸、動效時間、透明度或字重即失敗；斷點由 breakpoints.json 管理；註解除外）
+5. 網站設定 schema（欄位、型別、logo 檔案存在；預覽清單與 sites 一致）
+6. 對比計算（每品牌×淺深色：一般文字 4.5:1、大字與非文字 UI 3:1）
+7. 斷點一致（768／1024 在 JSON、CSS、JS 三處一致）
+8. 站點輸出煙霧測試（每份站設定都產生完整 index.html；placeholder 全數填入、品牌與 Logo 路徑正確、共用 CSS／JS 路徑存在）。瀏覽器 console 與實際 404 驗收列為 v1.1 Playwright 工作。
+9. axe／Playwright 計算樣式／視覺回歸：列為 v1.1（Storybook 未引入前，以上 8 道為 v1.0 門檻）
 
 ## 9. 版本
 
@@ -140,11 +141,11 @@ CHANGELOG.md 常備 Unreleased 區。參考：GOV.UK Frontend 版本政策。
 - Token 全部數值（六站識別色、語意色、字級、間距、圓角、陰影、版面尺寸）
   → tokens/*.tokens.json。為什麼沒問題：數值本身皆過 AA、與舊盤點實算一致。
 - logo/ 全部 16 檔 → logo/。為什麼沒問題：站點 ID 命名已定案、檔案完整。
-- theme.js → dist/theme.js。為什麼沒問題：三態邏輯已驗證；僅修正註解（版式位置、SPEC 引用）。
-- sidebar.js → dist/sidebar.js。為什麼沒問題：收合／抽屜／焦點邏輯已驗證；
-  改動：key 只剩 `<script>` 一個來源（舊報告 A06）、拿掉底部列 variant（舊報告 U01）。
+- theme.js → components/theme/theme.js → dist/theme.js。三態邏輯已驗證；dist 由建置器生成。
+- sidebar.js → components/sidebar/sidebar.js → dist/sidebar.js。收合／抽屜／焦點邏輯已驗證；
+  key 只剩 `<script>` 一個來源（舊報告 A06）、拿掉底部列 variant（舊報告 U01）。
 - components.css 第 1–56、161–719 行 → components/base/base.css。
-  為什麼沒問題：全部只引 Token；唯一改動是 Switch 滑鈕 #ffffff → Token（舊報告 A17）。
+  為什麼沒問題：全部只引 Token；後續 Token 化與無障礙修正以目前來源檔為準。
   按鈕段未搬：v2 button.css 已按 component token 重寫。
 - breakpoints.json、sites.json 的站資料 → breakpoints.json、sites/*.json。
   為什麼沒問題：斷點與站資料皆已定案；改動：sites 從一個寫死六站的陣列改為每站一檔。

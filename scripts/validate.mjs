@@ -509,7 +509,7 @@ for (const [name, source] of [['header', headerHtml], ['sidebar', sidebarHtml]])
 }
 
 // Dialog 使用原生 modal，並驗證 runtime 與文件公開契約一致。
-const dialogSource = readFileSync(path.join(ROOT, 'components', 'dialog.js'), 'utf8');
+const dialogSource = readFileSync(path.join(ROOT, 'components', 'dialog', 'dialog.js'), 'utf8');
 if (!templateSource.includes('<script src="../dist/dialog.js" defer></script>')) fail('base template 必須載入 Dialog runtime');
 for (const contract of ['dialog.chi-dialog', 'showModal()', 'data-chi-dialog-open', 'data-chi-dialog-close', 'returnFocus.set(dialog, opener || document.activeElement)', 'opener.focus()']) {
   if (!dialogSource.includes(contract)) fail(`Dialog runtime 缺少必要焦點／互動契約：${contract}`);

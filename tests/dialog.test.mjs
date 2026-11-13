@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 import vm from 'node:vm';
 
 const read = path => readFileSync(new URL(path, import.meta.url), 'utf8');
-const runtime = read('../components/dialog.js');
+const runtime = read('../components/dialog/dialog.js');
 const template = read('../templates/base.template.html');
 const spec = read('../SPEC.md');
 const builder = read('../scripts/build-site.mjs');
