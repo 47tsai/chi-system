@@ -41,4 +41,3 @@ test('Dialog contract documents accessible title association and focus options',
     assert.ok(spec.includes(contract), contract);
   }
 });
-[exit status 0]

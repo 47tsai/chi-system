@@ -33,6 +33,7 @@ export function buildSite() {
   mkdirSync(path.join(ROOT, 'dist'), { recursive: true });
   writeFileSync(path.join(ROOT, 'dist', 'components.css'), css);
   writeFileSync(path.join(ROOT, 'dist', 'tabs.js'), readFileSync(path.join(ROOT, 'components', 'tabs', 'tabs.js'), 'utf8'));
+  writeFileSync(path.join(ROOT, 'dist', 'dialog.js'), readFileSync(path.join(ROOT, 'components', 'dialog.js'), 'utf8'));
   // 預覽頁的網站清單也是生成物：由 sites/*.json 產生，預覽頁不得寫死站清單。
   const sites = readdirSync(path.join(ROOT, 'sites'))
     .filter((f) => f.endsWith('.json'))
@@ -71,7 +72,8 @@ export function buildSite() {
       .replaceAll('../dist/components.css', '../../components.css')
       .replaceAll('../dist/theme.js', '../../theme.js')
       .replaceAll('../dist/sidebar.js', '../../sidebar.js')
-      .replaceAll('../dist/tabs.js', '../../tabs.js');
+      .replaceAll('../dist/tabs.js', '../../tabs.js')
+      .replaceAll('../dist/dialog.js', '../../dialog.js');
     const htmlWithoutComments = html.replace(/<!--[\s\S]*?-->/g, '');
     if (/\{\{[^}]+\}\}/.test(htmlWithoutComments)) throw new Error('網站輸出仍有未填 placeholder：' + site.id);
     const siteDir = path.join(outputRoot, site.id);

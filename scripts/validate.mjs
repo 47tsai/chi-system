@@ -393,6 +393,15 @@ for (const [name, source] of [['header', headerHtml], ['sidebar', sidebarHtml]])
   }
 }
 
+// Dialog 使用原生 modal，並驗證 runtime 與文件公開契約一致。
+const dialogSource = readFileSync(path.join(ROOT, 'components', 'dialog.js'), 'utf8');
+if (!templateSource.includes('<script src="../dist/dialog.js" defer></script>')) fail('base template 必須載入 Dialog runtime');
+for (const contract of ['dialog.chi-dialog', 'showModal()', 'data-chi-dialog-open', 'data-chi-dialog-close', 'returnFocus.set(dialog, opener || document.activeElement)', 'opener.focus()']) {
+  if (!dialogSource.includes(contract)) fail(`Dialog runtime 缺少必要焦點／互動契約：${contract}`);
+}
+if (dialogSource.includes("addEventListener('keydown'")) fail('Dialog 不應重造原生 modal 的 Escape／焦點限制行為');
+if (!dialogSource.includes("event.target === dialog && dialog.hasAttribute('data-chi-dialog-backdrop-close')")) fail('Dialog backdrop close 必須明確 opt-in');
+
 // 5. 斷點一致：768／1024 在 JSON、CSS、JS 三處一致；不得用 max-width 反向寫法。
 const bp = JSON.parse(readFileSync(path.join(ROOT, 'breakpoints.json'), 'utf8'));
 const widths = bp.breakpoints.map((b) => b.minWidth);
