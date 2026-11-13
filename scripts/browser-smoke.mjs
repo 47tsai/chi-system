@@ -81,8 +81,21 @@ const browserFixture = `
           trigger.click();
           check('sidebar-collapse', toggled && window.ChiSidebar.isCollapsed() === before);
         }
-      } else check(mobile ? 'sidebar-drawer' : 'sidebar-collapse', false);
+        const sidebarVisible = getComputedStyle(sidebar).display !== 'none';
+        const mobileHeaderVisible = getComputedStyle(document.querySelector('.chi-mobile-header')).display !== 'none';
+        const expectedPosition = mobile ? 'fixed' : 'sticky';
+        check('sidebar-breakpoint', sidebarVisible && mobileHeaderVisible === mobile && getComputedStyle(sidebar).position === expectedPosition);
+      } else {
+        check(mobile ? 'sidebar-drawer' : 'sidebar-collapse', false);
+        check('sidebar-breakpoint', false);
+      }
       root.setAttribute('data-chi-layout', originalLayout || 'header');
+      const header = document.querySelector('.chi-header');
+      const layoutMatches = originalLayout === 'sidebar'
+        ? getComputedStyle(sidebar).display !== 'none' && getComputedStyle(header).display === 'none'
+        : getComputedStyle(header).display !== 'none' && getComputedStyle(sidebar).display === 'none';
+      check('site-layout', layoutMatches);
+      check('no-horizontal-overflow', document.documentElement.scrollWidth <= window.innerWidth && document.body.scrollWidth <= window.innerWidth);
 
       const firstTab = document.getElementById('smoke-tab-one');
       const secondTab = document.getElementById('smoke-tab-two');
@@ -188,7 +201,7 @@ try {
   await new Promise((resolve) => server.close(resolve));
 }
 
-console.log(`Chrome interaction smoke: ${passed}/${sites.length * viewports.length} site/viewport combinations passed (theme, sidebar, tabs, dialog).`);
+console.log(`Chrome interaction smoke: ${passed}/${sites.length * viewports.length} site/viewport combinations passed (theme, sidebar, responsive layout, overflow, tabs, dialog).`);
 if (failures.length) {
   for (const failure of failures) console.error(JSON.stringify(failure));
   process.exitCode = 1;
