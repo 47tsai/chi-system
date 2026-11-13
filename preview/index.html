@@ -55,6 +55,7 @@
   var theme = params.get('theme') === 'dark' ? 'dark' : 'light';
   var layout = params.get('layout') === 'sidebar' ? 'sidebar' : 'header';
   var root = document.documentElement;
+  root.setAttribute('data-chi-layout', layout);
   if (window.ChiTheme) window.ChiTheme.setPreviewMode(theme);
   else root.setAttribute('data-chi-theme', theme);
   document.getElementById('theme-select').value = theme;
@@ -78,7 +79,6 @@
         .replaceAll('{{slots.nav}}', '<a href="#" aria-current="page"><span class="chi-sidebar__icon">◆</span><span class="chi-sidebar__label">連結一</span></a><a href="#"><span class="chi-sidebar__icon">◆</span><span class="chi-sidebar__label">連結二</span></a><a href="#"><span class="chi-sidebar__icon">◆</span><span class="chi-sidebar__label">連結三</span></a>');
       // base.html 是完整文件：只取 <body> 內的殼，套進預覽頁
       var body = html.split('<body>')[1].split('</body>')[0];
-      body = body.replace('data-chi-layout="header"', 'data-chi-layout="' + layout + '"');
       document.getElementById('preview-app').innerHTML = body;
       // 元件展示也要放在共用殼內，讓 sidebar 版式能正確排列整個內容區。
       var demo = document.getElementById('preview-demo');
