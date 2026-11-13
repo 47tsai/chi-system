@@ -40,6 +40,7 @@ Foundations（原則）→ Tokens（數值）→ Components（元件）→ Patte
 - 三層：primitive → semantic → component。元件只讀 semantic／component，
   絕不讀 primitive、絕不寫 hex。參考：DTCG 2025.10、Material 3、Atlassian。
   `tokens/components.tokens.json` 的每個元件 Token 都必須被元件 CSS 實際使用；未使用的元件 Token 不得保留。
+- 支援型別：color、dimension、duration、fontFamily、fontWeight、number、shadow；number 必須是有限數值，duration 使用 ms 或 s。
 - 原始來源：tokens/*.tokens.json（DTCG 格式，`$value`／`$type` 必填，別名 `{…}`）。
   DTCG 是 Community Group Report，不是 W3C 正式標準，文件裡不稱它為「W3C 標準」。
   生成：scripts/build-tokens.mjs → dist/tokens.css（生成物，禁手改）。
@@ -118,7 +119,7 @@ CI 驗真的渲染依據，不是檔案在不在（舊系統三支腳本全綠�
 
 1. Token schema＋別名解析（每品牌全部 semantic 可解析）
 2. 生成物一致（重跑生成，diff 必須為空）
-3. 禁硬編碼（元件原始 CSS／模板來源出現 hex 或未經 Token 管理的 px 尺寸即失敗；斷點由 breakpoints.json 管理；註解除外）
+3. 禁硬編碼（元件原始 CSS／模板來源出現未經 Token 管理的色值、尺寸、動效時間、透明度或字重即失敗；斷點由 breakpoints.json 管理；註解除外）
 4. 網站設定 schema（欄位、型別、logo 檔案存在；預覽清單與 sites 一致）
 5. 對比計算（每品牌×淺深色：一般文字 4.5:1、大字與非文字 UI 3:1）
 6. 斷點一致（768／1024 在 JSON、CSS、JS 三處一致）

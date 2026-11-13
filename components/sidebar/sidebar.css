@@ -33,7 +33,7 @@
   z-index: 30;
   display: none;
   background: var(--chi-color-surface-sunken);
-  opacity: 0.6;
+  opacity: var(--chi-sidebar-scrim-opacity);
 }
 .chi-sidebar__scrim.visible {
   display: block;

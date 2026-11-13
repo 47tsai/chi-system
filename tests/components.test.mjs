@@ -93,3 +93,15 @@ test('Sidebar consumes its component-level surface and active-text tokens', () =
   assert.match(sidebarCss, /\.chi-sidebar\s*\{[^}]*background:\s*var\(--chi-sidebar-background\)/s);
   assert.match(sidebarCss, /\.chi-sidebar__nav a\[aria-current="page"\]\s*\{[^}]*color:\s*var\(--chi-sidebar-text-active\)/s);
 });
+
+
+test('CSS design-state values are tokenized instead of hard-coded', () => {
+  assert.match(baseCss, /opacity:\s*var\(--chi-base-state-disabled-opacity\)/);
+  assert.match(baseCss, /animation:\s*chi-spin var\(--chi-base-spinner-duration\)/);
+  assert.match(baseCss, /background-color:\s*var\(--chi-color-backdrop\)/);
+  assert.match(baseCss, /font-weight:\s*var\(--chi-font-weight-label\)/);
+  assert.match(sidebarCss, /opacity:\s*var\(--chi-sidebar-scrim-opacity\)/);
+  assert.doesNotMatch(baseCss + sidebarCss, /opacity:\s*0\.[0-9]+|(?:animation|transition):[^;]*\b[0-9]+(?:\.[0-9]+)?(?:ms|s)\b|font-weight:\s*[0-9]+|(?:background-color|background|color):\s*rgb\(/);
+  assert.match(read('../scripts/validate.mjs'), /Number Token 必須是有限數值/);
+  assert.match(read('../scripts/validate.mjs'), /Duration Token 必須使用 ms 或 s/);
+});
