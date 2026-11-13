@@ -80,3 +80,33 @@ test('storage failures do not prevent selecting a theme', () => {
   assert.doesNotThrow(() => ctx.api.setMode('dark'));
   assert.equal(ctx.api.getEffective(), 'dark');
 });
+
+test('theme toggle icon, accessible label, title, and click cycle stay synchronized', () => {
+  const ctx = createTheme();
+  const attrs = new Map([['href', '/icons.svg#initial']]);
+  const use = {
+    getAttribute(key) { return attrs.get(key) ?? null; },
+    hasAttribute(key) { return attrs.has(key); },
+    setAttribute(key, value) { attrs.set(key, value); },
+  };
+  const icon = { textContent: '' };
+  const button = {
+    attrs: new Map(),
+    listeners: new Map(),
+    querySelector(selector) { return selector === 'use' ? use : selector === '[data-chi-theme-icon]' ? icon : null; },
+    setAttribute(key, value) { this.attrs.set(key, value); },
+    addEventListener(type, fn) { this.listeners.set(type, fn); },
+  };
+  ctx.buttons.push(button);
+  ctx.api.bindToggles();
+  assert.equal(attrs.get('href'), '/icons.svg#sun-moon');
+  assert.equal(icon.textContent, '◐');
+  assert.equal(button.attrs.get('aria-label'), '目前色彩模式：跟隨系統，點擊切換');
+  assert.equal(button.attrs.get('title'), button.attrs.get('aria-label'));
+  button.listeners.get('click')();
+  assert.equal(attrs.get('href'), '/icons.svg#sun');
+  assert.equal(icon.textContent, '☀︎');
+  assert.equal(button.attrs.get('aria-label'), '目前色彩模式：淺色，點擊切換');
+  assert.equal(button.attrs.get('title'), button.attrs.get('aria-label'));
+  assert.equal(button.__chiThemeBound, true);
+});
