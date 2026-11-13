@@ -168,6 +168,13 @@ const cssFiles = [
   path.join(ROOT, 'dist', 'components.css'),
 ];
 const cssSources = cssFiles.map((file) => [file, stripComments(readFileSync(file, 'utf8'))]);
+const componentCss = readdirSync(path.join(ROOT, 'components'), { recursive: true })
+  .filter((file) => file.endsWith('.css'))
+  .map((file) => stripComments(readFileSync(path.join(ROOT, 'components', file), 'utf8'))).join('\n');
+for (const name of Object.keys(tokenSource('components.tokens.json'))) {
+  const variable = `var(--chi-${name.replaceAll('.', '-')})`;
+  if (!componentCss.includes(variable)) fail(`元件 Token 未被任何元件 CSS 使用：${name}`);
+}
 const definedProperties = new Set();
 for (const [, source] of cssSources) {
   for (const match of source.matchAll(/(^|[;{\s])(--[\w-]+)\s*:/gm)) definedProperties.add(match[2]);
@@ -377,9 +384,7 @@ for (const contract of ["[data-chi-tabs]", "[role=\"tab\"]", "ArrowRight", "Arro
 
 // 基礎元件語意範例：驗證實際 HTML 關聯，而不只檢查 CSS class 是否存在。
 const examplesHtml = readFileSync(path.join(ROOT, 'components', 'base', 'examples.html'), 'utf8');
-const componentCss = readdirSync(path.join(ROOT, 'components'), { recursive: true })
-  .filter((file) => file.endsWith('.css'))
-  .map((file) => stripComments(readFileSync(path.join(ROOT, 'components', file), 'utf8'))).join('\n');
+
 const exampleClasses = new Set([...examplesHtml.matchAll(/\bclass="([^"]+)"/g)].flatMap((match) => match[1].split(/\s+/)));
 for (const className of exampleClasses) {
   if (className.startsWith('chi-') && !componentCss.includes('.' + className)) fail('語意範例使用未定義的元件 class：' + className);
