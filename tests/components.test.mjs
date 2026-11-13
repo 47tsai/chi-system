@@ -162,3 +162,20 @@ test('Every semantic token is consumed by component CSS or a component-token ali
   assert.match(read('../scripts/validate.mjs'), /Semantic Token 未被元件 CSS 或元件 Token 使用/);
   assert.match(read('../scripts/validate.mjs'), /componentAliasReferences/);
 });
+
+
+test('Runtime loading order prevents theme and sidebar flash before first paint', () => {
+  const template = read('../templates/base.template.html');
+  const validator = read('../scripts/validate.mjs');
+  const theme = template.indexOf('theme.js');
+  const sidebar = template.indexOf('sidebar.js');
+  const stylesheet = template.indexOf('<link rel="stylesheet"');
+  const tabs = template.match(/<script src="[^"']*tabs\.js"([^>]*)>/);
+  const dialog = template.match(/<script src="[^"']*dialog\.js"([^>]*)>/);
+  assert.ok(theme >= 0 && theme < sidebar && sidebar < stylesheet);
+  assert.match(tabs?.[1] || '', /\bdefer\b/);
+  assert.match(dialog?.[1] || '', /\bdefer\b/);
+  assert.match(validator, /Runtime 必須在樣式表之前載入/);
+  assert.match(validator, /Theme Runtime 必須先於 Sidebar Runtime/);
+  assert.match(validator, /必須使用 defer 且不可 async/);
+});

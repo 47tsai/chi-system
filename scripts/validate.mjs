@@ -425,6 +425,32 @@ if (/<a\b/.test(footerHtml)) fail('Footer 不得加入跨站連結');
 
 // Tabs script is a generated runtime asset and must be loaded by the canonical shell.
 const templateSource = readFileSync(path.join(ROOT, 'templates', 'base.template.html'), 'utf8');
+
+const runtimeScripts = [...templateSource.matchAll(/<script\b([^>]*)><\/script>/gi)].map((match) => ({
+  attrs: match[1],
+  src: (match[1].match(/\bsrc=["']([^"']+)["']/i) || [])[1] || '',
+  index: match.index,
+}));
+const runtime = (name) => runtimeScripts.find((script) => script.src.endsWith('/' + name + '.js'));
+const themeScript = runtime('theme');
+const sidebarScript = runtime('sidebar');
+const tabsScript = runtime('tabs');
+const dialogScript = runtime('dialog');
+const firstStylesheet = templateSource.indexOf('<link rel="stylesheet"');
+if (!themeScript || !sidebarScript || !tabsScript || !dialogScript) {
+  fail('模板必須載入 Theme／Sidebar／Tabs／Dialog 四個 Runtime');
+} else {
+  for (const [name, script] of [['Theme', themeScript], ['Sidebar', sidebarScript]]) {
+    if (/\b(?:defer|async)\b/i.test(script.attrs)) fail(name + ' Runtime 必須同步載入，避免首次繪製閃爍');
+    if (script.index > firstStylesheet) fail(name + ' Runtime 必須在樣式表之前載入');
+  }
+  if (themeScript.index > sidebarScript.index) fail('Theme Runtime 必須先於 Sidebar Runtime');
+  for (const [name, script] of [['Tabs', tabsScript], ['Dialog', dialogScript]]) {
+    if (!/\bdefer\b/i.test(script.attrs) || /\basync\b/i.test(script.attrs)) {
+      fail(name + ' Runtime 必須使用 defer 且不可 async');
+    }
+  }
+}
 const tabsSource = readFileSync(path.join(ROOT, 'components', 'tabs', 'tabs.js'), 'utf8');
 if (!templateSource.includes('<script src="../dist/tabs.js" defer></script>')) fail('base template 必須載入 Tabs runtime');
 for (const contract of ["[data-chi-tabs]", "[role=\"tab\"]", "ArrowRight", "ArrowLeft", "Home", "End", "aria-selected", "aria-controls", "tabindex"]) {

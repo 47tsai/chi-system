@@ -77,6 +77,7 @@ Foundations（原則）→ Tokens（數值）→ Components（元件）→ Patte
 
 ## 6. 元件合約
 
+- Runtime 載入：Theme 與 Sidebar 必須在 `<head>` 中同步載入，且位於樣式表之前，確保首次繪製前套用主題與側欄收合狀態；Theme 先於 Sidebar。Tabs 與 Dialog 使用 `defer`，不可使用 `async`。
 - Header：logo（本身就是首頁連結，不另設首頁按鍵）＋站名＋主題切換＋本站操作；
   導覽不進 header，放 header 下方獨立一列；沒有導覽的站省略整段。
   主題切換在 header 版式放 header，側邊欄版式放側邊欄底部。
