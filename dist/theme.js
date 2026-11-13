@@ -31,6 +31,8 @@
   var MODES = ['system', 'light', 'dark'];
   var ICONS = { system: 'sun-moon', light: 'sun', dark: 'moon' };
   var LABELS = { system: '跟隨系統', light: '淺色', dark: '深色' };
+  // 文字圖示使用純文字呈現，避免依賴未隨設計系統提供的外部 SVG sprite。
+  var GLYPHS = { system: '◐', light: '☀︎', dark: '☾' };
   var ORDER = ['system', 'light', 'dark'];
 
   var root = document.documentElement;
@@ -88,6 +90,8 @@
     for (var i = 0; i < buttons.length; i++) {
       var button = buttons[i];
       setIcon(button, mode);
+      var icon = button.querySelector('[data-chi-theme-icon]');
+      if (icon) icon.textContent = GLYPHS[mode];
       var label = '目前色彩模式：' + LABELS[mode] + '，點擊切換';
       button.setAttribute('aria-label', label);
       // 原生 title 也同步，避免滑鼠提示仍停留在初始的泛用文案。
