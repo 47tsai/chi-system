@@ -46,7 +46,7 @@ test('All generated sites and local assets serve with HTTP 200 from dist root', 
       const pageUrl = new URL(`/sites/${site}/index.html`, origin);
       const pageResponse = await fetch(pageUrl);
       assert.equal(pageResponse.status, 200, `${site} entry page should load`);
-      assert.match(pageResponse.headers.get('content-type') || '', /text\\/html/);
+      assert.match(pageResponse.headers.get('content-type') || '', /text\/html/);
       const html = await pageResponse.text();
       for (const [, asset] of html.matchAll(/(?:src|href)="([^"]+)"/g)) {
         if (/^(?:https?:|#|data:|mailto:|tel:)/i.test(asset)) continue;
