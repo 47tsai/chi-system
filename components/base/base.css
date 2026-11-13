@@ -27,27 +27,6 @@
   outline-offset: var(--chi-focus-offset);
 }
 
-/* 動效只服務狀態變化；減少動態偏好時關閉（SPEC.md 7.8） */
-@media (prefers-reduced-motion: reduce) {
-  .chi-btn,
-  .chi-input,
-  .chi-select,
-  .chi-textarea,
-  .chi-check__input,
-  .chi-radio__input,
-  .chi-switch__input,
-  .chi-card,
-  .chi-list__item,
-  .chi-tab,
-  .chi-nav-link {
-    transition: none;
-  }
-
-  .chi-spinner {
-    animation: none;
-  }
-}
-
 /* 圖示尺寸：與 icons.svg 的 <use> 搭配 */
 .chi-icon {
   width: var(--chi-base-icon-md);
@@ -676,3 +655,25 @@ a {
 [data-chi-layout="sidebar"] .chi-subnav {
   display: none;
 }
+
+/* 動效只服務狀態變化；減少動態偏好時關閉（SPEC.md 7.8） */
+@media (prefers-reduced-motion: reduce) {
+  .chi-btn,
+  .chi-input,
+  .chi-select,
+  .chi-textarea,
+  .chi-check__input,
+  .chi-radio__input,
+  .chi-switch__input,
+  .chi-card,
+  .chi-list__item,
+  .chi-tab,
+  .chi-nav-link {
+    transition: none;
+  }
+
+  .chi-spinner {
+    animation: none;
+  }
+}
+
