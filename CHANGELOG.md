@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- M35 將 axe-core 納入既有 Chrome 無障礙驗收：依 WCAG 2.0／2.1／2.2 A／AA 規則掃描六站 × 桌機／手機 × 淺／深主題共 24 組，違規直接使測試失敗；CI 新增 `npm ci`，鎖定依賴並確保乾淨環境可重現。Playwright 與人工輔助科技驗收仍列後續工作。
 - M34 補齊 Theme／Sidebar／Tabs／Dialog 的公開 JavaScript API、參數、事件與使用時機文件；文件驗證器同步比對 Runtime 實際匯出的方法，避免 API 文件與程式碼分岔。
 - M33 新增全新站點整合驗收：測試執行期間暫時加入兩份品牌 Token 與兩份站設定，分別驗證預設 Header 與指定 Sidebar 版式可生成完整站點、品牌 Token、Logo 與共用資產路徑，並通過完整站點驗證；測試結束自動清除 fixture 並重建正式輸出。
 - M32 強化元件公開契約文件：補齊 Header／Sidebar Runtime 載入範例、Radio fieldset／legend、Readonly／Disabled／Invalid 差異、圖示按鈕可存取名稱、Tabs 自動啟用與 Dialog 原生 Modal 行為；新增文件範例驗證器，檢查 HTML ID／ARIA 關聯、表單標籤、Button closed enum、Tabs／Dialog／Table 語意，並納入 `npm run validate`。
