@@ -7,7 +7,7 @@
     "check": "npm run build && npm run validate && npm test && npm run test:browser && git diff --exit-code -- dist templates/base.html preview/sites.json",
     "validate": "node scripts/validate.mjs",
     "test": "node --test",
-    "test:browser": "node scripts/browser-smoke.mjs && node scripts/browser-keyboard-smoke.mjs && node scripts/browser-sidebar-keyboard-smoke.mjs && node scripts/browser-a11y-smoke.mjs && node scripts/browser-components-smoke.mjs && node scripts/browser-form-keyboard-smoke.mjs && node scripts/browser-showcase-smoke.mjs && node scripts/browser-token-consumption-smoke.mjs && node scripts/browser-layout-geometry-smoke.mjs"
+    "test:browser": "node scripts/browser-smoke.mjs && node scripts/browser-keyboard-smoke.mjs && node scripts/browser-sidebar-keyboard-smoke.mjs && node scripts/browser-a11y-smoke.mjs && node scripts/browser-components-smoke.mjs && node scripts/browser-form-keyboard-smoke.mjs && node scripts/browser-showcase-smoke.mjs && node scripts/browser-token-consumption-smoke.mjs && node scripts/browser-layout-geometry-smoke.mjs && node scripts/browser-visual-state-smoke.mjs"
   },
   "type": "module",
   "version": "1.0.0"

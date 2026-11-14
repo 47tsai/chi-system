@@ -25,6 +25,7 @@
 - M26 新增可互動元件展示頁與開發者使用指南，覆蓋 Button、Form、Tabs、Card、List、Table、Badge、Dialog、Data states，並以六品牌 × 淺深主題 × 手機／平板／桌機共 36 組 Chrome 驗收。
 - M27 新增六品牌 × 淺深主題 × Header／Sidebar 共 24 組 Token 實際消費測試，明確區分品牌識別色與共用操作 Accent；修正生成 CSS 檔頭註解中的 `*/` 意外結束註解，避免瀏覽器丟棄第一條 Header CSS 規則。
 - M28 新增共用殼幾何回歸測試，六品牌 × 淺深主題 × Header／Sidebar × 五種視窗寬度共 120 組，檢查斷點、側欄寬度、主內容置中、Footer 位置、水平溢出、按鈕／表單控制尺寸一致性與觸控目標。
+- M29 新增瀏覽器互動狀態視覺回歸，六品牌 × 淺深主題共 12 組，實際驗證 Button Hover／Active／Disabled、表單 Hover／Focus／Error／Disabled、Tabs、Card、List、Table 狀態是否使用正確語意 Token；展示頁補齊停用欄位與可互動 Card／List 範例。
 
 - 新增 DTCG Token schema 驗證，明確檢查 `$type`、`$value`、別名括號格式。
 - 統一本地與 CI 驗收入口為 `npm run check`。

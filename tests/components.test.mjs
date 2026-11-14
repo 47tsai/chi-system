@@ -235,3 +235,12 @@ test('Text inputs, selects, and textareas use a shared border-box sizing contrac
   assert.match(controls[1], /box-sizing:\s*border-box/);
   assert.match(controls[1], /min-height:\s*var\(--chi-size-control\)/);
 });
+
+
+test('Visual state browser regression covers interactive and disabled component states', () => {
+  const smoke = read('../scripts/browser-visual-state-smoke.mjs');
+  for (const contract of ['buttonHoverUsesToken','buttonActiveUsesToken','disabledButtonStable','fieldHoverUsesToken','fieldFocusUsesToken','fieldErrorUsesToken','disabledFieldUsesToken','tabHoverUsesPrimaryText','selectedTabUsesAccent','disabledTabUsesToken','cardHoverUsesStrongBorder','listHoverUsesSunkenSurface','tableHoverUsesSunkenSurface']) {
+    assert.ok(smoke.includes(contract), `visual state contract ${contract}`);
+  }
+  assert.match(smoke, /Chrome visual state regression smoke/);
+});
