@@ -8,6 +8,7 @@ import { spawn, spawnSync } from 'node:child_process';
 const ROOT = path.resolve(import.meta.dirname, '..');
 const DIST = path.join(ROOT, 'dist');
 const sitesDir = path.join(ROOT, 'sites');
+const AXE_SOURCE = readFileSync(path.join(ROOT, 'node_modules/axe-core/axe.min.js'), 'utf8');
 const browserCandidates = [process.env.CHROME_BIN, 'google-chrome', 'chromium', 'chromium-browser'].filter(Boolean);
 const browser = browserCandidates.find((candidate) => spawnSync(candidate, ['--version'], { encoding: 'utf8' }).status === 0);
 if (!browser) {
@@ -73,6 +74,7 @@ try {
         const pageUrl = `${origin}/sites/${siteId}/index.html`;
         await send('Page.navigate', { url: pageUrl });
         await waitFor(async () => (await send('Runtime.evaluate', { expression: `location.href === ${JSON.stringify(pageUrl)} && document.readyState === 'complete'`, returnByValue: true })).result.value === true);
+        await send('Runtime.evaluate', { expression: AXE_SOURCE });
         for (const theme of ['light', 'dark']) {
         await send('Runtime.evaluate', { expression: `document.documentElement.setAttribute('data-chi-theme', '${'${theme}'}')` });
         const audit = await send('Runtime.evaluate', { returnByValue: true, expression: `(() => {
@@ -171,6 +173,23 @@ try {
           return { title: document.title, lang: document.documentElement.lang, checkedTextRuns, issues };
         })()` });
         const result = audit.result.value;
+        const axeAudit = await send('Runtime.evaluate', {
+          awaitPromise: true,
+          returnByValue: true,
+          expression: `axe.run(document, { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'] } }).then(({ violations, passes, incomplete }) => ({
+            passCount: passes.length,
+            incompleteCount: incomplete.length,
+            violations: violations.map((violation) => ({
+              id: violation.id,
+              impact: violation.impact,
+              help: violation.help,
+              helpUrl: violation.helpUrl,
+              nodes: violation.nodes.slice(0, 8).map((node) => ({ target: node.target, summary: node.failureSummary?.slice(0, 500) }))
+            }))
+          }))`
+        });
+        result.axe = axeAudit.result.value;
+        result.issues.push(...result.axe.violations.map((violation) => ({ code: `axe-${violation.id}`, impact: violation.impact, help: violation.help, nodes: violation.nodes })));
         const ax = await send('Accessibility.getFullAXTree');
         const axNodes = ax.nodes || [];
         const unnamedInteractive = axNodes.filter((node) => !node.ignored && ['button','link','textbox','combobox','checkbox','radio','tab'].includes(node.role?.value) && !node.name?.value?.trim()).map((node) => ({ role: node.role?.value, backendNodeId: node.backendDOMNodeId }));
@@ -178,7 +197,7 @@ try {
         const ok = result.issues.length === 0;
         if (ok) passed++;
         else failures.push({ site: siteId, viewport: viewport.name, theme, result, stderr: stderr.slice(-1000) });
-        console.log(`${ok ? 'PASS' : 'FAIL'} ${siteId} ${viewport.name} ${theme} ${result.checkedTextRuns} text runs ${result.issues.length} issue(s) ${JSON.stringify(result.issues)}`);
+        console.log(`${ok ? 'PASS' : 'FAIL'} ${siteId} ${viewport.name} ${theme} ${result.checkedTextRuns} text runs, axe ${result.axe.passCount} passes / ${result.axe.violations.length} violations, ${result.issues.length} total issue(s) ${JSON.stringify(result.issues)}`);
         }
       } catch (error) {
         failures.push({ site: siteId, viewport: viewport.name, error: String(error), stderr: stderr.slice(-1500) });
