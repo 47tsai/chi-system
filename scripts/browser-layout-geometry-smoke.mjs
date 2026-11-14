@@ -14,7 +14,7 @@ if (!browser) {
 }
 
 const tokenCss = readFileSync(path.join(ROOT, 'dist/tokens.css'), 'utf8');
-const brands = [...tokenCss.matchAll(/\[data-chi-brand="([^"]+)"\]\s*\{/g)].map(([, id]) => id);
+const brands = [...new Set([...tokenCss.matchAll(/\[data-chi-brand="([^"]+)"\]\s*\{/g)].map(([, id]) => id))];
 if (brands.length !== 6) throw new Error(`Expected six generated brands, found ${brands.length}`);
 const viewports = [
   { name: 'mobile-320', width: 320, height: 800 },

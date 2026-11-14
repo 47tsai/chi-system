@@ -76,13 +76,38 @@ export function buildTokens() {
   for (const [k, v] of Object.entries(darkVars)) {
     if (lightVars[k] !== v) darkOverrides[k] = v;
   }
-  // 品牌：每品牌一份只寫別名的檔案 → [data-chi-brand] 覆寫 --chi-color-brand
+  // 品牌：每品牌一份只寫別名的檔案 → [data-chi-brand] 覆寫 --chi-color-brand。
+  // 品牌檔還可帶 accent 覆寫（淺色用 color.*／button.*／sidebar.*，深色用 dark.* 同名鍵）：
+  // 淺色覆寫併進原本的品牌區塊（--chi-color-brand 必須維持第一行，供 smoke 測試的
+  // 正則比對），深色覆寫另出 [data-chi-theme="dark"][data-chi-brand] 區塊（特異度高於
+  // 單屬性選擇器，深色才生效）。目前只有 nav 有 accent 覆寫（齊 2026-11-14 定案：
+  // nav 配件跟主題色走），其餘站只出品牌色。
+  const OVERRIDE_KEYS = [
+    'color.accent', 'color.accent-hover', 'color.accent-active', 'color.focus-ring',
+    'button.primary.background', 'button.primary.background-hover', 'button.primary.background-active',
+    'sidebar.text-active',
+  ];
   const brandFiles = readdirSync(path.join(TOKENS, 'brands')).filter((f) => f.endsWith('.tokens.json'));
   const brands = {};
+  const brandOverrides = {};
   for (const f of brandFiles) {
     const id = f.replace('.tokens.json', '');
     const flat = flatten(load(`brands/${f}`), '', {});
-    brands[id] = resolveAll({ ...prim, ...light, ...flat })['color.brand'];
+    const lightResolved = resolveAll({ ...prim, ...light, ...flat });
+    brands[id] = lightResolved['color.brand'];
+    const lightAccent = {};
+    for (const key of OVERRIDE_KEYS) {
+      if (key in flat) lightAccent[key] = lightResolved[key];
+    }
+    const darkFlat = Object.fromEntries(
+      Object.entries(flat).filter(([k]) => k.startsWith('dark.')).map(([k, v]) => [k.slice(5), v]),
+    );
+    const darkResolved = resolveAll({ ...prim, ...light, ...dark, ...darkFlat });
+    const darkAccent = {};
+    for (const key of OVERRIDE_KEYS) {
+      if (key in darkFlat) darkAccent[key] = darkResolved[key];
+    }
+    brandOverrides[id] = { light: lightAccent, dark: darkAccent };
   }
 
   let css = `/* chi-system tokens.css — 生成物，DO NOT EDIT。\n * 由 scripts/build-tokens.mjs 從 tokens/*.tokens.json 產生；手改會被 CI 擋下。\n * DTCG 2025.10（Community Group Report，不是 W3C 正式標準）。\n */\n`;
@@ -90,6 +115,14 @@ export function buildTokens() {
   css += `\n${cssBlock('[data-chi-theme="dark"]', darkOverrides)}`;
   for (const [id, hex] of Object.entries(brands).sort()) {
     css += `\n[data-chi-brand="${id}"] {\n  --chi-color-brand: ${hex};\n}\n`;
+  }
+  for (const [id, { light, dark }] of Object.entries(brandOverrides).sort()) {
+    if (Object.keys(light).length) {
+      css += `\n${cssBlock(`[data-chi-brand="${id}"]`, light)}`;
+    }
+    if (Object.keys(dark).length) {
+      css += `\n${cssBlock(`[data-chi-theme="dark"][data-chi-brand="${id}"]`, dark)}`;
+    }
   }
   // 相容別名：舊 components.css（v2 base.css 沿用）用的 --chi-line-height-* 與 --chi-duration。
   css += `\n/* 相容別名（舊寫法沿用，見 components/base/base.css 檔頭） */\n:root {\n`;
@@ -101,7 +134,7 @@ export function buildTokens() {
   css += `\n[data-chi-density="compact"] {\n  --chi-space-section: 32px;\n  --chi-space-group: 16px;\n  --chi-space-item: 12px;\n  --chi-size-control: var(--chi-size-control-compact);\n  --chi-size-list-row: var(--chi-size-list-row-compact);\n}\n`;
   mkdirSync(path.join(ROOT, 'dist'), { recursive: true });
   writeFileSync(path.join(ROOT, 'dist', 'tokens.css'), css);
-  return { lightCount: Object.keys(lightVars).length, darkOverrides: Object.keys(darkOverrides).length, brands, resolvedLight, resolvedDark };
+  return { lightCount: Object.keys(lightVars).length, darkOverrides: Object.keys(darkOverrides).length, brands, brandOverrides, resolvedLight, resolvedDark };
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {

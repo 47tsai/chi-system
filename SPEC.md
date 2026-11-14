@@ -46,7 +46,7 @@ Foundations（原則）→ Tokens（數值）→ Components（元件）→ Patte
   生成：scripts/build-tokens.mjs → dist/tokens.css（生成物，禁手改）。
 - 品牌：每站識別色是 semantic `color.brand`，由 tokens/brands/<站>.tokens.json
   把 semantic 指到 primitive（只寫別名，不寫原始值）。六站定案值：
-  chi #4A88FC、fg #FF9A00、merch #584CCC、nav #008CAD、h #FF61F6、status #8CDC47。品牌色只用於站點識別（Header／Sidebar 品牌標記），不取代共用語意 `color.accent`；連結、主要按鈕、焦點環與互動狀態使用依淺深主題調整的 Accent。品牌識別與操作色分離是刻意的 Token 契約。
+  chi #4A88FC、fg #FF9A00、merch #584CCC、nav #008CAD、h #FF61F6、status #8CDC47。品牌色只用於站點識別（Header／Sidebar 品牌標記），不取代共用語意 `color.accent`；連結、主要按鈕、焦點環與互動狀態使用依淺深主題調整的 Accent。品牌識別與操作色分離是刻意的 Token 契約。例外：nav 站的 accent 全家跟品牌色走（由 tokens/brands/nav.tokens.json 覆寫淺／深兩套），其餘站維持分離。
 - 語意色共用一組（Adobe Spectrum 900 階）：成功 #05834E／#099D59、
   異常 #9E6600／#BA7C00、錯誤 #D73220／#FC432E，淺深兩套，皆過 AA，
   永遠配文字或圖示，不只靠顏色。

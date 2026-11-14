@@ -1,9 +1,1 @@
-{
-  "$description": "nav 品牌檔 — 只寫別名，不寫原始值。",
-  "color": {
-    "brand": {
-      "$type": "color",
-      "$value": "{color.teal.500}"
-    }
-  }
-}
+{"$description":"nav 品牌檔 — 只寫別名，不寫原始值。accent 覆寫：本站配件跟主題色走（齊 2026-11-14 定案），其餘站不動。","button":{"primary":{"background":{"$type":"color","$value":"{color.accent.teal-light-hover}"},"background-active":{"$type":"color","$value":"{color.accent.teal-light-deep}"},"background-hover":{"$type":"color","$value":"{color.accent.teal-light-active}"}}},"color":{"accent":{"$type":"color","$value":"{color.accent.teal-light-hover}"},"accent-active":{"$type":"color","$value":"{color.accent.teal-light-active}"},"accent-hover":{"$type":"color","$value":"{color.accent.teal-light-active}"},"brand":{"$type":"color","$value":"{color.teal.500}"},"focus-ring":{"$type":"color","$value":"{color.accent.teal-light}"}},"dark":{"button":{"primary":{"background":{"$type":"color","$value":"{color.accent.teal-dark}"},"background-active":{"$type":"color","$value":"{color.accent.teal-dark-active}"},"background-hover":{"$type":"color","$value":"{color.accent.teal-dark-hover}"}}},"color":{"accent":{"$type":"color","$value":"{color.accent.teal-dark}"},"accent-active":{"$type":"color","$value":"{color.accent.teal-dark-active}"},"accent-hover":{"$type":"color","$value":"{color.accent.teal-dark-hover}"},"focus-ring":{"$type":"color","$value":"{color.accent.teal-dark}"}},"sidebar":{"text-active":{"$type":"color","$value":"{color.accent.teal-dark}"}}},"sidebar":{"text-active":{"$type":"color","$value":"{color.accent.teal-light-hover}"}}}
