@@ -179,3 +179,18 @@ test('Runtime loading order prevents theme and sidebar flash before first paint'
   assert.match(validator, /Theme Runtime 必須先於 Sidebar Runtime/);
   assert.match(validator, /必須使用 defer 且不可 async/);
 });
+
+test('Component showcase and developer guide cover the stable component catalog', () => {
+  const showcase = read('../preview/components.html');
+  const guide = read('../docs/COMPONENTS.md');
+  const preview = read('../preview/index.html');
+  for (const id of ['buttons-title','badges-title','form-title','tabs-title','card-title','list-title','table-title','state-title','dialog-title']) {
+    assert.ok(showcase.includes(`id="${id}"`), `showcase section ${id}`);
+  }
+  for (const brand of ['chi','fg','h','merch','nav','status']) assert.ok(showcase.includes(`value="${brand}"`), `showcase brand ${brand}`);
+  for (const contract of ['aria-invalid', 'aria-describedby', 'data-chi-tabs', 'data-chi-dialog-open', 'chi-switch__input']) {
+    assert.ok(guide.includes(contract), `developer guide contract ${contract}`);
+  }
+  assert.match(preview, /href="components\.html"/);
+  assert.match(read('../package.json'), /browser-showcase-smoke\.mjs/);
+});
