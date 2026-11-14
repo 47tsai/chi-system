@@ -186,5 +186,5 @@ Badge 修飾短狀態，使用 `chi-badge--success|warning|danger|info`。資料
 
 1. 先在元件展示頁檢查六品牌、淺／深主題與桌機／手機版面。
 2. 修改只落在 `components/`、`tokens/` 或模板來源；不要手改 `dist/`、`templates/base.html`。
-3. 執行 `npm run check`，確認 Node、Chrome 互動、鍵盤、axe-core WCAG 2.0／2.1／2.2 A／AA 稽核、Playwright Chromium／Firefox／WebKit 跨瀏覽器互動測試、無障礙與生成物一致性全部通過。axe-core 覆蓋六站 × 桌機／手機 × 淺／深主題；Playwright 覆蓋 Chromium／Firefox／WebKit 三引擎 × 六站 × 桌機／手機共 36 組。兩者補強自訂 DOM／Accessibility Tree 檢查，但不取代人工螢幕閱讀器測試。
+3. 執行 `npm run check`，確認 Node、Chrome 互動、鍵盤、axe-core WCAG 2.0／2.1／2.2 A／AA 稽核、Playwright Chromium／Firefox／WebKit 跨瀏覽器互動測試、無障礙與生成物一致性全部通過。axe-core 覆蓋六站 × 桌機／手機 × 淺／深主題；Playwright 覆蓋 Chromium／Firefox／WebKit 三引擎 × 六站 × 桌機／手機共 36 組，並於三引擎 × 六站 × 桌機／手機 × 淺／深主題共 72 組執行 axe-core WCAG 2.0／2.1／2.2 A／AA 稽核。兩者補強自訂 DOM／Accessibility Tree 檢查，但不取代人工螢幕閱讀器測試。
 4. 新元件依 `SPEC.md` 的 draft → preview → stable 流程；沒有文件與無障礙驗收，不升 stable。
