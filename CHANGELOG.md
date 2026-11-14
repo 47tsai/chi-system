@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- M40 擴充跨瀏覽器元件展示驗收：三引擎 × 六品牌 × 桌機／手機共 36 組，真實操作 Tabs 方向鍵／Home／End、Radio／Switch、表單送出與原生 Dialog 開啟／Escape／焦點返回；另執行 108 組 showcase axe-core 淺／深主題與 Dialog 開啟狀態稽核。修正展示頁 Theme icon-only 按鈕與 Card link 的可見文字／可存取名稱不一致，跨瀏覽器展示頁共 180 組 axe-core 稽核零違規。
 - M39 將 axe-core WCAG 2.0／2.1／2.2 A／AA 稽核整合至 Playwright 三引擎流程，在 Chromium／Firefox／WebKit × 六站 × 桌機／手機 × 淺／深主題共 72 組執行；全部零違規，跨引擎無障礙結果成為 CI 阻擋條件。
 - M38 擴充 Playwright 至 Chromium／Firefox／WebKit 三引擎，六站 × 桌機／手機共 36 組；並在三引擎 × 六站 × 桌機／手機 × 淺／深主題共 72 組執行 axe-core WCAG 2.0／2.1／2.2 A／AA 稽核，全部零違規。CI 安裝三種瀏覽器及必要系統依賴，跨引擎互動與無障礙旅程成為正式阻擋門檻。
 - M37 修正 Node 測試探索範圍：`npm test` 只執行 `tests/*.test.mjs`，避免把會暫時改寫 Token／站設定與 dist 的整合腳本再次當成單元測試並行執行，消除生成物讀寫競態。
