@@ -91,7 +91,8 @@ try {
             button: { background:style('.chi-btn--primary','background-color'), token:token('--chi-button-primary-background'), hover:token('--chi-button-primary-background-hover'), active:token('--chi-button-primary-background-active') },
             field: { border:style('.chi-input','border-top-color'), hover:token('--chi-color-text-muted'), focus:token('--chi-color-accent'), danger:token('--chi-color-danger'), disabled:token('--chi-color-surface-sunken') },
             tabs: { selected:token('--chi-color-accent'), text:token('--chi-color-text-primary'), disabled:token('--chi-color-text-disabled') },
-            surfaces: { sunken:token('--chi-color-surface-sunken'), border:token('--chi-color-border-strong') },
+            surfaces: { sunken:token('--chi-color-surface-sunken'), border:token('--chi-color-border-strong'), raised:token('--chi-color-surface-raised'), backdrop:token('--chi-color-backdrop') },
+            status: { accent:token('--chi-color-accent'), success:token('--chi-color-success'), warning:token('--chi-color-warning'), danger:token('--chi-color-danger'), info:token('--chi-color-info'), muted:token('--chi-color-text-muted'), primary:token('--chi-color-text-primary'), disabledText:token('--chi-color-text-disabled') },
           };
         })()`);
         const checks = {};
@@ -150,6 +151,54 @@ try {
         await new Promise((resolve) => setTimeout(resolve, 220));
         const tableHover = await evaluate("getComputedStyle(document.querySelector('.chi-table tbody tr')).backgroundColor");
         checks.tableHoverUsesSunkenSurface = tableHover === baseline.surfaces.sunken;
+
+        const choice = await evaluate(`(() => {
+          const check = document.querySelector('.chi-check__input');
+          const radio = document.querySelector('.chi-radio__input');
+          const toggle = document.querySelector('.chi-switch__input');
+          const disabledCheck = document.querySelector('.chi-check__input:disabled');
+          const disabledRadio = document.querySelector('.chi-radio__input:disabled');
+          const disabledSwitch = document.querySelector('.chi-switch__input:disabled');
+          const color = (element, property) => getComputedStyle(element).getPropertyValue(property).trim();
+          const label = (element) => color(element.closest('label'), 'color');
+          const opacity = (element) => color(element, 'opacity');
+          return {checkBefore:color(check,'background-color'),checkChecked:color(check,'background-color'),checkBorder:color(check,'border-top-color'),radioBorder:color(radio,'border-top-color'),switchBefore:color(toggle,'background-color'),disabledCheckOpacity:opacity(disabledCheck),disabledRadioOpacity:opacity(disabledRadio),disabledSwitchOpacity:opacity(disabledSwitch),disabledLabel:label(disabledSwitch),disabledLabelColor:color(document.querySelector('.chi-switch__input:disabled').closest('label'),'color')};
+        })()`);
+        checks.checkboxCheckedUsesAccent = choice.checkChecked === baseline.status.accent;
+        checks.radioCheckedUsesAccent = choice.radioBorder === baseline.status.accent;
+        checks.switchCheckedUsesAccent = choice.switchBefore === baseline.status.accent;
+        checks.disabledChoiceOpacityConsistent = choice.disabledCheckOpacity === choice.disabledRadioOpacity && choice.disabledRadioOpacity === choice.disabledSwitchOpacity && Number(choice.disabledCheckOpacity) < 1;
+        checks.disabledChoiceLabelUsesDisabledText = choice.disabledLabel === baseline.status.disabledText;
+        const disabledControlFocus = await evaluate(`(() => { const el=document.querySelector('.chi-check__input:disabled'); el.focus(); return document.activeElement === el; })()`);
+        checks.disabledChoiceCannotReceiveFocus = disabledControlFocus === false;
+
+        const badgeChecks = await evaluate(`(() => {
+          const map = [['success','--chi-color-success-strong'],['warning','--chi-color-warning-strong'],['danger','--chi-color-danger-strong'],['info','--chi-color-info-strong']];
+          return map.map(([name,token]) => { const badge=document.querySelector('.chi-badge--'+name); const probe=document.createElement('span'); probe.style.color=getComputedStyle(document.documentElement).getPropertyValue(token).trim(); document.body.appendChild(probe); const expected=getComputedStyle(probe).color; probe.remove(); return getComputedStyle(badge).color === expected; });
+        })()`);
+        checks.badgeSemanticColors = badgeChecks.every(Boolean);
+        checks.spinnerUsesAccent = await evaluate(`getComputedStyle(document.querySelector('.chi-spinner')).borderTopColor`) === baseline.status.accent;
+        checks.skeletonUsesSunkenSurface = await evaluate(`getComputedStyle(document.querySelector('.chi-skeleton')).backgroundColor`) === baseline.surfaces.sunken;
+        checks.emptyErrorSuccessStatesPresent = await evaluate(`document.querySelectorAll('.chi-state').length >= 4 && !!document.querySelector('.chi-state[role=alert]') && [...document.querySelectorAll('.chi-state')].some(el => el.textContent.includes('儲存成功'))`);
+
+        const opener = '.chi-dialog + *';
+        await evaluate(`document.querySelector('[data-chi-dialog-open="showcase-dialog"]').click()`);
+        await new Promise((resolve) => setTimeout(resolve, 100));
+        const dialog = await evaluate(`(() => { const el=document.querySelector('#showcase-dialog'); const backdrop=getComputedStyle(el,'::backdrop').backgroundColor; return {open:el.open,background:getComputedStyle(el).backgroundColor,color:getComputedStyle(el).color,backdrop,activeInside:el.contains(document.activeElement)}; })()`);
+        checks.dialogOpensAndReceivesFocus = dialog.open && dialog.activeInside;
+        checks.dialogUsesRaisedSurface = dialog.background === baseline.surfaces.raised;
+        checks.dialogTextUsesPrimary = dialog.color === baseline.status.primary;
+        checks.dialogBackdropUsesToken = dialog.backdrop === baseline.surfaces.backdrop;
+        await evaluate(`document.querySelector('#showcase-dialog [data-chi-dialog-close]').click()`);
+        await new Promise((resolve) => setTimeout(resolve, 100));
+        checks.dialogClosesAndReturnsFocus = await evaluate(`!document.querySelector('#showcase-dialog').open && document.activeElement === document.querySelector('[data-chi-dialog-open="showcase-dialog"]')`);
+        await evaluate(`document.querySelector('[data-chi-dialog-open="showcase-dialog"]').click()`);
+        await new Promise((resolve) => setTimeout(resolve, 80));
+        await send('Input.dispatchMouseEvent', {type:'mouseMoved',x:12,y:12});
+        await send('Input.dispatchMouseEvent', {type:'mousePressed',x:12,y:12,button:'left',clickCount:1});
+        await send('Input.dispatchMouseEvent', {type:'mouseReleased',x:12,y:12,button:'left',clickCount:1});
+        await new Promise((resolve) => setTimeout(resolve, 100));
+        checks.dialogBackdropClosesAndReturnsFocus = await evaluate(`!document.querySelector('#showcase-dialog').open && document.activeElement === document.querySelector('[data-chi-dialog-open="showcase-dialog"]')`);
         checks.brandAndThemeApplied = await evaluate(`document.documentElement.getAttribute('data-chi-brand') === ${JSON.stringify(brand)} && document.documentElement.getAttribute('data-chi-theme') === ${JSON.stringify(theme)}`);
         const issues = Object.entries(checks).filter(([, ok]) => !ok).map(([name]) => name);
         if (issues.length) failures.push({ brand, theme, issues, baseline, stderr: stderr.slice(-600) });

@@ -239,8 +239,17 @@ test('Text inputs, selects, and textareas use a shared border-box sizing contrac
 
 test('Visual state browser regression covers interactive and disabled component states', () => {
   const smoke = read('../scripts/browser-visual-state-smoke.mjs');
-  for (const contract of ['buttonHoverUsesToken','buttonActiveUsesToken','disabledButtonStable','fieldHoverUsesToken','fieldFocusUsesToken','fieldErrorUsesToken','disabledFieldUsesToken','tabHoverUsesPrimaryText','selectedTabUsesAccent','disabledTabUsesToken','cardHoverUsesStrongBorder','listHoverUsesSunkenSurface','tableHoverUsesSunkenSurface']) {
+  for (const contract of ['buttonHoverUsesToken','buttonActiveUsesToken','disabledButtonStable','fieldHoverUsesToken','fieldFocusUsesToken','fieldErrorUsesToken','disabledFieldUsesToken','tabHoverUsesPrimaryText','selectedTabUsesAccent','disabledTabUsesToken','cardHoverUsesStrongBorder','listHoverUsesSunkenSurface','tableHoverUsesSunkenSurface','checkboxCheckedUsesAccent','radioCheckedUsesAccent','switchCheckedUsesAccent','disabledChoiceOpacityConsistent','disabledChoiceLabelUsesDisabledText','badgeSemanticColors','spinnerUsesAccent','skeletonUsesSunkenSurface','emptyErrorSuccessStatesPresent','dialogOpensAndReceivesFocus','dialogUsesRaisedSurface','dialogTextUsesPrimary','dialogBackdropUsesToken','dialogClosesAndReturnsFocus','dialogBackdropClosesAndReturnsFocus']) {
     assert.ok(smoke.includes(contract), `visual state contract ${contract}`);
   }
   assert.match(smoke, /Chrome visual state regression smoke/);
+});
+
+
+test('Showcase includes disabled checkbox, radio, and switch states plus success data state', () => {
+  const html = read('../preview/components.html');
+  assert.match(html, /chi-check__input[^>]*disabled/);
+  assert.match(html, /chi-radio__input[^>]*disabled/);
+  assert.match(html, /chi-switch__input[^>]*disabled/);
+  assert.match(html, /儲存成功/);
 });
