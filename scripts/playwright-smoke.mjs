@@ -84,6 +84,17 @@ try {
         if (await page.getByRole('main').count() !== 1) throw new Error('expected exactly one main landmark');
         if (await page.getByRole('heading', { level: 1, name: '標題' }).count() !== 1) throw new Error('expected one named level-one heading');
 
+        // 手機版 sidebar 版式站（如 nav）：主題切換在側邊欄抽屜裡，抽屜未開時
+        // sidebar.inert = true，按鈕雖可被 :visible 定位到卻點不下去。先照真實
+        // 使用者流程開抽屜，等它不再 inert 再繼續。header 版式站不受影響。
+        if (viewport.name === 'mobile' && (await page.locator('html').getAttribute('data-chi-layout')) === 'sidebar') {
+          await page.locator('.chi-mobile-header [data-chi-sidebar-toggle]').click();
+          await page.waitForFunction(() => {
+            const sidebar = document.querySelector('.chi-sidebar');
+            return sidebar?.classList.contains('mobile-open') && !sidebar.inert;
+          });
+        }
+
         const themeToggle = page.locator('[data-chi-theme-toggle]:visible').first();
         if (await page.locator('[data-chi-theme-toggle]:visible').count() !== 1) throw new Error('expected one visible theme toggle');
         const beforeMode = await page.locator('html').getAttribute('data-chi-theme-mode');
