@@ -35,7 +35,24 @@ const themes = ['light', 'dark'];
 const layouts = ['header', 'sidebar'];
 const failures = [];
 let passed = 0;
-const sharedAccent = new Map();
+// Expected accent per brand/theme, parsed from the generated CSS: the :root /
+// [data-chi-theme="dark"] defaults, overridden per brand by the
+// [data-chi-brand="…"] (and dark variant) blocks. A brand may declare its
+// own accent — nav follows its theme color (#008CAD) instead of the shared
+// default — so the accent is asserted per brand, not identical across brands.
+const expectedAccent = new Map();
+const defaultAccent = {};
+for (const [, selector, body] of tokenCss.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
+  const accent = /--chi-color-accent:\s*(#[0-9a-fA-F]{6})\s*;/.exec(body)?.[1]?.toLowerCase();
+  if (!accent) continue;
+  const brandMatch = /\[data-chi-brand="([^"]+)"\]/.exec(selector);
+  const dark = selector.includes('[data-chi-theme="dark"]');
+  if (!brandMatch) defaultAccent[dark ? 'dark' : 'light'] = accent;
+  else expectedAccent.set(`${brandMatch[1]}:${dark ? 'dark' : 'light'}`, accent);
+}
+for (const { id } of brands) for (const theme of themes) {
+  if (!expectedAccent.has(`${id}:${theme}`)) expectedAccent.set(`${id}:${theme}`, defaultAccent[theme]);
+}
 const semanticValues = new Map();
 
 async function waitFor(predicate, timeout = 12000) {
@@ -114,8 +131,8 @@ try {
         const checks = { ...result };
         delete checks.values;
         const issues = Object.entries(checks).filter(([, ok]) => !ok).map(([name]) => name);
-        if (sharedAccent.has(theme) && sharedAccent.get(theme) !== result.values.accent) issues.push('accent-inconsistent-across-brands');
-        else sharedAccent.set(theme, result.values.accent);
+        const expected = expectedAccent.get(`${brand}:${theme}`);
+        if (expected && result.values.accent.toLowerCase() !== expected) issues.push('accent-does-not-match-brand-tokens');
         const semanticKey = `${brand}:${theme}`;
         semanticValues.set(semanticKey, result.values);
         if (issues.length) failures.push({ brand, theme, layout, issues, values: result.values, stderr: stderr.slice(-500) }); else passed++;
