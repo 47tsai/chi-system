@@ -7,11 +7,11 @@
      {{slots.*}} 由各站填入。
      參考架構：GOV.UK template.njk「一個頁面殼＋具名區塊」（見研究報告 §3、§6）。 -->
 <!DOCTYPE html>
-<html lang="zh-Hant" data-chi-theme="light" data-chi-layout="header" data-chi-brand="nav">
+<html lang="zh-Hant" data-chi-theme="light" data-chi-layout="sidebar" data-chi-brand="nav">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>標題 — Chi Nav</title>
+<title>標題 — Chi導航</title>
 <script src="../../theme.js"></script>
 <script src="../../sidebar.js" data-chi-sidebar-key="chi-nav-sidebar-collapsed"></script>
 <link rel="stylesheet" href="../../tokens.css">
@@ -26,13 +26,13 @@
      適用門檻：本站導覽 ≥5 個頂層區段，或為動態分類，才用側邊欄版式；否則用 header＋副導覽列。
      收合開關在側邊欄頂列右側；收合 key 只有一個存放位置：引入 sidebar.js 的
      <script data-chi-sidebar-key="chi-<站點>-sidebar-collapsed">，<aside> 上不寫 key。
-     佔位符：https://nav.chi.qzz.io/ Chi Nav ../../logo/nav-b.png ../../logo/nav-w.png；<a href="#" aria-current="page"><span class="chi-sidebar__icon" aria-hidden="true">◆</span><span class="chi-sidebar__label">連結一</span></a><a href="#"><span class="chi-sidebar__icon" aria-hidden="true">◆</span><span class="chi-sidebar__label">連結二</span></a><a href="#"><span class="chi-sidebar__icon" aria-hidden="true">◆</span><span class="chi-sidebar__label">連結三</span></a> 為本站導覽連結。 -->
+     佔位符：https://nav.chi.qzz.io/ Chi導航 ../../logo/nav-b.png ../../logo/nav-w.png；<a href="#" aria-current="page"><span class="chi-sidebar__icon" aria-hidden="true">◆</span><span class="chi-sidebar__label">連結一</span></a><a href="#"><span class="chi-sidebar__icon" aria-hidden="true">◆</span><span class="chi-sidebar__label">連結二</span></a><a href="#"><span class="chi-sidebar__icon" aria-hidden="true">◆</span><span class="chi-sidebar__label">連結三</span></a> 為本站導覽連結。 -->
 <aside id="chi-sidebar" class="chi-sidebar" aria-label="側邊欄">
   <div class="chi-sidebar__top">
     <a class="chi-sidebar__brand" href="https://nav.chi.qzz.io/">
       <img class="chi-sidebar__logo chi-sidebar__logo--light" src="../../logo/nav-b.png" alt="" width="32" height="32">
       <img class="chi-sidebar__logo chi-sidebar__logo--dark" src="../../logo/nav-w.png" alt="" width="32" height="32">
-      <span class="chi-sidebar__name">Chi Nav</span>
+      <span class="chi-sidebar__name">Chi導航</span>
     </a>
     <button class="chi-sidebar__trigger" type="button" data-chi-sidebar-toggle aria-controls="chi-sidebar" aria-expanded="true" aria-label="收合側邊欄" title="收合側邊欄">‹</button>
   </div>
@@ -46,17 +46,17 @@
 <div class="chi-content">
 <div class="chi-mobile-header">
 <button class="chi-sidebar__trigger" type="button" data-chi-sidebar-toggle aria-controls="chi-sidebar" aria-expanded="false" aria-label="開啟導覽選單" title="開啟導覽選單">☰</button>
-<span class="chi-header__name">Chi Nav</span>
+<span class="chi-header__name">Chi導航</span>
 </div>
 <!-- chi-system Header — 唯一實作（SPEC.md §6）。網站不得複製修改。
-     佔位符由網站建置時以 sites/<site>.json 填入：https://nav.chi.qzz.io/ Chi Nav ../../logo/nav-b.png ../../logo/nav-w.png
+     佔位符由網站建置時以 sites/<site>.json 填入：https://nav.chi.qzz.io/ Chi導航 ../../logo/nav-b.png ../../logo/nav-w.png
      主題切換按鈕在 header 版式；側邊欄版式的站沒有 header，切換改放側邊欄底部。
      導覽不進 header，放 header 下方獨立一列（slots.subnav），沒有導覽的站省略整段。 -->
 <header class="chi-header">
   <a class="chi-header__brand" href="https://nav.chi.qzz.io/">
     <img class="chi-header__logo chi-header__logo--light" src="../../logo/nav-b.png" alt="" width="32" height="32">
     <img class="chi-header__logo chi-header__logo--dark" src="../../logo/nav-w.png" alt="" width="32" height="32">
-    <span class="chi-header__name">Chi Nav</span>
+    <span class="chi-header__name">Chi導航</span>
   </a>
   <div class="chi-header__actions">
     
@@ -78,9 +78,9 @@
 <button class="chi-btn chi-btn--danger" type="button">按鈕</button>
 </main>
 <!-- chi-system Footer — 唯一實作（SPEC.md §6）。頁尾跨站清單已拿掉，不放其他站連結。
-     佔位符：Chi Nav 站名、v1.0.0 由建置時填入（例如 v1.0.0）。 -->
+     佔位符：Chi導航 站名、v1.0.0 由建置時填入（例如 v1.0.0）。 -->
 <footer class="chi-footer">
-  <span class="chi-footer__name">Chi Nav</span>
+  <span class="chi-footer__name">Chi導航</span>
   <span class="chi-footer__version" data-chi-version>版本 v1.0.0</span>
 </footer>
 </div>
