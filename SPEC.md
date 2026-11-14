@@ -102,7 +102,7 @@ Foundations（原則）→ Tokens（數值）→ Components（元件）→ Patte
 ## 7. 元件展示與使用文件
 
 - `preview/components.html` 是可互動元件展示頁，必須覆蓋所有穩定元件與主要狀態，並可切換六品牌與淺／深主題。
-- `docs/COMPONENTS.md` 是開發者使用指南，提供語意 HTML、Runtime 載入方式、鍵盤／ARIA 契約與驗收流程；`scripts/validate-component-contracts.mjs` 會檢查文件範例與 canonical HTML 的 ID／ARIA 關聯、表單標籤、Radio 群組、Tabs、Dialog、Table 及 Button closed enum；與本規範衝突時以本文件為準。
+- `docs/COMPONENTS.md` 是開發者使用指南，提供語意 HTML、Runtime 載入方式、鍵盤／ARIA 契約與驗收流程；`scripts/validate-component-contracts.mjs` 會檢查文件範例與 canonical HTML 的 ID／ARIA 關聯、表單標籤、Radio 群組、Tabs、Dialog、Table、Button closed enum，以及 Theme／Sidebar／Tabs／Dialog 公開 Runtime API 文件與實作一致；與本規範衝突時以本文件為準。
 - 展示頁需在手機、平板、桌機驗證無非預期水平溢出；元件樣式必須來自正式 Token 與元件 CSS，不另建一套展示專用元件樣式。
 
 ## 8. 新增流程

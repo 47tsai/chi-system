@@ -97,6 +97,20 @@ if (snippets.length < 5) fail('docs/COMPONENTS.md: expected the complete set of 
 snippets.forEach((snippet, index) => inspectMarkup(snippet, `docs/COMPONENTS.md HTML example ${index + 1}`));
 inspectMarkup(read('components/base/examples.html'), 'components/base/examples.html');
 
+const runtimeContracts = [
+  ['Theme', 'components/theme/theme.js', ['window.ChiTheme = {','getMode:','getEffective:','setMode: setMode','setPreviewMode: setPreviewMode','cycle: cycle','bindToggles: bindToggles','chi-theme-change']],
+  ['Sidebar', 'components/sidebar/sidebar.js', ['window.ChiSidebar = {','bind: bind','isCollapsed: isCollapsed','setCollapsed: setCollapsed','toggleCollapsed: toggleCollapsed','openMobile: openMobile','closeMobile: closeMobile','chi-sidebar-change']],
+  ['Tabs', 'components/tabs/tabs.js', ['window.ChiTabs = { init, initAll }']],
+  ['Dialog', 'components/dialog/dialog.js', ['window.ChiDialog = { init, initAll, open, close }']],
+];
+for (const [name, file, contracts] of runtimeContracts) {
+  const source = read(file);
+  for (const contract of contracts) if (!source.includes(contract)) fail(`${name} runtime public API missing: ${contract}`);
+}
+for (const contract of ['ChiTheme.getMode()','ChiTheme.getEffective()','ChiTheme.setMode(mode)','ChiTheme.setPreviewMode(mode)','ChiTheme.bindToggles()','ChiSidebar.bind()','ChiSidebar.setCollapsed(value)','ChiSidebar.openMobile()','ChiSidebar.closeMobile(restoreFocus)','ChiTabs.init(root)','ChiTabs.initAll()','ChiDialog.open(dialog, opener)','ChiDialog.close(dialog, returnValue)','chi-theme-change','chi-sidebar-change']) {
+  if (!guide.includes(contract)) fail(`docs/COMPONENTS.md missing runtime API contract: ${contract}`);
+}
+
 const requiredSections = ['## Button','## Form fields','## Tabs','## Card、List、Table','## Badge 與資料狀態','## Dialog','## 驗收與變更'];
 for (const heading of requiredSections) if (!guide.includes(heading)) fail(`docs/COMPONENTS.md missing section: ${heading}`);
 for (const file of ['SPEC.md','README.md']) if (!read(file).includes('docs/COMPONENTS.md')) fail(`${file} should link to the component usage guide`);

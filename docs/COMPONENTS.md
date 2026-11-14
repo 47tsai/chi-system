@@ -48,6 +48,38 @@ Theme 必須先於 Sidebar；兩者皆同步載入且早於樣式表，避免首
 | Dialog | `components/base/base.css`、`components/dialog/dialog.js` | 需要暫時聚焦的任務 | 原生 dialog、aria-labelledby、開啟／關閉與焦點返回契約 |
 | Data states | `components/base/base.css` | Loading、Empty、Error、Success | 使用 status／alert 語意；狀態標題與說明清楚可讀 |
 
+## Runtime JavaScript API
+
+Runtime 會在共用殼載入時自動初始化。以下公開方法供動態插入元件、框架整合或除錯使用；一般靜態頁面只需依照前面的 HTML attribute 契約，不必手動呼叫。
+
+| Runtime | 公開 API | 行為 |
+|---|---|---|
+| Theme | `ChiTheme.getMode()`、`ChiTheme.getEffective()` | 取得使用者模式（`system`／`light`／`dark`）與實際生效主題（`light`／`dark`） |
+| Theme | `ChiTheme.setMode(mode)`、`ChiTheme.cycle()` | 設定並儲存模式，或依序切換；`setMode` 接受三種合法模式 |
+| Theme | `ChiTheme.setPreviewMode(mode)` | 只切換當前頁面，不寫入使用者偏好，供預覽器使用 |
+| Theme | `ChiTheme.bindToggles()`、`ChiTheme.KEY`、`ChiTheme.MODES` | 綁定主題按鈕；公開儲存 key 與合法模式清單 |
+| Sidebar | `ChiSidebar.bind()`、`ChiSidebar.isCollapsed()` | 重綁新增的 Sidebar DOM（不重複註冊既有事件）與讀取桌面收合狀態 |
+| Sidebar | `ChiSidebar.setCollapsed(value)`、`ChiSidebar.toggleCollapsed()` | 設定或切換桌面收合狀態 |
+| Sidebar | `ChiSidebar.openMobile()`、`ChiSidebar.closeMobile(restoreFocus)` | 開啟手機抽屜；關閉時預設返回觸發按鈕，只有跨斷點等情況才傳 `false` 略過焦點返回 |
+| Tabs | `ChiTabs.init(root)`、`ChiTabs.initAll()` | 初始化指定的 `[data-chi-tabs]` 根節點，或掃描整份文件；適用動態插入的 Tabs |
+| Dialog | `ChiDialog.init(dialog)`、`ChiDialog.initAll()` | 初始化指定 Dialog，或掃描整份文件 |
+| Dialog | `ChiDialog.open(dialog, opener)`、`ChiDialog.close(dialog, returnValue)` | 以原生 modal 開啟／關閉；`open` 成功回傳 `true`，無法開啟回傳 `false` |
+
+事件：`window` 會派發 `chi-theme-change`（`detail: { mode, effective }`）與 `chi-sidebar-change`（`detail: { collapsed }`）。監聽器應依事件 detail 更新自己的介面，不要直接修改 CHI 內部的 DOM 狀態。`setPreviewMode()` 不儲存偏好；正式使用者操作請用 `setMode()`。
+
+```js
+// 動態插入元件後，初始化新增的區塊
+window.ChiTabs?.init(document.querySelector('[data-chi-tabs]'));
+window.ChiDialog?.init(document.querySelector('#confirm-dialog'));
+
+// 監聽共用狀態
+window.addEventListener('chi-theme-change', (event) => {
+  console.log(event.detail.mode, event.detail.effective);
+});
+```
+
+Runtime 物件是版本化公開 API；未列出的內部函式、DOM class 與私有屬性不保證跨版本相容。呼叫 Dialog API 時傳入實際 DOM Element，不是 ID 字串。
+
 ## Button
 
 ```html
