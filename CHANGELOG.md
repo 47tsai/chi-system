@@ -20,6 +20,7 @@
 - Dialog 的瀏覽器 close-control smoke 改為檢查同步關閉結果；原生 Escape、close event 與焦點返回由獨立 CDP 鍵盤測試驗證。
 - 新增 Sidebar 手機抽屜真實鍵盤驗收：六站逐一以 Tab／Shift+Tab 測試焦點循環、抽屜外焦點回收與 Escape 關閉／焦點返回。
 - M23 擴充真實鍵盤旅程：Tabs 以方向鍵略過 disabled tab，並實測 Home／End；Theme 以 Space 鍵操作並確認模式與可存取標籤同步；Dialog 實際點擊 backdrop 驗證 opt-in 關閉與焦點返回。六站桌機／手機共 12 組。
+- M24 新增表單／按鈕瀏覽器回歸測試：驗證 Email 錯誤／有效狀態、Select／Textarea、Checkbox／Radio、disabled 狀態、按鈕送出表單與控制項水平溢出；六站 × 五種視窗寬度 × 淺深主題共 60 組。
 
 - 新增 DTCG Token schema 驗證，明確檢查 `$type`、`$value`、別名括號格式。
 - 統一本地與 CI 驗收入口為 `npm run check`。
