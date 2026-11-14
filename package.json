@@ -6,13 +6,15 @@
     "build": "node scripts/build-tokens.mjs && node scripts/build-site.mjs",
     "check": "npm run build && npm run validate && npm run test:integration && npm test && npm run test:browser && git diff --exit-code -- dist templates/base.html preview/sites.json",
     "validate": "node scripts/validate.mjs && node scripts/validate-component-contracts.mjs",
-    "test": "node --test",
-    "test:browser": "node scripts/browser-smoke.mjs && node scripts/browser-keyboard-smoke.mjs && node scripts/browser-sidebar-keyboard-smoke.mjs && node scripts/browser-a11y-smoke.mjs && node scripts/browser-components-smoke.mjs && node scripts/browser-form-keyboard-smoke.mjs && node scripts/browser-showcase-smoke.mjs && node scripts/browser-token-consumption-smoke.mjs && node scripts/browser-layout-geometry-smoke.mjs && node scripts/browser-visual-state-smoke.mjs && node scripts/browser-a11y-interaction-smoke.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "test:browser": "node scripts/browser-smoke.mjs && node scripts/browser-keyboard-smoke.mjs && node scripts/browser-sidebar-keyboard-smoke.mjs && node scripts/browser-a11y-smoke.mjs && node scripts/browser-components-smoke.mjs && node scripts/browser-form-keyboard-smoke.mjs && node scripts/browser-showcase-smoke.mjs && node scripts/browser-token-consumption-smoke.mjs && node scripts/browser-layout-geometry-smoke.mjs && node scripts/browser-visual-state-smoke.mjs && node scripts/browser-a11y-interaction-smoke.mjs && node scripts/playwright-smoke.mjs",
+    "test:playwright": "node scripts/playwright-smoke.mjs",
     "test:integration": "node scripts/test-fresh-site.mjs"
   },
   "type": "module",
   "version": "1.0.0",
   "devDependencies": {
-    "axe-core": "^4.14.0"
+    "axe-core": "^4.14.0",
+    "playwright-core": "^1.65.1"
   }
 }
