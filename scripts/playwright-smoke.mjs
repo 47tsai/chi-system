@@ -1,8 +1,7 @@
 import { createServer } from 'node:http';
 import { readFileSync, statSync } from 'node:fs';
 import path from 'node:path';
-import { spawnSync } from 'node:child_process';
-import { chromium } from 'playwright-core';
+import { chromium, firefox, webkit } from 'playwright-core';
 
 const ROOT = path.resolve(import.meta.dirname, '..');
 const DIST = path.join(ROOT, 'dist');
@@ -11,17 +10,11 @@ const viewports = [
   { name: 'desktop', width: 1365, height: 900 },
   { name: 'mobile', width: 390, height: 844 },
 ];
-const candidates = [process.env.CHROME_BIN, 'google-chrome', 'chromium', 'chromium-browser'].filter(Boolean);
-const executablePath = candidates.map((candidate) => {
-  if (spawnSync(candidate, ['--version'], { encoding: 'utf8' }).status !== 0) return null;
-  const located = spawnSync('which', [candidate], { encoding: 'utf8' });
-  return located.status === 0 ? located.stdout.trim() : null;
-}).find(Boolean);
-
-if (!executablePath) {
-  console.log('Playwright smoke skipped: Chrome/Chromium is not installed.');
-  process.exit(0);
-}
+const engines = [
+  { name: 'Chromium', browserType: chromium },
+  { name: 'Firefox', browserType: firefox },
+  { name: 'WebKit', browserType: webkit },
+];
 
 const server = createServer((request, response) => {
   const pathname = decodeURIComponent(new URL(request.url, 'http://localhost').pathname);
@@ -53,17 +46,18 @@ await new Promise((resolve, reject) => {
 const origin = `http://127.0.0.1:${server.address().port}`;
 const failures = [];
 let passed = 0;
-let browser;
+const browsers = [];
 
 try {
-  browser = await chromium.launch({
-    executablePath,
-    headless: true,
-    args: ['--no-sandbox', '--disable-dev-shm-usage'],
-  });
+  for (const engine of engines) {
+    const browser = await engine.browserType.launch({
+      headless: true,
+      ...(engine.name === 'Chromium' ? { args: ['--no-sandbox', '--disable-dev-shm-usage'] } : {}),
+    });
+    browsers.push(browser);
 
-  for (const site of sites) {
-    for (const viewport of viewports) {
+    for (const site of sites) {
+      for (const viewport of viewports) {
       const context = await browser.newContext({
         viewport: { width: viewport.width, height: viewport.height },
         colorScheme: 'light',
@@ -104,21 +98,22 @@ try {
         if (pageErrors.length) throw new Error(`page errors: ${pageErrors.join('; ')}`);
 
         passed++;
-        console.log(`PASS ${site} ${viewport.name} ${geometry.viewport}px mode=${beforeMode}→dark`);
+        console.log(`PASS ${engine.name} ${site} ${viewport.name} ${geometry.viewport}px mode=${beforeMode}→dark`);
       } catch (error) {
-        failures.push({ site, viewport: viewport.name, error: String(error), pageErrors });
-        console.log(`FAIL ${site} ${viewport.name} ${String(error)}`);
+        failures.push({ engine: engine.name, site, viewport: viewport.name, error: String(error), pageErrors });
+        console.log(`FAIL ${engine.name} ${site} ${viewport.name} ${String(error)}`);
       } finally {
         await context.close();
+      }
       }
     }
   }
 } finally {
-  await browser?.close();
+  await Promise.all(browsers.map((browser) => browser.close()));
   await new Promise((resolve) => server.close(resolve));
 }
 
-console.log(`Playwright browser smoke: ${passed}/${sites.length * viewports.length} site/viewport journeys passed.`);
+console.log(`Playwright cross-browser smoke: ${passed}/${engines.length * sites.length * viewports.length} engine/site/viewport journeys passed.`);
 if (failures.length) {
   for (const failure of failures) console.error(JSON.stringify(failure));
   process.exitCode = 1;

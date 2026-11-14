@@ -2,9 +2,10 @@
 
 ## Unreleased
 
+- M38 擴充 Playwright 至 Chromium／Firefox／WebKit 三引擎，六站 × 桌機／手機共 36 組；CI 安裝三種瀏覽器及必要系統依賴，跨引擎旅程成為正式阻擋門檻。
 - M37 修正 Node 測試探索範圍：`npm test` 只執行 `tests/*.test.mjs`，避免把會暫時改寫 Token／站設定與 dist 的整合腳本再次當成單元測試並行執行，消除生成物讀寫競態。
-- M36 新增 Playwright Chromium 瀏覽器旅程：六站 × 桌機／手機共 12 組，透過可存取角色與名稱定位主要介面，驗證主 Landmark、H1、品牌識別、主題切換、文件語言與水平溢出；納入 `npm run test:browser`，並提供獨立 `npm run test:playwright`。
-- M35 將 axe-core 納入既有 Chrome 無障礙驗收：依 WCAG 2.0／2.1／2.2 A／AA 規則掃描六站 × 桌機／手機 × 淺／深主題共 24 組，違規直接使測試失敗；CI 新增 `npm ci`，鎖定依賴並確保乾淨環境可重現。人工螢幕閱讀器驗收與 Firefox／WebKit 跨瀏覽器測試仍列後續工作。
+- M36 新增 Playwright 瀏覽器旅程：六站 × 桌機／手機共 12 組，透過可存取角色與名稱定位主要介面，驗證主 Landmark、H1、品牌識別、主題切換、文件語言與水平溢出；納入 `npm run test:browser`，並提供獨立 `npm run test:playwright`。
+- M35 將 axe-core 納入既有 Chrome 無障礙驗收：依 WCAG 2.0／2.1／2.2 A／AA 規則掃描六站 × 桌機／手機 × 淺／深主題共 24 組，違規直接使測試失敗；CI 新增 `npm ci`，鎖定依賴並確保乾淨環境可重現。人工螢幕閱讀器驗收仍列後續工作。
 - M34 補齊 Theme／Sidebar／Tabs／Dialog 的公開 JavaScript API、參數、事件與使用時機文件；文件驗證器同步比對 Runtime 實際匯出的方法，避免 API 文件與程式碼分岔。
 - M33 新增全新站點整合驗收：測試執行期間暫時加入兩份品牌 Token 與兩份站設定，分別驗證預設 Header 與指定 Sidebar 版式可生成完整站點、品牌 Token、Logo 與共用資產路徑，並通過完整站點驗證；測試結束自動清除 fixture 並重建正式輸出。
 - M32 強化元件公開契約文件：補齊 Header／Sidebar Runtime 載入範例、Radio fieldset／legend、Readonly／Disabled／Invalid 差異、圖示按鈕可存取名稱、Tabs 自動啟用與 Dialog 原生 Modal 行為；新增文件範例驗證器，檢查 HTML ID／ARIA 關聯、表單標籤、Button closed enum、Tabs／Dialog／Table 語意，並納入 `npm run validate`。
@@ -60,7 +61,7 @@
 - CI：Token 解析、對比計算（每品牌×淺深色）、禁硬編碼、網站設定 schema、斷點一致、生成物 diff。
 - 定案值沿用舊版：六站識別色、語意色（Adobe Spectrum 900 階）、斷點 768／1024、
   主題 key chi-theme-mode、logo 站點 ID 命名、範本佔位規則。
-- 已知缺口（v1.1）：axe／Playwright 計算樣式／視覺回歸、日期選擇等未列入基礎示例表的元件。
+- 已知缺口（v1.1）：逐像素視覺回歸、人工螢幕閱讀器驗收，以及日期選擇等未列入基礎示例表的元件。
 - 新增 Chrome Accessibility／DOM 稽核：六站桌機／手機、淺色／深色共 24 組，檢查文件語言與標題、主要 Landmark、互動名稱、表單標籤、圖片 alt、ARIA IDREF、重複 ID、隱藏區焦點與實際渲染文字對比。
 - M30 擴充元件狀態驗收：六品牌 × 淺深主題共 12 組，實際檢查 Checkbox／Radio／Switch 的 Checked／Disabled、Badge 四種語意色、Spinner／Skeleton、Empty／Error／Success 資料狀態，以及 Dialog 表面／Backdrop／開關與焦點返回；展示頁補齊停用選擇控制與成功狀態。
 - M31 新增真實鍵盤與 Chrome Accessibility Tree 驗收，六品牌 × 桌機／手機共 12 組，驗證 Checkbox／Radio／Switch 語意角色、Checked 狀態、Disabled／Readonly／Invalid 公告、Tab 順序、Space／方向鍵操作、Live Region，以及 Dialog 初始焦點、原生 Modal 背景隔離、Tab／Shift+Tab 邊界焦點與 Escape 焦點返回；補上具名稱的原生 Radio fieldset／legend 群組，並保留原生 `<dialog>` 的焦點管理，不另造一套焦點陷阱。
