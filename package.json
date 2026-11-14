@@ -11,5 +11,8 @@
     "test:integration": "node scripts/test-fresh-site.mjs"
   },
   "type": "module",
-  "version": "1.0.0"
+  "version": "1.0.0",
+  "devDependencies": {
+    "axe-core": "^4.14.0"
+  }
 }
