@@ -22,6 +22,7 @@
 - M23 擴充真實鍵盤旅程：Tabs 以方向鍵略過 disabled tab，並實測 Home／End；Theme 以 Space 鍵操作並確認模式與可存取標籤同步；Dialog 實際點擊 backdrop 驗證 opt-in 關閉與焦點返回。六站桌機／手機共 12 組。
 - M24 新增表單／按鈕瀏覽器回歸測試：驗證 Email 錯誤／有效狀態、Select／Textarea、Checkbox／Radio、disabled 狀態、按鈕送出表單與控制項水平溢出；六站 × 五種視窗寬度 × 淺深主題共 60 組。
 - M25 新增真實表單鍵盤旅程：以 Chrome DevTools Protocol 實際按 Tab、方向鍵、Space、Enter，驗證 Email 輸入、Select／Radio 選擇、Checkbox 勾選及表單送出；六站桌機／手機共 12 組。
+- M26 新增可互動元件展示頁與開發者使用指南，覆蓋 Button、Form、Tabs、Card、List、Table、Badge、Dialog、Data states，並以六品牌 × 淺深主題 × 手機／平板／桌機共 36 組 Chrome 驗收。
 
 - 新增 DTCG Token schema 驗證，明確檢查 `$type`、`$value`、別名括號格式。
 - 統一本地與 CI 驗收入口為 `npm run check`。

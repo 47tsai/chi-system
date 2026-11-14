@@ -34,13 +34,18 @@ logo/
 .github/workflows/ci.yml
 ```
 
+## 元件展示與使用
+
+- [元件展示頁](preview/components.html)：六品牌、淺／深主題、桌機／平板／手機的互動展示。
+- [元件使用指南](docs/COMPONENTS.md)：元件總覽、HTML 範例、語意與鍵盤契約。
+
 ## 用法
 
 ```sh
 npm run build     # 產生 Token／元件 CSS、共用模板、預覽清單、dist/logo 與 dist/sites/<站>/index.html
 npm run validate  # Token schema／解析、對比、硬編碼、站設定、模板與站點輸出、dist 產物清單、斷點
 npm run test      # Node.js 行為、Theme／Sidebar／Tabs／Dialog、Header／Footer、Button／表單與 HTML 語意測試
-npm run test:browser # Chrome 可用時，六站桌機／手機載入與 Theme／Sidebar／Tabs／Dialog 互動、斷點版式、水平溢位、Focus-visible CSS 合約、真實 Tab／Shift+Tab／方向鍵／Home／End／Space／Escape 鍵盤互動、Dialog backdrop、Sidebar 焦點循環、Accessibility Tree 名稱／ARIA 關聯與實際渲染文字對比，以及預設／減少動態偏好測試；另以六站 × 五種視窗寬度 × 淺深主題驗證表單與按鈕互動；另以真實 Tab／方向鍵／Space／Enter 驗證表單鍵盤旅程
+npm run test:browser # Chrome 可用時，六站桌機／手機載入與 Theme／Sidebar／Tabs／Dialog 互動、斷點版式、水平溢位、Focus-visible CSS 合約、真實 Tab／Shift+Tab／方向鍵／Home／End／Space／Escape 鍵盤互動、Dialog backdrop、Sidebar 焦點循環、Accessibility Tree 名稱／ARIA 關聯與實際渲染文字對比，以及預設／減少動態偏好測試；另以元件展示頁六品牌 × 淺深主題 × 三種視窗共 36 組驗收；另以六站 × 五種視窗寬度 × 淺深主題驗證表單與按鈕互動；另以真實 Tab／方向鍵／Space／Enter 驗證表單鍵盤旅程
 npm run check     # build + validate + unit tests + browser interaction smoke + 生成物 diff
 ```
 

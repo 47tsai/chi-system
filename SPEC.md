@@ -99,7 +99,13 @@ Foundations（原則）→ Tokens（數值）→ Components（元件）→ Patte
   Runtime 來源為 `components/dialog/dialog.js`，建置後輸出 `dist/dialog.js`；設定初始焦點並於 close 後返回觸發處；焦點限制、Escape 與背景 inert 由原生 modal dialog 提供。
   日期選擇、檔案上傳、滑桿等未列入基礎示例表的元件，使用前須另行定義。
 
-## 7. 新增流程
+## 7. 元件展示與使用文件
+
+- `preview/components.html` 是可互動元件展示頁，必須覆蓋所有穩定元件與主要狀態，並可切換六品牌與淺／深主題。
+- `docs/COMPONENTS.md` 是開發者使用指南，提供語意 HTML、Runtime 載入方式、鍵盤／ARIA 契約與驗收流程；與本規範衝突時以本文件為準。
+- 展示頁需在手機、平板、桌機驗證無非預期水平溢出；元件樣式必須來自正式 Token 與元件 CSS，不另建一套展示專用元件樣式。
+
+## 8. 新增流程
 
 狀態 draft → preview → stable，只有核心維護者能升 stable。
 
@@ -114,7 +120,7 @@ Foundations（原則）→ Tokens（數值）→ Components（元件）→ Patte
 - 新 Token：只提角色、不提數值；角色至少在 2 站或 2 元件出現才加。
   廢棄用 `$deprecated` 標註替代品與移除版本，移除只在下一個 major。
 
-## 8. 驗收
+## 9. 驗收
 
 CI 驗真的渲染依據，不是檔案在不在（舊系統三支腳本全綠仍是亂的）：
 
@@ -125,10 +131,10 @@ CI 驗真的渲染依據，不是檔案在不在（舊系統三支腳本全綠�
 5. 網站設定 schema（欄位、型別、logo 檔案存在；預覽清單與 sites 一致）
 6. 對比計算（每品牌×淺深色：一般文字 4.5:1、大字與非文字 UI 3:1）
 7. 斷點一致（768／1024 在 JSON、CSS、JS 三處一致）
-8. 站點輸出煙霧測試（每份站設定都產生完整 index.html；placeholder 全數填入、品牌與 Logo 路徑正確且都位於 dist 根目錄內、共用 CSS／JS 路徑存在）。所有本機 CSS／JS／Logo 路徑須通過靜態 HTTP 200 與 MIME smoke test；Chrome 可用時另以 headless 桌機／手機載入六站並檢查 console；Chrome 可用時，另驗證預設／減少動態偏好、Focus-visible CSS 合約與元件互動；另以 Chrome DevTools Protocol 注入真實 Tab、方向鍵、Home／End、Space、Escape 與滑鼠 backdrop 點擊，於六站桌機／手機共 12 組情境確認焦點落點、`:focus-visible`、Tabs disabled 略過／首末項移動與面板同步、Theme 鍵盤操作及標籤同步，以及 Dialog Escape／backdrop 關閉和焦點返回；另於六站手機版實際驗證 Sidebar 抽屜的 Tab／Shift+Tab 焦點循環、外部焦點回收與 Escape 關閉。 Chrome Accessibility Tree 與 DOM 稽核則覆蓋六站桌機／手機、淺色／深色共 24 組，檢查文件語言／標題、主要 Landmark、互動可存取名稱、表單標籤、圖片 alt、ARIA IDREF、重複 ID、aria-hidden 焦點安全，以及可見文字的實際前景／背景對比。另以元件表單瀏覽器測試覆蓋六站、五種視窗寬度（320／390／768／1024／1365px）及淺深主題共 60 組，實際檢查 Email 有效／錯誤狀態、欄位錯誤樣式、Select／Textarea 值、Checkbox／Radio 操作、按鈕送出表單、停用控制穩定性與表單控制項水平溢出；另以 Chrome DevTools Protocol 於六站桌機／手機共 12 組實際驗證 Tab 焦點順序、Select 方向鍵、Checkbox Space、Radio 方向鍵及 Enter 送出表單。此自動檢查是專案回歸門檻，不宣稱取代完整人工 WCAG／輔助科技測試。
+8. 站點輸出煙霧測試（每份站設定都產生完整 index.html；placeholder 全數填入、品牌與 Logo 路徑正確且都位於 dist 根目錄內、共用 CSS／JS 路徑存在）。所有本機 CSS／JS／Logo 路徑須通過靜態 HTTP 200 與 MIME smoke test；Chrome 可用時另以 headless 桌機／手機載入六站並檢查 console；Chrome 可用時，另驗證元件展示頁六品牌 × 淺深主題 × 手機／平板／桌機共 36 組，檢查元件樣式、Runtime、表單互動與水平溢出；並驗證預設／減少動態偏好、Focus-visible CSS 合約與元件互動；另以 Chrome DevTools Protocol 注入真實 Tab、方向鍵、Home／End、Space、Escape 與滑鼠 backdrop 點擊，於六站桌機／手機共 12 組情境確認焦點落點、`:focus-visible`、Tabs disabled 略過／首末項移動與面板同步、Theme 鍵盤操作及標籤同步，以及 Dialog Escape／backdrop 關閉和焦點返回；另於六站手機版實際驗證 Sidebar 抽屜的 Tab／Shift+Tab 焦點循環、外部焦點回收與 Escape 關閉。 Chrome Accessibility Tree 與 DOM 稽核則覆蓋六站桌機／手機、淺色／深色共 24 組，檢查文件語言／標題、主要 Landmark、互動可存取名稱、表單標籤、圖片 alt、ARIA IDREF、重複 ID、aria-hidden 焦點安全，以及可見文字的實際前景／背景對比。另以元件表單瀏覽器測試覆蓋六站、五種視窗寬度（320／390／768／1024／1365px）及淺深主題共 60 組，實際檢查 Email 有效／錯誤狀態、欄位錯誤樣式、Select／Textarea 值、Checkbox／Radio 操作、按鈕送出表單、停用控制穩定性與表單控制項水平溢出；另以 Chrome DevTools Protocol 於六站桌機／手機共 12 組實際驗證 Tab 焦點順序、Select 方向鍵、Checkbox Space、Radio 方向鍵及 Enter 送出表單。此自動檢查是專案回歸門檻，不宣稱取代完整人工 WCAG／輔助科技測試。
 9. axe／Playwright 計算樣式／視覺回歸：列為 v1.1（Storybook 未引入前，以上 8 道為 v1.0 門檻）
 
-## 9. 版本
+## 10. 版本
 
 SemVer。v1.0.0 是公開 API 宣告與 SemVer 承諾開始之時：
 公開 API＝Token、元件 props／slots、站設定 schema、模板區塊；未列入的皆為內部。
@@ -136,7 +142,7 @@ SemVer。v1.0.0 是公開 API 宣告與 SemVer 承諾開始之時：
 站釘版用確切版本（或 Git Tag），回滾就是切回上一個 Tag 重建。
 CHANGELOG.md 常備 Unreleased 區。參考：GOV.UK Frontend 版本政策。
 
-## 10. 來源（搬用與參考，皆註明）
+## 11. 來源（搬用與參考，皆註明）
 
 舊版搬用（chi-system-old，HEAD 436f028；皆為全量盤點核對過沒問題的部分）：
 - Token 全部數值（六站識別色、語意色、字級、間距、圓角、陰影、版面尺寸）
@@ -158,7 +164,7 @@ CHANGELOG.md 常備 Unreleased 區。參考：GOV.UK Frontend 版本政策。
 - DWP：變更與貢獻流程。Carbon：draft→preview→stable 生命週期。
 - 研究報告：~/workspace/research_notes/chi-system-design-systems-research-20261109-1329/report.md
 
-## 11. 執行順序
+## 12. 執行順序
 
 1. 本文件齊審閱通過（v1.0.0 已按此版實作，見 CHANGELOG.md）
 2. 最小核心實作，本地驗證全過
