@@ -194,3 +194,22 @@ test('Component showcase and developer guide cover the stable component catalog'
   assert.match(preview, /href="components\.html"/);
   assert.match(read('../package.json'), /browser-showcase-smoke\.mjs/);
 });
+
+
+test('Generated component stylesheet keeps the first Header rule parseable', () => {
+  const builder = read('../scripts/build-site.mjs');
+  const generated = read('../dist/components.css');
+  assert.ok(!builder.includes('components/*/*.css'), 'CSS block comments must not contain the */ terminator inside a glob');
+  assert.match(generated, /^\/\*[\s\S]*?\*\/[\s\S]*?\.chi-header\s*\{/);
+});
+
+test('Brand identity and action accent remain separate token contracts', () => {
+  const spec = read('../SPEC.md');
+  const guide = read('../docs/COMPONENTS.md');
+  const smoke = read('../scripts/browser-token-consumption-smoke.mjs');
+  assert.match(spec, /品牌色只用於站點識別/);
+  assert.match(guide, /品牌識別色與操作色/);
+  assert.match(smoke, /brandIdentityRendered/);
+  assert.match(smoke, /primaryUsesAccent/);
+  assert.match(smoke, /footerUsesMutedText/);
+});

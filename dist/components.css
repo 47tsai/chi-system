@@ -1,4 +1,4 @@
-/* chi-system components.css — 生成物，DO NOT EDIT。由 scripts/build-site.mjs 串接 components/*/*.css 產生。順序：header、footer、sidebar、button、base。 */
+/* chi-system components.css — 生成物，DO NOT EDIT。由 scripts/build-site.mjs 串接 components/<元件>/*.css 產生。順序：header、footer、sidebar、button、base。 */
 
 /* --- header/header.css --- */
 /* chi-system Header — 只引 Token，不寫原始值。 */

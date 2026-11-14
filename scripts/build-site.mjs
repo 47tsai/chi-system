@@ -25,7 +25,7 @@ export function buildSite() {
   writeFileSync(path.join(ROOT, 'templates', 'base.html'), out);
 
   const order = ['header', 'footer', 'sidebar', 'button', 'base'];
-  let css = `/* chi-system components.css — 生成物，DO NOT EDIT。由 scripts/build-site.mjs 串接 components/*/*.css 產生。順序：${order.join('、')}。 */\n`;
+  let css = `/* chi-system components.css — 生成物，DO NOT EDIT。由 scripts/build-site.mjs 串接 components/<元件>/*.css 產生。順序：${order.join('、')}。 */\n`;
   for (const name of order) {
     const files = readdirSync(path.join(ROOT, 'components', name)).filter((f) => f.endsWith('.css'));
     for (const f of files) css += `\n/* --- ${name}/${f} --- */\n${readFileSync(path.join(ROOT, 'components', name, f), 'utf8')}`;

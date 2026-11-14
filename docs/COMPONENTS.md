@@ -16,6 +16,12 @@
 
 以上路徑以獨立部署的 `dist/` 為根目錄。實際部署版本請釘選 Git Tag，不要引用浮動分支。
 
+## 品牌識別色與操作色
+
+品牌 Token `color.brand` 只負責站點識別，例如 Header／Sidebar 頂部的品牌識別線；它不會覆寫全站操作色。連結、Primary Button、焦點環與互動狀態使用共用語意 Token `color.accent`，並依淺色／深色主題切換。這是刻意的分層，不是品牌色漏套。
+
+新增元件時，先判斷它是在表達「這是哪個站」還是在表達「這個操作可以做什麼」：前者使用 `color.brand`，後者使用對應的 semantic／component Token。不要直接把 `color.brand` 套到所有主要按鈕。
+
 ## 元件總覽
 
 | 元件 | CSS／Runtime 來源 | 主要用途 | 關鍵契約 |
