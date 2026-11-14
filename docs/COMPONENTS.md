@@ -14,7 +14,18 @@
 <script src="/dialog.js" defer></script>
 ```
 
-以上路徑以獨立部署的 `dist/` 為根目錄。實際部署版本請釘選 Git Tag，不要引用浮動分支。
+以上是 Header 版式。Sidebar 版式需在 `<head>` 中、樣式表之前同步載入 Sidebar Runtime，並以 script attribute 指定唯一的站點收合 key：
+
+```html
+<script src="/theme.js"></script>
+<script src="/sidebar.js" data-chi-sidebar-key="chi-example-sidebar-collapsed"></script>
+<link rel="stylesheet" href="/tokens.css">
+<link rel="stylesheet" href="/components.css">
+<script src="/tabs.js" defer></script>
+<script src="/dialog.js" defer></script>
+```
+
+Theme 必須先於 Sidebar；兩者皆同步載入且早於樣式表，避免首次繪製閃爍。Sidebar key 格式為 `chi-<site-id>-sidebar-collapsed`，只放在 script attribute，不要另存於 HTML 或 JavaScript。以上路徑以獨立部署的 `dist/` 為根目錄。實際部署版本請釘選 Git Tag，不要引用浮動分支。
 
 ## 品牌識別色與操作色
 
@@ -47,7 +58,7 @@
 <button class="chi-btn chi-btn--primary" type="button" disabled>處理中</button>
 ```
 
-使用原生 `disabled`，不要只用 `aria-disabled` 模擬停用。按鈕若不是送出表單，明確指定 `type="button"`。
+使用原生 `disabled`，不要只用 `aria-disabled` 模擬停用。按鈕若不是送出表單，明確指定 `type="button"`。純圖示按鈕必須提供可存取名稱（例如 `aria-label`）；不可只依賴 tooltip 或圖示外觀。一個操作情境最多一個 Primary。
 
 ## Form fields
 
@@ -65,11 +76,17 @@
 </div>
 
 <label class="chi-check"><input class="chi-check__input" type="checkbox" name="updates"> 接收更新通知</label>
-<label class="chi-radio"><input class="chi-radio__input" type="radio" name="frequency" value="weekly"> 每週</label>
+<fieldset>
+  <legend>通知頻率</legend>
+  <label class="chi-radio"><input class="chi-radio__input" type="radio" name="frequency" value="weekly"> 每週</label>
+  <label class="chi-radio"><input class="chi-radio__input" type="radio" name="frequency" value="monthly"> 每月</label>
+</fieldset>
 <label class="chi-switch"><input class="chi-switch__input" type="checkbox" role="switch"> 啟用通知</label>
 ```
 
-錯誤欄位必須同時有 `aria-invalid="true"`、`aria-describedby` 指向錯誤訊息，以及 `chi-field--error`。Checkbox／Radio／Switch 的文字放在 label 內，讓點擊範圍包含文字。
+錯誤欄位必須同時有 `aria-invalid="true"`、`aria-describedby` 指向錯誤訊息，以及 `chi-field--error`。Checkbox／Radio／Switch 的文字放在 label 內，讓點擊範圍包含文字；Radio 選項必須放在有可見 `legend` 的 `fieldset` 中。
+
+`disabled` 與 `readonly` 不可混用：`disabled` 不可聚焦且不會隨表單送出；`readonly` 僅適用於支援它的 Input／Textarea，仍可聚焦且會隨表單送出。Select、Checkbox、Radio 不支援 `readonly`，不可用 `aria-readonly` 假裝原生行為。欄位錯誤使用 `aria-invalid`，不要把錯誤狀態當成停用或唯讀。
 
 Select 使用原生 `<select class="chi-select">`；需要包裝圖示時使用 `.chi-select-wrap`。Textarea 使用 `.chi-textarea`。不要自行重做原生選擇器的鍵盤行為。
 
@@ -86,7 +103,7 @@ Select 使用原生 `<select class="chi-select">`；需要包裝圖示時使用 
 </div>
 ```
 
-每個 tab 與 panel 的 ID 必須唯一且互相關聯。Runtime 會同步 `aria-selected`、`tabindex` 與 panel `hidden`；disabled tab 會略過。
+每個 tab 與 panel 的 ID 必須唯一且互相關聯。Runtime 會同步 `aria-selected`、`tabindex` 與 panel `hidden`；disabled tab 會略過。這是自動啟用模式：方向鍵移動焦點時，同步切換選取與面板；Home／End 移至第一／最後一個可用 tab。Tab 鍵離開整組 tablist，panel 依範例以 `tabindex="0"` 接受焦點。
 
 ## Card、List、Table
 
@@ -131,7 +148,7 @@ Badge 修飾短狀態，使用 `chi-badge--success|warning|danger|info`。資料
 </dialog>
 ```
 
-由 `dialog.js` 管理 `showModal()`、初始焦點與關閉後焦點返回。可用 `data-chi-dialog-initial-focus` 指定初始焦點，或在 dialog 上加 `data-chi-dialog-backdrop-close` 啟用背景點擊關閉。
+由 `dialog.js` 管理 `showModal()`、初始焦點與關閉後焦點返回。可用 `data-chi-dialog-initial-focus` 指定初始焦點，或在 dialog 上加 `data-chi-dialog-backdrop-close` 啟用背景點擊關閉。焦點限制、Escape 關閉與背景 inert 由原生 modal `<dialog>` 提供，不要自行再加一套焦點陷阱。每個 Dialog 都必須有唯一 ID，並以 `aria-labelledby` 指向對話框內可見標題。
 
 ## 驗收與變更
 
