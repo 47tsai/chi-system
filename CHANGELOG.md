@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- M32 強化元件公開契約文件：補齊 Header／Sidebar Runtime 載入範例、Radio fieldset／legend、Readonly／Disabled／Invalid 差異、圖示按鈕可存取名稱、Tabs 自動啟用與 Dialog 原生 Modal 行為；新增文件範例驗證器，檢查 HTML ID／ARIA 關聯、表單標籤、Button closed enum、Tabs／Dialog／Table 語意，並納入 `npm run validate`。
 - Theme／Sidebar runtime 來源收回 `components/`，由建置器產生 `dist/`；CI 驗證 Theme／Sidebar／Tabs／Dialog 四份 runtime 來源與輸出一致。
 - Dialog 使用原生 modal dialog，管理初始焦點與關閉後焦點返回；補足 Tabs 鍵盤行為與表單／元件語意回歸測試。
 - 補齊 Badge 四種狀態與 Loading／Empty／Error／Success 語意範例及驗證。
