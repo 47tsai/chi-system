@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- M33 新增全新站點整合驗收：測試執行期間暫時加入兩份品牌 Token 與兩份站設定，分別驗證預設 Header 與指定 Sidebar 版式可生成完整站點、品牌 Token、Logo 與共用資產路徑，並通過完整站點驗證；測試結束自動清除 fixture 並重建正式輸出。
 - M32 強化元件公開契約文件：補齊 Header／Sidebar Runtime 載入範例、Radio fieldset／legend、Readonly／Disabled／Invalid 差異、圖示按鈕可存取名稱、Tabs 自動啟用與 Dialog 原生 Modal 行為；新增文件範例驗證器，檢查 HTML ID／ARIA 關聯、表單標籤、Button closed enum、Tabs／Dialog／Table 語意，並納入 `npm run validate`。
 - Theme／Sidebar runtime 來源收回 `components/`，由建置器產生 `dist/`；CI 驗證 Theme／Sidebar／Tabs／Dialog 四份 runtime 來源與輸出一致。
 - Dialog 使用原生 modal dialog，管理初始焦點與關閉後焦點返回；補足 Tabs 鍵盤行為與表單／元件語意回歸測試。
