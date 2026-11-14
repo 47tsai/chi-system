@@ -45,7 +45,7 @@ logo/
 npm run build     # 產生 Token／元件 CSS、共用模板、預覽清單、dist/logo 與 dist/sites/<站>/index.html
 npm run validate  # Token schema／解析、對比、硬編碼、站設定、模板與站點輸出、dist 產物清單、斷點
 npm run test      # Node.js 行為、Theme／Sidebar／Tabs／Dialog、Header／Footer、Button／表單與 HTML 語意測試
-npm run test:browser # Chrome 可用時，六站桌機／手機載入與 Theme／Sidebar／Tabs／Dialog 互動、斷點版式、水平溢位、Focus-visible CSS 合約、真實 Tab／Shift+Tab／方向鍵／Home／End／Space／Escape 鍵盤互動、Dialog backdrop、Sidebar 焦點循環、Accessibility Tree 名稱／ARIA 關聯與實際渲染文字對比，以及預設／減少動態偏好測試；另以元件展示頁六品牌 × 淺深主題 × 三種視窗共 36 組驗收；另以正式預覽殼六品牌 × 淺深主題 × Header／Sidebar 共 24 組驗證 Token 實際套用，並以五種視窗寬度共 120 組驗證共用殼與元件幾何一致性；另以六品牌 × 淺深主題共 12 組實際驗證元件 Hover／Active／Focus／Error／Disabled 視覺狀態與 Token；同樣以 12 組驗證 Checkbox／Radio／Switch Checked／Disabled、Badge 語意色、Spinner／Skeleton、Empty／Error／Success 與 Dialog Backdrop／Focus；另以六站 × 五種視窗寬度 × 淺深主題驗證表單與按鈕互動；另以真實 Tab／方向鍵／Space／Enter 驗證表單鍵盤旅程
+npm run test:browser # Chrome 可用時，六站桌機／手機載入與 Theme／Sidebar／Tabs／Dialog 互動、斷點版式、水平溢位、Focus-visible CSS 合約、真實 Tab／Shift+Tab／方向鍵／Home／End／Space／Escape 鍵盤互動、Dialog backdrop、Sidebar 焦點循環、Accessibility Tree 名稱／ARIA 關聯與實際渲染文字對比，以及預設／減少動態偏好測試；另以元件展示頁六品牌 × 淺深主題 × 三種視窗共 36 組驗收；另以正式預覽殼六品牌 × 淺深主題 × Header／Sidebar 共 24 組驗證 Token 實際套用，並以五種視窗寬度共 120 組驗證共用殼與元件幾何一致性；另以六品牌 × 淺深主題共 12 組實際驗證元件 Hover／Active／Focus／Error／Disabled 視覺狀態與 Token；同樣以 12 組驗證 Checkbox／Radio／Switch Checked／Disabled、Badge 語意色、Spinner／Skeleton、Empty／Error／Success 與 Dialog Backdrop／Focus；另以六品牌 × 桌機／手機 12 組執行真實鍵盤與 Chrome Accessibility Tree 驗收，涵蓋選擇控制角色與具名稱 Radio 群組、Readonly／Disabled／Invalid、Live Region、Dialog 原生 Modal 背景隔離、Tab／Shift+Tab 邊界焦點與返回；另以六站 × 五種視窗寬度 × 淺深主題驗證表單與按鈕互動；另以真實 Tab／方向鍵／Space／Enter 驗證表單鍵盤旅程
 npm run check     # build + validate + unit tests + browser interaction smoke + 生成物 diff
 ```
 

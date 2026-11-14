@@ -81,7 +81,7 @@ try {
       await evaluate('window.ChiTabs?.initAll(); window.ChiDialog?.initAll(); true');
 
       for (const theme of themes) {
-        await evaluate(`window.ChiTheme.setPreviewMode(${JSON.stringify(theme)})`);
+        await evaluate(`window.scrollTo(0, 0); window.ChiTheme.setPreviewMode(${JSON.stringify(theme)})`);
         await new Promise((resolve) => setTimeout(resolve, 220));
         const baseline = await evaluate(`(() => {
           const root = getComputedStyle(document.documentElement);

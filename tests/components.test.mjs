@@ -252,4 +252,16 @@ test('Showcase includes disabled checkbox, radio, and switch states plus success
   assert.match(html, /chi-radio__input[^>]*disabled/);
   assert.match(html, /chi-switch__input[^>]*disabled/);
   assert.match(html, /儲存成功/);
+  assert.match(html, /<fieldset class="showcase-choice-group"><legend>通知對象<\/legend>/);
+});
+
+
+test('Dialog keeps native modal focus behavior and accessibility interaction regression coverage', () => {
+  const dialog = read('../components/dialog/dialog.js');
+  const smoke = read('../scripts/browser-a11y-interaction-smoke.mjs');
+  assert.match(dialog, /dialog\.showModal\(\)/);
+  assert.doesNotMatch(dialog, /addEventListener\('keydown'/, 'native modal owns Escape and focus containment');
+  for (const contract of ['axCheckboxRole','axRadioRole','axSwitchRole','axInvalidAnnounced','axReadonlyAnnounced','axDisabledAnnounced','axStatusRole','axAlertRole','disabledSkippedInTabOrder','checkboxSpaceToggles','radioArrowChangesSelection','switchSpaceToggles','dialogTabMovesToNextControl','dialogTabDoesNotFocusBackground','dialogShiftTabReturnsToLastControl','backgroundModalIsolation','dialogEscapeReturnsFocus']) {
+    assert.ok(smoke.includes(contract), `accessibility interaction contract ${contract}`);
+  }
 });

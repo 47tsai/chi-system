@@ -57,3 +57,4 @@
 - 已知缺口（v1.1）：axe／Playwright 計算樣式／視覺回歸、日期選擇等未列入基礎示例表的元件。
 - 新增 Chrome Accessibility／DOM 稽核：六站桌機／手機、淺色／深色共 24 組，檢查文件語言與標題、主要 Landmark、互動名稱、表單標籤、圖片 alt、ARIA IDREF、重複 ID、隱藏區焦點與實際渲染文字對比。
 - M30 擴充元件狀態驗收：六品牌 × 淺深主題共 12 組，實際檢查 Checkbox／Radio／Switch 的 Checked／Disabled、Badge 四種語意色、Spinner／Skeleton、Empty／Error／Success 資料狀態，以及 Dialog 表面／Backdrop／開關與焦點返回；展示頁補齊停用選擇控制與成功狀態。
+- M31 新增真實鍵盤與 Chrome Accessibility Tree 驗收，六品牌 × 桌機／手機共 12 組，驗證 Checkbox／Radio／Switch 語意角色、Checked 狀態、Disabled／Readonly／Invalid 公告、Tab 順序、Space／方向鍵操作、Live Region，以及 Dialog 初始焦點、原生 Modal 背景隔離、Tab／Shift+Tab 邊界焦點與 Escape 焦點返回；補上具名稱的原生 Radio fieldset／legend 群組，並保留原生 `<dialog>` 的焦點管理，不另造一套焦點陷阱。
