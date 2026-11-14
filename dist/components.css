@@ -506,6 +506,7 @@ html.chi-sidebar-open body {
 .chi-input,
 .chi-select,
 .chi-textarea {
+  box-sizing: border-box;
   min-height: var(--chi-size-control);
   padding: 0 var(--chi-space-3);
   border: var(--chi-base-border-default-width) solid var(--chi-color-border-strong);

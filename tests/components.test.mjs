@@ -213,3 +213,25 @@ test('Brand identity and action accent remain separate token contracts', () => {
   assert.match(smoke, /primaryUsesAccent/);
   assert.match(smoke, /footerUsesMutedText/);
 });
+
+
+test('Layout geometry regression covers shell breakpoints and shared component dimensions', () => {
+  const smoke = read('../scripts/browser-layout-geometry-smoke.mjs');
+  assert.match(smoke, /mobile-320/);
+  assert.match(smoke, /tablet-768/);
+  assert.match(smoke, /desktop-1024/);
+  assert.match(smoke, /noDocumentHorizontalOverflow/);
+  assert.match(smoke, /buttonVariantsShareHeight/);
+  assert.match(smoke, /inputAndSelectShareHeight/);
+  assert.match(smoke, /choiceLabelsMeetTouchTarget/);
+  assert.match(smoke, /mainCenteredInContent/);
+});
+
+
+test('Text inputs, selects, and textareas use a shared border-box sizing contract', () => {
+  const css = read('../components/base/base.css');
+  const controls = css.match(/\.chi-input,\s*\n\.chi-select,\s*\n\.chi-textarea\s*\{([^}]+)\}/);
+  assert.ok(controls, 'shared form control rule exists');
+  assert.match(controls[1], /box-sizing:\s*border-box/);
+  assert.match(controls[1], /min-height:\s*var\(--chi-size-control\)/);
+});
