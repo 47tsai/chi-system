@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-- nav 站 accent 跟主題色走：tokens/brands/nav.tokens.json 新增淺／深兩套 accent 覆寫（淺色 #008CAD／文字與按鈕 #007A96、深色 #35BDD8），眉標、側邊欄 active、主要按鈕、焦點環等配件不再是藍色；生成器改為輸出品牌 accent 覆寫區塊，幾何 smoke 的品牌計數改為去重；token-consumption smoke 的 accent 檢查改為按品牌／主題比對生成 CSS 宣告的預期值，不再要求六站 accent 相同。語意色與其他站品牌色不動。
+- nav 站 accent 跟主題色走：tokens/brands/nav.tokens.json 新增淺／深兩套 accent 覆寫（淺色 #008CAD／文字與按鈕 #006E87、深色 #35BDD8），眉標、側邊欄 active、主要按鈕、焦點環等配件不再是藍色；文字 accent 用 #006E87 而非 #007A96，因 #007A96 在 sunken／soft 底上只有 4.35／4.41:1、過不了 axe AA，#006E87 在 sunken 5.13:1、soft 5.21:1；生成器改為輸出品牌 accent 覆寫區塊，幾何 smoke 的品牌計數改為去重；token-consumption smoke 的 accent 檢查改為按品牌／主題比對生成 CSS 宣告的預期值，不再要求六站 accent 相同。語意色與其他站品牌色不動。
 - M40 擴充跨瀏覽器元件展示驗收：三引擎 × 六品牌 × 桌機／手機共 36 組，真實操作 Tabs 方向鍵／Home／End、Radio／Switch、表單送出與原生 Dialog 開啟／Escape／焦點返回；另執行 108 組 showcase axe-core 淺／深主題與 Dialog 開啟狀態稽核。修正展示頁 Theme icon-only 按鈕與 Card link 的可見文字／可存取名稱不一致，跨瀏覽器展示頁共 180 組 axe-core 稽核零違規。
 - M39 將 axe-core WCAG 2.0／2.1／2.2 A／AA 稽核整合至 Playwright 三引擎流程，在 Chromium／Firefox／WebKit × 六站 × 桌機／手機 × 淺／深主題共 72 組執行；全部零違規，跨引擎無障礙結果成為 CI 阻擋條件。
 - M38 擴充 Playwright 至 Chromium／Firefox／WebKit 三引擎，六站 × 桌機／手機共 36 組；並在三引擎 × 六站 × 桌機／手機 × 淺／深主題共 72 組執行 axe-core WCAG 2.0／2.1／2.2 A／AA 稽核，全部零違規。CI 安裝三種瀏覽器及必要系統依賴，跨引擎互動與無障礙旅程成為正式阻擋門檻。
