@@ -5,6 +5,7 @@ import { chromium, firefox, webkit } from 'playwright-core';
 
 const ROOT = path.resolve(import.meta.dirname, '..');
 const DIST = path.join(ROOT, 'dist');
+const AXE_SOURCE = readFileSync(path.join(ROOT, 'node_modules/axe-core/axe.min.js'), 'utf8');
 const sites = ['chi', 'fg', 'h', 'merch', 'nav', 'status'];
 const viewports = [
   { name: 'desktop', width: 1365, height: 900 },
@@ -46,6 +47,7 @@ await new Promise((resolve, reject) => {
 const origin = `http://127.0.0.1:${server.address().port}`;
 const failures = [];
 let passed = 0;
+let axeAuditsPassed = 0;
 const browsers = [];
 
 try {
@@ -71,6 +73,8 @@ try {
         const response = await page.goto(`${origin}/sites/${site}/index.html`, { waitUntil: 'load' });
         if (!response?.ok()) throw new Error(`site response was ${response?.status() ?? 'missing'}`);
 
+        await page.addScriptTag({ content: AXE_SOURCE });
+
         const brand = await page.locator('html').getAttribute('data-chi-brand');
         if (brand !== site) throw new Error(`brand mismatch: expected ${site}, received ${brand}`);
 
@@ -82,8 +86,21 @@ try {
         const beforeMode = await page.locator('html').getAttribute('data-chi-theme-mode');
         await themeToggle.click();
         await page.waitForFunction((previous) => document.documentElement.dataset.chiThemeMode !== previous, beforeMode);
+        await page.waitForFunction(() => document.documentElement.dataset.chiThemeMode === 'light' && document.documentElement.dataset.chiTheme === 'light');
+        const lightAudit = await page.evaluate(async () => {
+          const { violations, passes } = await window.axe.run(document, { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'] } });
+          return { passCount: passes.length, violations: violations.map(({ id, impact, help, nodes }) => ({ id, impact, help, targets: nodes.slice(0, 5).map((node) => node.target) })) };
+        });
+        if (lightAudit.violations.length) throw new Error(`axe light violations: ${JSON.stringify(lightAudit.violations)}`);
+        axeAuditsPassed++;
         await themeToggle.click();
         await page.waitForFunction(() => document.documentElement.dataset.chiThemeMode === 'dark' && document.documentElement.dataset.chiTheme === 'dark');
+        const darkAudit = await page.evaluate(async () => {
+          const { violations, passes } = await window.axe.run(document, { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'] } });
+          return { passCount: passes.length, violations: violations.map(({ id, impact, help, nodes }) => ({ id, impact, help, targets: nodes.slice(0, 5).map((node) => node.target) })) };
+        });
+        if (darkAudit.violations.length) throw new Error(`axe dark violations: ${JSON.stringify(darkAudit.violations)}`);
+        axeAuditsPassed++;
         const after = await page.locator('html').getAttribute('data-chi-theme');
         if (after !== 'dark') throw new Error(`theme toggle expected dark, received ${after}`);
 
@@ -98,7 +115,7 @@ try {
         if (pageErrors.length) throw new Error(`page errors: ${pageErrors.join('; ')}`);
 
         passed++;
-        console.log(`PASS ${engine.name} ${site} ${viewport.name} ${geometry.viewport}px mode=${beforeMode}→dark`);
+        console.log(`PASS ${engine.name} ${site} ${viewport.name} ${geometry.viewport}px mode=${beforeMode}→dark axe=${lightAudit.passCount + darkAudit.passCount} passes / 0 violations`);
       } catch (error) {
         failures.push({ engine: engine.name, site, viewport: viewport.name, error: String(error), pageErrors });
         console.log(`FAIL ${engine.name} ${site} ${viewport.name} ${String(error)}`);
@@ -113,7 +130,7 @@ try {
   await new Promise((resolve) => server.close(resolve));
 }
 
-console.log(`Playwright cross-browser smoke: ${passed}/${engines.length * sites.length * viewports.length} engine/site/viewport journeys passed.`);
+console.log(`Playwright cross-browser smoke: ${passed}/${engines.length * sites.length * viewports.length} engine/site/viewport journeys passed; axe-core ${axeAuditsPassed}/${engines.length * sites.length * viewports.length * 2} engine/site/viewport/theme audits passed.`);
 if (failures.length) {
   for (const failure of failures) console.error(JSON.stringify(failure));
   process.exitCode = 1;
