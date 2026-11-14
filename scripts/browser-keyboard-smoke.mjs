@@ -96,17 +96,29 @@ try {
           button.style.left = '8px';
           button.style.top = '8px';
           document.body.prepend(button);
+          const themeButton = document.createElement('button');
+          themeButton.id = 'chi-cdp-theme-toggle'; themeButton.type = 'button';
+          themeButton.setAttribute('data-chi-theme-toggle', ''); themeButton.textContent = 'Theme';
+          document.body.append(themeButton);
+          window.ChiTheme?.bindToggles();
           const tabs = document.createElement('div');
           tabs.id = 'chi-cdp-tabs';
           tabs.setAttribute('data-chi-tabs', '');
           const tablist = document.createElement('div');
           tablist.setAttribute('role', 'tablist');
           tablist.setAttribute('aria-label', 'Keyboard tabs');
-          for (const [id, panelId, label, selected] of [['chi-cdp-tab-one', 'chi-cdp-panel-one', 'One', true], ['chi-cdp-tab-two', 'chi-cdp-panel-two', 'Two', false]]) {
+          for (const [id, panelId, label, selected, disabled] of [
+            ['chi-cdp-tab-one', 'chi-cdp-panel-one', 'One', true, false],
+            ['chi-cdp-tab-disabled', 'chi-cdp-panel-disabled', 'Disabled', false, true],
+            ['chi-cdp-tab-two', 'chi-cdp-panel-two', 'Two', false, false],
+            ['chi-cdp-tab-last', 'chi-cdp-panel-last', 'Last', false, false],
+          ]) {
             const tab = document.createElement('button');
             tab.id = id; tab.type = 'button'; tab.setAttribute('role', 'tab');
             tab.setAttribute('aria-controls', panelId); tab.setAttribute('aria-selected', String(selected));
-            tab.tabIndex = selected ? 0 : -1; tab.textContent = label; tablist.append(tab);
+            tab.tabIndex = selected ? 0 : -1; tab.textContent = label;
+            if (disabled) { tab.disabled = true; tab.setAttribute('aria-disabled', 'true'); }
+            tablist.append(tab);
             const panel = document.createElement('section');
             panel.id = panelId; panel.setAttribute('role', 'tabpanel'); panel.setAttribute('aria-labelledby', id);
             panel.hidden = !selected; panel.textContent = label + ' panel'; tabs.append(panel);
@@ -119,6 +131,7 @@ try {
           const dialog = document.createElement('dialog');
           dialog.id = 'chi-cdp-dialog'; dialog.className = 'chi-dialog';
           dialog.setAttribute('aria-labelledby', 'chi-cdp-dialog-title');
+          dialog.setAttribute('data-chi-dialog-backdrop-close', '');
           const title = document.createElement('h2'); title.id = 'chi-cdp-dialog-title'; title.tabIndex = -1; title.textContent = 'Keyboard dialog';
           const closeButton = document.createElement('button'); closeButton.type = 'button'; closeButton.textContent = 'Close';
           dialog.append(title, closeButton); document.body.append(dialogOpener, dialog);
@@ -138,12 +151,27 @@ try {
           return { focused: document.activeElement === target, focusVisible: target.matches(':focus-visible'), outlineStyle: style.outlineStyle, outlineWidth: style.outlineWidth, outlineColor: style.outlineColor };
         })()`, returnByValue: true });
         await send('Runtime.evaluate', { expression: `document.getElementById('chi-cdp-tab-one').focus()` });
-        await send('Input.dispatchKeyEvent', { type: 'keyDown', key: 'ArrowRight', code: 'ArrowRight', windowsVirtualKeyCode: 39, nativeVirtualKeyCode: 39 });
-        await send('Input.dispatchKeyEvent', { type: 'keyUp', key: 'ArrowRight', code: 'ArrowRight', windowsVirtualKeyCode: 39, nativeVirtualKeyCode: 39 });
+        const key = async (name, code, keyCode) => {
+          await send('Input.dispatchKeyEvent', { type: 'keyDown', key: name, code, windowsVirtualKeyCode: keyCode, nativeVirtualKeyCode: keyCode });
+          await send('Input.dispatchKeyEvent', { type: 'keyUp', key: name, code, windowsVirtualKeyCode: keyCode, nativeVirtualKeyCode: keyCode });
+        };
+        await key('ArrowRight', 'ArrowRight', 39);
+        const arrowSkippedDisabled = await send('Runtime.evaluate', { expression: `document.activeElement?.id === 'chi-cdp-tab-two'`, returnByValue: true });
+        await key('End', 'End', 35);
+        const endFocusedLast = await send('Runtime.evaluate', { expression: `document.activeElement?.id === 'chi-cdp-tab-last'`, returnByValue: true });
+        await key('Home', 'Home', 36);
+        const homeFocusedFirst = await send('Runtime.evaluate', { expression: `document.activeElement?.id === 'chi-cdp-tab-one'`, returnByValue: true });
         const tabsCheck = await send('Runtime.evaluate', { expression: `(() => ({
-          tabsFocused: document.activeElement?.id === 'chi-cdp-tab-two',
-          tabsSelected: document.getElementById('chi-cdp-tab-two')?.getAttribute('aria-selected') === 'true',
-          tabsPanelVisible: !document.getElementById('chi-cdp-panel-two')?.hidden
+          tabsFocused: document.activeElement?.id === 'chi-cdp-tab-one',
+          tabsSelected: document.getElementById('chi-cdp-tab-one')?.getAttribute('aria-selected') === 'true',
+          tabsPanelVisible: !document.getElementById('chi-cdp-panel-one')?.hidden
+        }))()`, returnByValue: true });
+        await send('Runtime.evaluate', { expression: `document.getElementById('chi-cdp-theme-toggle').focus()` });
+        await key(' ', 'Space', 32);
+        const themeCheck = await send('Runtime.evaluate', { expression: `(() => ({
+          themeMode: window.ChiTheme?.getMode(),
+          themeLabel: document.getElementById('chi-cdp-theme-toggle')?.getAttribute('aria-label'),
+          themeEffective: document.documentElement.getAttribute('data-chi-theme')
         }))()`, returnByValue: true });
         await send('Runtime.evaluate', { expression: `window.ChiDialog.open(document.getElementById('chi-cdp-dialog'), document.getElementById('chi-cdp-dialog-opener'))` });
         await send('Input.dispatchKeyEvent', { type: 'keyDown', key: 'Escape', code: 'Escape', windowsVirtualKeyCode: 27, nativeVirtualKeyCode: 27 });
@@ -162,6 +190,21 @@ try {
           });
         })()`, awaitPromise: true, returnByValue: true });
         const dialogFocusRestored = closeCheck.result.value;
+        await send('Runtime.evaluate', { expression: `window.ChiDialog.open(document.getElementById('chi-cdp-dialog'), document.getElementById('chi-cdp-dialog-opener'))` });
+        await send('Input.dispatchMouseEvent', { type: 'mousePressed', x: 1, y: 1, button: 'left', clickCount: 1 });
+        await send('Input.dispatchMouseEvent', { type: 'mouseReleased', x: 1, y: 1, button: 'left', clickCount: 1 });
+        const backdropCheck = await send('Runtime.evaluate', { expression: `(() => new Promise((resolve) => {
+          const dialog = document.getElementById('chi-cdp-dialog');
+          let frames = 0;
+          const poll = () => {
+            if (!dialog.open && document.activeElement.id === 'chi-cdp-dialog-opener') resolve(true);
+            else if (frames++ >= 180) resolve(false);
+            else requestAnimationFrame(poll);
+          };
+          requestAnimationFrame(poll);
+          setTimeout(() => resolve(false), 5000);
+        }))()`, awaitPromise: true, returnByValue: true });
+        const dialogBackdropClosed = backdropCheck.result.value;
         const details = await send('Runtime.evaluate', { expression: `(() => {
           const target = document.getElementById('chi-cdp-keyboard-target');
           const style = getComputedStyle(target);
@@ -176,11 +219,21 @@ try {
             dialogClosed: !document.getElementById('chi-cdp-dialog')?.open
           };
         })()`, returnByValue: true });
-        const result = { ...details.result.value, ...tabsCheck.result.value, ...focusCheck.result.value, dialogFocusRestored };
-        const ok = result.focused && result.focusVisible && result.outlineStyle !== 'none' && result.outlineWidth !== '0px' && result.tabsFocused && result.tabsSelected && result.tabsPanelVisible && result.dialogClosed && result.dialogFocusRestored;
+        const result = {
+          ...details.result.value,
+          ...tabsCheck.result.value,
+          ...themeCheck.result.value,
+          ...focusCheck.result.value,
+          arrowSkippedDisabled: arrowSkippedDisabled.result.value,
+          endFocusedLast: endFocusedLast.result.value,
+          homeFocusedFirst: homeFocusedFirst.result.value,
+          dialogFocusRestored,
+          dialogBackdropClosed,
+        };
+        const ok = result.focused && result.focusVisible && result.outlineStyle !== 'none' && result.outlineWidth !== '0px' && result.tabsFocused && result.tabsSelected && result.tabsPanelVisible && result.arrowSkippedDisabled && result.endFocusedLast && result.homeFocusedFirst && result.themeMode === 'light' && result.themeLabel?.includes('淺色') && result.dialogClosed && result.dialogFocusRestored && result.dialogBackdropClosed;
         if (ok) passed++;
         else failures.push({ site: siteId, viewport: viewport.name, result, stderr: stderr.slice(-1500) });
-        console.log(`${ok ? 'PASS' : 'FAIL'} ${siteId} ${viewport.name} real Tab / ArrowRight / Escape → focus-visible + Tabs + Dialog ${JSON.stringify(result)}`);
+        console.log(`${ok ? 'PASS' : 'FAIL'} ${siteId} ${viewport.name} real Tab / Tabs arrows + Home/End / theme Space / Escape → focus-visible + Tabs + Theme + Dialog Escape/backdrop ${JSON.stringify(result)}`);
       } catch (error) {
         failures.push({ site: siteId, viewport: viewport.name, error: String(error), stderr: stderr.slice(-1500) });
         console.log(`FAIL ${siteId} ${viewport.name} ${String(error)}`);
