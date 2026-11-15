@@ -47,6 +47,7 @@ Theme 必須先於 Sidebar；兩者皆同步載入且早於樣式表，避免首
 | Badge | `components/base/base.css` | 短狀態標記 | 狀態文字不可只靠顏色表達 |
 | Dialog | `components/base/base.css`、`components/dialog/dialog.js` | 需要暫時聚焦的任務 | 原生 dialog、aria-labelledby、開啟／關閉與焦點返回契約 |
 | Data states | `components/base/base.css` | Loading、Empty、Error、Success | 使用 status／alert 語意；狀態標題與說明清楚可讀 |
+| Icon | `components/icon/` | 內嵌 SVG 圖示（取代 Font Awesome CDN） | `chiIcon()` 回傳 inline svg；未知名稱回傳 fallback，不拋錯 |
 
 ## Runtime JavaScript API
 
@@ -64,6 +65,7 @@ Runtime 會在共用殼載入時自動初始化。以下公開方法供動態插
 | Tabs | `ChiTabs.init(root)`、`ChiTabs.initAll()` | 初始化指定的 `[data-chi-tabs]` 根節點，或掃描整份文件；適用動態插入的 Tabs |
 | Dialog | `ChiDialog.init(dialog)`、`ChiDialog.initAll()` | 初始化指定 Dialog，或掃描整份文件 |
 | Dialog | `ChiDialog.open(dialog, opener)`、`ChiDialog.close(dialog, returnValue)` | 以原生 modal 開啟／關閉；`open` 成功回傳 `true`，無法開啟回傳 `false` |
+| Icon | `ChiIcon.icon(name, options)`（即 `ChiIcon.chiIcon`）、`ChiIcon.has(name)`、`ChiIcon.list()` | 依 Font Awesome 寫法取圖示，回傳完整 inline svg 字串；`has` 檢查圖示是否存在，`list` 列出全部 key |
 
 事件：`window` 會派發 `chi-theme-change`（`detail: { mode, effective }`）與 `chi-sidebar-change`（`detail: { collapsed }`）。監聽器應依事件 detail 更新自己的介面，不要直接修改 CHI 內部的 DOM 狀態。`setPreviewMode()` 不儲存偏好；正式使用者操作請用 `setMode()`。
 
@@ -91,6 +93,31 @@ Runtime 物件是版本化公開 API；未列出的內部函式、DOM class 與�
 ```
 
 使用原生 `disabled`，不要只用 `aria-disabled` 模擬停用。按鈕若不是送出表單，明確指定 `type="button"`。純圖示按鈕必須提供可存取名稱（例如 `aria-label`）；不可只依賴 tooltip 或圖示外觀。一個操作情境最多一個 Primary。
+
+## Icon
+
+內嵌 SVG 圖示集，取代 Font Awesome CDN（nav 全站原本用的 `cdnjs` 6.4.0 CDN 由此取代）。圖示來源為 Font Awesome Free 6.4.0，Icons: CC BY 4.0；例外是 `fa-brands fa-threads` 在 6.4.0 尚不存在，取自 6.4.2（見 `components/icon/icon.js` 檔頭）。共 39 個圖示：solid 31、regular 2、brands 6，key 沿用 Font Awesome class 寫法（例如 `'fa-solid fa-star'`；solid 與 regular 的 `fa-star` 是不同圖示）。
+
+`chiIcon()` 是純字串 helper，不依賴外部檔案、不依賴 sprite 路徑，適合在 JS 裡動態組 HTML 字串時使用（nav 的導覽就是這樣組的）。共用殼不預載 `icon.js`；需要的站自行引入 `dist/icon.js`（defer 或同步皆可）。
+
+```js
+// 動態組 HTML：回傳完整 inline <svg> 字串
+ChiIcon.icon('fa-solid fa-star');
+// '<svg class="chi-icon" viewBox="0 0 576 512" fill="currentColor" aria-hidden="true"><path d="…"/></svg>'
+ChiIcon.icon('fa-regular fa-copy', { size: 'lg' }); // 加上 chi-icon--lg
+ChiIcon.icon('fa-brands fa-github', { className: 'my-icon' });
+ChiIcon.icon('fa-solid fa-house', { title: '首頁' }); // 有意義的圖示：帶 role="img"＋<title>，不加 aria-hidden
+ChiIcon.has('fa-solid fa-star'); // true
+ChiIcon.list(); // 全部 39 個 key
+ChiIcon.icon('fa-solid fa-nope'); // 未知名稱不拋錯，回傳 fallback（fa-solid fa-triangle-exclamation）
+```
+
+```html
+<!-- 側邊欄導覽：圖示格固定 Token 尺寸，內層 svg 撐滿；裝飾圖示帶 aria-hidden -->
+<a href="#"><span class="chi-sidebar__icon" aria-hidden="true"><svg class="chi-icon" viewBox="0 0 512 512" fill="currentColor" aria-hidden="true"><path d="M448 256c0-106-86-192-192-192V448c106 0 192-86 192-192zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256z"/></svg></span><span class="chi-sidebar__label">連結一</span></a>
+```
+
+尺寸預設 `1em` 跟隨文字大小與 `currentColor` 跟隨文字顏色；`--sm`／`--lg` 修飾沿用 Token 尺寸（16px／24px）。注意 `components/base/base.css` 也有 `.chi-icon`（Token 固定 20px，供 `<select>` 等舊用法）；`icon.css` 用 `svg.chi-icon` 提高特異度，確保 `chiIcon()` 產生的 svg 依文字縮放。新增圖示流程見 [SPEC.md §8](../SPEC.md)：從 jsDelivr 下載對應 `svgs/{solid,regular,brands}/*.svg`，原樣保留 viewBox 與單一 path，寫入 `ICONS` map，補 `tests/icon.test.mjs` 的清單與抽查 viewBox。圖示只增不改，已收錄圖示的 path 與 viewBox 不得擅自更換版本。
 
 ## Form fields
 

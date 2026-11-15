@@ -2,8 +2,9 @@
 // 參考架構：GOV.UK「一個頁面殼＋具名區塊」（研究報告 §3、§6）。
 // 輸入：templates/base.template.html（來源檔）＋ components/*/*.html／*.css／*.js
 // 輸出：templates/base.html、dist/components.css 與 runtime JS（皆為生成物，DO NOT EDIT）
-// CSS 串接順序固定為 header、footer、sidebar、button、base：base 在最後，
-//   其中的版式開關（data-chi-layout）才能覆寫前面的版式規則。
+// CSS 串接順序固定為 header、footer、sidebar、button、icon、base：base 在最後，
+//   其中的版式開關（data-chi-layout）才能覆寫前面的版式規則；icon 在 base 之前，
+//   但 icon.css 用 svg.chi-icon 提高特異度，不被 base.css 的 .chi-icon 蓋回固定尺寸。
 import { readFileSync, writeFileSync, readdirSync, mkdirSync, rmSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
@@ -24,7 +25,7 @@ export function buildSite() {
   const out = `<!-- chi-system base.html — 生成物，DO NOT EDIT。由 scripts/build-site.mjs 從 templates/base.template.html ＋ components/*/*.html 組裝。版本 v${VERSION}。 -->\n${base}`;
   writeFileSync(path.join(ROOT, 'templates', 'base.html'), out);
 
-  const order = ['header', 'footer', 'sidebar', 'button', 'base'];
+  const order = ['header', 'footer', 'sidebar', 'button', 'icon', 'base'];
   let css = `/* chi-system components.css — 生成物，DO NOT EDIT。由 scripts/build-site.mjs 串接 components/<元件>/*.css 產生。順序：${order.join('、')}。 */\n`;
   for (const name of order) {
     const files = readdirSync(path.join(ROOT, 'components', name)).filter((f) => f.endsWith('.css'));
@@ -36,6 +37,7 @@ export function buildSite() {
   writeFileSync(path.join(ROOT, 'dist', 'sidebar.js'), readFileSync(path.join(ROOT, 'components', 'sidebar', 'sidebar.js'), 'utf8'));
   writeFileSync(path.join(ROOT, 'dist', 'tabs.js'), readFileSync(path.join(ROOT, 'components', 'tabs', 'tabs.js'), 'utf8'));
   writeFileSync(path.join(ROOT, 'dist', 'dialog.js'), readFileSync(path.join(ROOT, 'components', 'dialog', 'dialog.js'), 'utf8'));
+  writeFileSync(path.join(ROOT, 'dist', 'icon.js'), readFileSync(path.join(ROOT, 'components', 'icon', 'icon.js'), 'utf8'));
   // 預覽頁的網站清單也是生成物：由 sites/*.json 產生，預覽頁不得寫死站清單。
   const sites = readdirSync(path.join(ROOT, 'sites'))
     .filter((f) => f.endsWith('.json'))

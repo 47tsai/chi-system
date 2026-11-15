@@ -90,6 +90,15 @@ Foundations（原則）→ Tokens（數值）→ Components（元件）→ Patte
   導覽連結寫法：`<a><span class="chi-sidebar__icon">…</span><span class="chi-sidebar__label">…</span></a>`。
 - Button：primary／secondary／ghost／danger 四級 closed enum；
   一個操作情境至多一個 primary；不得自由傳 class。
+- Icon：內嵌 SVG 圖示集（`components/icon/icon.js`＋`icon.css`），來源 Font Awesome Free 6.4.0
+  （Icons: CC BY 4.0；`fa-brands fa-threads` 例外取自 6.4.2，見 icon.js 檔頭）。
+  `chiIcon('fa-solid fa-star')` 回傳完整 inline `<svg viewBox="…" fill="currentColor" aria-hidden="true"><path d="…"/></svg>`
+  字串，不依賴外部檔案、不依賴 sprite 路徑；viewBox 各圖示不同，原樣保留。
+  未知名稱回傳 fallback（`fa-solid fa-triangle-exclamation`），不拋錯。
+  裝飾圖示帶 `aria-hidden="true"`；有意義的圖示改用 `title`＋`role="img"`。
+  尺寸預設 1em 跟隨文字，`--sm`／`--lg` 修飾沿用 Token 尺寸。
+  側邊欄導覽寫法：`<a><span class="chi-sidebar__icon">chiIcon(…)</span><span class="chi-sidebar__label">…</span></a>`，
+  圖示格固定 Token 尺寸，內層 svg 撐滿。
 - Tabs：容器使用 `data-chi-tabs` 與 `role="tablist"`；每個 tab 使用原生 button、`role="tab"`、唯一 id、`aria-controls`、`aria-selected`、`tabindex`；panel 使用 `role="tabpanel"`、唯一 id、`aria-labelledby`。方向鍵循環切換、Home／End 移至首／末個可用 tab，選取時同步更新 panel hidden；disabled tab 略過。
 - 其他元件（表單、Tabs、卡片、清單／表格、徽章、對話框、資料狀態）：
   樣式在 components/base/base.css，沿用舊版已核對的段落（見 §10 來源）。 HTML 語意範例集中於 `components/base/examples.html`，作為欄位關聯、Tabs、Card、List、Table、Badge、Dialog 與四種資料狀態的可驗證參考。
@@ -120,13 +129,20 @@ Foundations（原則）→ Tokens（數值）→ Components（元件）→ Patte
   系統擁有 primitive＋semantic 合約；各站擁有自己的品牌檔與設定檔。
 - 新 Token：只提角色、不提數值；角色至少在 2 站或 2 元件出現才加。
   廢棄用 `$deprecated` 標註替代品與移除版本，移除只在下一個 major。
+- 新圖示：確認該圖示在 Font Awesome Free 6.4.0 存在（不存在時註明實際來源版本，
+  如 `fa-brands fa-threads` 取自 6.4.2）；從 jsDelivr 下載對應
+  `svgs/{solid,regular,brands}/*.svg`，原樣保留 viewBox 與單一 path，寫入
+  `components/icon/icon.js` 的 ICONS map（key 沿用 Font Awesome class 寫法，
+  如 `'fa-solid fa-star'`）；icon.css 不動（除非要新尺寸）；補
+  `tests/icon.test.mjs` 的清單與抽查 viewBox；文件與 CHANGELOG 同步更新。
+  圖示只增不改：已收錄圖示的 path 與 viewBox 不得擅自更換版本。
 
 ## 9. 驗收
 
 CI 驗真的渲染依據，不是檔案在不在（舊系統三支腳本全綠仍是亂的）：
 
 1. Token schema＋別名解析（每品牌全部 semantic 可解析）
-2. Runtime 生成物與 components/ 來源逐位元一致（Theme／Sidebar／Tabs／Dialog）
+2. Runtime 生成物與 components/ 來源逐位元一致（Theme／Sidebar／Tabs／Dialog／Icon）
 3. 生成物一致（重跑生成，diff 必須為空；dist 只允許明確列出的生成資產）
 4. 禁硬編碼（元件原始 CSS／模板來源出現未經 Token 管理的色值、尺寸、動效時間、透明度或字重即失敗；斷點由 breakpoints.json 管理；註解除外）
 5. 網站設定 schema（欄位、型別、logo 檔案存在；預覽清單與 sites 一致）

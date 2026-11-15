@@ -111,12 +111,13 @@ test('CSS design-state values are tokenized instead of hard-coded', () => {
 });
 
 
-test('Theme, Sidebar, Tabs, and Dialog runtime outputs are generated from component sources', () => {
+test('Theme, Sidebar, Tabs, Dialog, and Icon runtime outputs are generated from component sources', () => {
   for (const [source, output] of [
     ['../components/theme/theme.js', '../dist/theme.js'],
     ['../components/sidebar/sidebar.js', '../dist/sidebar.js'],
     ['../components/tabs/tabs.js', '../dist/tabs.js'],
     ['../components/dialog/dialog.js', '../dist/dialog.js'],
+    ['../components/icon/icon.js', '../dist/icon.js'],
   ]) assert.equal(read(source), read(output), `${output} must be generated from ${source}`);
 });
 

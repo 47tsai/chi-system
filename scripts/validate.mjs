@@ -435,7 +435,7 @@ function collectDistFiles(directory, prefix = '') {
   });
 }
 const expectedDistFiles = new Set([
-  'components.css', 'dialog.js', 'sidebar.js', 'tabs.js', 'theme.js', 'tokens.css',
+  'components.css', 'dialog.js', 'icon.js', 'sidebar.js', 'tabs.js', 'theme.js', 'tokens.css',
   ...siteRecords.map((site) => 'sites/' + site.id + '/index.html'),
   ...siteRecords.flatMap((site) => [site.logoLight, site.logoDark]),
 ]);
