@@ -38,9 +38,11 @@ let passed = 0;
 // Expected accent per brand/theme, parsed from the generated CSS: the :root /
 // [data-chi-theme="dark"] defaults, overridden per brand by the
 // [data-chi-brand="…"] (and dark variant) blocks. A brand may declare its
-// own accent — nav follows its theme color (#008CAD) instead of the shared
-// default — so the accent is asserted per brand, not identical across brands.
+// own accent — nav follows its theme color (#008CAD) and fg follows its theme
+// color (#FF9A00) instead of the shared default — so the accent is asserted
+// per brand, not identical across brands.
 const expectedAccent = new Map();
+const accentOverrideBrands = new Set();
 const defaultAccent = {};
 for (const [, selector, body] of tokenCss.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
   const accent = /--chi-color-accent:\s*(#[0-9a-fA-F]{6})\s*;/.exec(body)?.[1]?.toLowerCase();
@@ -48,7 +50,10 @@ for (const [, selector, body] of tokenCss.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
   const brandMatch = /\[data-chi-brand="([^"]+)"\]/.exec(selector);
   const dark = selector.includes('[data-chi-theme="dark"]');
   if (!brandMatch) defaultAccent[dark ? 'dark' : 'light'] = accent;
-  else expectedAccent.set(`${brandMatch[1]}:${dark ? 'dark' : 'light'}`, accent);
+  else {
+    expectedAccent.set(`${brandMatch[1]}:${dark ? 'dark' : 'light'}`, accent);
+    accentOverrideBrands.add(`${brandMatch[1]}:${dark ? 'dark' : 'light'}`);
+  }
 }
 for (const { id } of brands) for (const theme of themes) {
   if (!expectedAccent.has(`${id}:${theme}`)) expectedAccent.set(`${id}:${theme}`, defaultAccent[theme]);
@@ -110,7 +115,7 @@ try {
           const activeLink = document.querySelector('.chi-sidebar__nav a[aria-current="page"]');
           const brandLine = ${JSON.stringify(layout)} === 'header' ? getComputedStyle(header).boxShadow : getComputedStyle(document.querySelector('.chi-sidebar__top')).boxShadow;
           const actualAccent = css('--chi-color-accent');
-          const values = { canvas: css('--chi-color-canvas'), surface: css('--chi-color-surface'), text: css('--chi-color-text-primary'), accent: actualAccent };
+          const values = { canvas: css('--chi-color-canvas'), surface: css('--chi-color-surface'), sunken: css('--chi-color-surface-sunken'), text: css('--chi-color-text-primary'), accent: actualAccent };
           return {
             brandAttribute: root.getAttribute('data-chi-brand') === ${JSON.stringify(brand)},
             themeAttribute: root.getAttribute('data-chi-theme') === ${JSON.stringify(theme)},
@@ -157,6 +162,40 @@ for (const brand of brands.map((item) => item.id)) {
     if (light.surface === dark.surface) failures.push({ brand, issue: 'surface-does-not-change-with-theme' });
     if (light.text === dark.text) failures.push({ brand, issue: 'text-does-not-change-with-theme' });
     if (light.accent === dark.accent) failures.push({ brand, issue: 'accent-does-not-change-with-theme' });
+  }
+}
+// U6：有 accent 覆寫的品牌，文字 accent 在 canvas／surface／sunken／soft 四種底上皆須 ≥4.5:1。
+// 與 validate.mjs 同一組數字，這裡用瀏覽器實際 computed style 再驗一次。
+// soft 底色取自 primitives（目前只有 fg 有對應 Token：orange-soft-light／orange-soft-dark；
+// nav 的 soft #E6F4F7 只在 nav.css，2026-11-14 人工驗算 #006E87 為 5.21:1，此處略過）。
+const softTint = (() => {
+  try {
+    const prim = JSON.parse(readFileSync(path.join(ROOT, 'tokens', 'primitives.tokens.json'), 'utf8'));
+    return {
+      light: prim.color.accent['orange-soft-light']?.$value,
+      dark: prim.color.accent['orange-soft-dark']?.$value,
+    };
+  } catch { return {}; }
+})();
+const hexLuminance = (hex) => {
+  const [r, g, b] = [0, 2, 4].map((i) => parseInt(hex.slice(1 + i, 3 + i), 16) / 255)
+    .map((c) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4));
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+};
+const contrastRatio = (a, b) => {
+  const [l1, l2] = [hexLuminance(a), hexLuminance(b)].sort((x, y) => y - x);
+  return (l1 + 0.05) / (l2 + 0.05);
+};
+for (const key of accentOverrideBrands) {
+  const [brand, theme] = key.split(':');
+  const v = semanticValues.get(key);
+  const accent = expectedAccent.get(key);
+  if (!v || !accent) continue;
+  const bgs = { canvas: v.canvas, surface: v.surface, sunken: v.sunken, soft: softTint[theme] };
+  for (const [name, bg] of Object.entries(bgs)) {
+    if (!bg) continue;
+    const r = contrastRatio(accent, bg);
+    if (r < 4.5) failures.push({ brand, theme, issue: `accent-contrast-${name}`, ratio: Number(r.toFixed(2)) });
   }
 }
 console.log(`Chrome token consumption smoke: ${passed}/${brands.length * themes.length * layouts.length} brand/theme/layout combinations passed.`);

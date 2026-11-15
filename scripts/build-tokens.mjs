@@ -80,8 +80,8 @@ export function buildTokens() {
   // 品牌檔還可帶 accent 覆寫（淺色用 color.*／button.*／sidebar.*，深色用 dark.* 同名鍵）：
   // 淺色覆寫併進原本的品牌區塊（--chi-color-brand 必須維持第一行，供 smoke 測試的
   // 正則比對），深色覆寫另出 [data-chi-theme="dark"][data-chi-brand] 區塊（特異度高於
-  // 單屬性選擇器，深色才生效）。目前只有 nav 有 accent 覆寫（齊 2026-11-14 定案：
-  // nav 配件跟主題色走），其餘站只出品牌色。
+  // 單屬性選擇器，深色才生效）。目前 nav、fg 有 accent 覆寫（齊定案：nav 2026-11-14、
+  // fg 2026-11-16，兩站配件跟主題色走），其餘站只出品牌色。
   const OVERRIDE_KEYS = [
     'color.accent', 'color.accent-hover', 'color.accent-active', 'color.focus-ring',
     'button.primary.background', 'button.primary.background-hover', 'button.primary.background-active',

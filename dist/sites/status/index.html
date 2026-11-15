@@ -1,9 +1,9 @@
-<!-- chi-system base.html — 生成物，DO NOT EDIT。由 scripts/build-site.mjs 從 templates/base.template.html ＋ components/*/*.html 組裝。版本 v1.0.0。 -->
+<!-- chi-system base.html — 生成物，DO NOT EDIT。由 scripts/build-site.mjs 從 templates/base.template.html ＋ components/*/*.html 組裝。版本 v1.1.0。 -->
 <!-- chi-system base template — 新站起步頁（來源檔，templates/base.template.html）。
      由 scripts/build-site.mjs 把 components/*.html 片段組裝成 templates/base.html（生成物）。
      佔位規則（齊定案）：範本不放任何真實內容。標題打「標題」、內文打「內文」、
      品牌寫「站名」／「副標」、導覽寫「連結一／連結二／連結三」。
-     {{site.*}}（含 logoLight／logoDark）、v1.0.0 由網站建置時以 sites/<site>.json 填入；
+     {{site.*}}（含 logoLight／logoDark）、v1.1.0 由網站建置時以 sites/<site>.json 填入；
      {{slots.*}} 由各站填入。
      參考架構：GOV.UK template.njk「一個頁面殼＋具名區塊」（見研究報告 §3、§6）。 -->
 <!DOCTYPE html>
@@ -39,7 +39,7 @@
   <nav class="chi-sidebar__nav" aria-label="本站導覽"><a href="#" aria-current="page"><span class="chi-sidebar__icon" aria-hidden="true">◆</span><span class="chi-sidebar__label">連結一</span></a><a href="#"><span class="chi-sidebar__icon" aria-hidden="true">◆</span><span class="chi-sidebar__label">連結二</span></a><a href="#"><span class="chi-sidebar__icon" aria-hidden="true">◆</span><span class="chi-sidebar__label">連結三</span></a></nav>
   <div class="chi-sidebar__bottom">
     <button class="chi-sidebar__theme" type="button" data-chi-theme-toggle aria-label="切換主題" title="切換主題"><span aria-hidden="true" data-chi-theme-icon>◐</span></button>
-    <span class="chi-sidebar__version" data-chi-version>版本 v1.0.0</span>
+    <span class="chi-sidebar__version" data-chi-version>版本 v1.1.0</span>
   </div>
 </aside>
 <div class="chi-sidebar__scrim" data-chi-sidebar-scrim aria-hidden="true"></div>
@@ -78,10 +78,10 @@
 <button class="chi-btn chi-btn--danger" type="button">按鈕</button>
 </main>
 <!-- chi-system Footer — 唯一實作（SPEC.md §6）。頁尾跨站清單已拿掉，不放其他站連結。
-     佔位符：Chi Status 站名、v1.0.0 由建置時填入（例如 v1.0.0）。 -->
+     佔位符：Chi Status 站名、v1.1.0 由建置時填入（例如 v1.0.0）。 -->
 <footer class="chi-footer">
   <span class="chi-footer__name">Chi Status</span>
-  <span class="chi-footer__version" data-chi-version>版本 v1.0.0</span>
+  <span class="chi-footer__version" data-chi-version>版本 v1.1.0</span>
 </footer>
 </div>
 </div>

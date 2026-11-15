@@ -1,9 +1,1 @@
-{
-  "$description": "fg 品牌檔 — 只寫別名，不寫原始值。",
-  "color": {
-    "brand": {
-      "$type": "color",
-      "$value": "{color.orange.500}"
-    }
-  }
-}
+{"$description":"fg 品牌檔 — 只寫別名，不寫原始值。accent 覆寫：本站配件跟主題色走（齊 2026-11-16 定案），其餘站不動。文字 accent 用深橘 #8F5600 而非品牌色 #FF9A00，因 #FF9A00 對白僅 2.13:1；焦點環用 #B86E00，因 #FF9A00 對白 2.13:1 過不了非文字 3:1。","button":{"primary":{"background":{"$type":"color","$value":"{color.accent.orange-light-hover}"},"background-active":{"$type":"color","$value":"{color.accent.orange-light-deep}"},"background-hover":{"$type":"color","$value":"{color.accent.orange-light-active}"}}},"color":{"accent":{"$type":"color","$value":"{color.accent.orange-light-hover}"},"accent-active":{"$type":"color","$value":"{color.accent.orange-light-active}"},"accent-hover":{"$type":"color","$value":"{color.accent.orange-light-active}"},"brand":{"$type":"color","$value":"{color.orange.500}"},"focus-ring":{"$type":"color","$value":"{color.accent.orange-light-focus}"}},"dark":{"button":{"primary":{"background":{"$type":"color","$value":"{color.accent.orange-dark}"},"background-active":{"$type":"color","$value":"{color.accent.orange-dark-active}"},"background-hover":{"$type":"color","$value":"{color.accent.orange-dark-hover}"}}},"color":{"accent":{"$type":"color","$value":"{color.accent.orange-dark}"},"accent-active":{"$type":"color","$value":"{color.accent.orange-dark-active}"},"accent-hover":{"$type":"color","$value":"{color.accent.orange-dark-hover}"},"focus-ring":{"$type":"color","$value":"{color.accent.orange-dark}"}},"sidebar":{"text-active":{"$type":"color","$value":"{color.accent.orange-dark}"}}},"sidebar":{"text-active":{"$type":"color","$value":"{color.accent.orange-light-hover}"}}}

@@ -6,6 +6,7 @@ import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import { buildTokens, flatten } from './build-tokens.mjs';
+import { findChiTokenDefinitions } from './check-site-tokens.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const failures = [];
@@ -92,7 +93,7 @@ for (const file of tokenFiles) {
 console.log('Token schema 檢查完成：' + tokenFiles.length + ' 份來源檔');
 
 // 1. Token 解析（buildTokens 內已做別名解析與循環檢查；未解析會直接拋錯）
-const { resolvedLight, resolvedDark, brands } = buildTokens();
+const { resolvedLight, resolvedDark, brands, brandOverrides } = buildTokens();
 console.log(`Token 解析通過：淺色 ${Object.keys(resolvedLight).length} 個，深色 ${Object.keys(resolvedDark).length} 個，品牌 ${Object.keys(brands).length} 個`);
 
 // 別名型別必須一致：避免 color 指向 dimension 等可解析但語意錯誤的 Token。
@@ -153,6 +154,33 @@ for (const [theme, vars] of [['light', resolvedLight], ['dark', resolvedDark]]) 
   }
 }
 
+// 2b. per-brand accent 對比（U6）：有 accent 覆寫的品牌，文字 accent 在四種底上皆須 ≥4.5:1，
+// 白字（on-accent）在品牌 accent 按鈕底上也須 ≥4.5:1。
+// 四種底：canvas、surface（淺色即白底）、surface-sunken＋soft（品牌自有的 accent-soft 底色）。
+// soft 目前只有 fg 有對應 primitive（color.accent.orange-soft-light／orange-soft-dark）；
+// nav 的 soft #E6F4F7 只在 nav.css，未進 Token，2026-11-14 人工驗算 #006E87 為 5.21:1。
+const BRAND_SOFT = { fg: { light: 'color.accent.orange-soft-light', dark: 'color.accent.orange-soft-dark' } };
+for (const [id, overrides] of Object.entries(brandOverrides)) {
+  for (const [theme, vars] of [['light', resolvedLight], ['dark', resolvedDark]]) {
+    const accent = overrides[theme]?.['color.accent'];
+    if (!accent) continue; // 無覆寫的品牌用共用 accent，已在上方 pairs 檢查
+    const bgs = { canvas: vars['color.canvas'], surface: vars['color.surface'], 'surface-sunken': vars['color.surface-sunken'] };
+    const softKey = BRAND_SOFT[id]?.[theme];
+    if (softKey) bgs.soft = vars[softKey];
+    for (const [bgName, bg] of Object.entries(bgs)) {
+      if (!bg) { fail(`per-brand accent 對比缺少底色：${id} ${theme} ${bgName}`); continue; }
+      const r = ratio(accent, bg);
+      const line = `對比 ${theme} ${id} accent on ${bgName}：${r.toFixed(2)}:1（需 ≥4.5:1）`;
+      if (r < 4.5) fail(line);
+      else notes.push(line);
+    }
+    const rBtn = ratio(vars['color.on-accent'], accent);
+    const lineBtn = `對比 ${theme} ${id} on-accent on accent（白字按鈕）：${rBtn.toFixed(2)}:1（需 ≥4.5:1）`;
+    if (rBtn < 4.5) fail(lineBtn);
+    else notes.push(lineBtn);
+  }
+}
+
 // 3. 禁硬編碼：元件原始 CSS 與模板來源不得出現 hex（註解除外）；生成的 tokens.css 除外（它就是解析後的數值）。
 for (const dir of ['components']) {
   for (const f of readdirSync(path.join(ROOT, dir), { recursive: true }).filter((x) => x.endsWith('.css'))) {
@@ -170,6 +198,21 @@ for (const dir of ['components']) {
     if (rawWeight) fail(`硬編碼字重：${dir}/${f} 出現 ${[...new Set(rawWeight)].join('、')}，請改用 FontWeight Token`);
     const rawColorFunction = src.match(/(?:background(?:-color)?|color):\s*rgba?\(/g);
     if (rawColorFunction) fail(`硬編碼顏色函式：${dir}/${f} 出現 ${[...new Set(rawColorFunction)].join('、')}，請改用 Color Token`);
+  }
+}
+
+// 3b. U1 自查：本系統自己的原始碼也不得定義 --chi-*（定義只准出現在生成的 dist/tokens.css）。
+// 元件 CSS 與模板只能引用 var(--chi-*)。站點端的同規則見 scripts/check-site-tokens.mjs。
+const ownSources = [
+  ...readdirSync(path.join(ROOT, 'components'), { recursive: true })
+    .filter((file) => file.endsWith('.css'))
+    .map((file) => path.join(ROOT, 'components', file)),
+  path.join(ROOT, 'templates', 'base.template.html'),
+];
+for (const file of ownSources) {
+  const hits = findChiTokenDefinitions(readFileSync(file, 'utf8'));
+  if (hits.length) {
+    fail(`系統原始碼定義 --chi-*：${path.relative(ROOT, file)} ${hits.map((h) => `${h.property}（行 ${h.line}）`).join('、')}`);
   }
 }
 

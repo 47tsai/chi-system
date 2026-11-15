@@ -46,7 +46,8 @@ Foundations（原則）→ Tokens（數值）→ Components（元件）→ Patte
   生成：scripts/build-tokens.mjs → dist/tokens.css（生成物，禁手改）。
 - 品牌：每站識別色是 semantic `color.brand`，由 tokens/brands/<站>.tokens.json
   把 semantic 指到 primitive（只寫別名，不寫原始值）。六站定案值：
-  chi #4A88FC、fg #FF9A00、merch #584CCC、nav #008CAD、h #FF61F6、status #8CDC47。品牌色只用於站點識別（Header／Sidebar 品牌標記），不取代共用語意 `color.accent`；連結、主要按鈕、焦點環與互動狀態使用依淺深主題調整的 Accent。品牌識別與操作色分離是刻意的 Token 契約。例外：nav 站的 accent 全家跟品牌色走（由 tokens/brands/nav.tokens.json 覆寫淺／深兩套），其餘站維持分離。
+  chi #4A88FC、fg #FF9A00、merch #584CCC、nav #008CAD、h #FF61F6、status #8CDC47。品牌色只用於站點識別（Header／Sidebar 品牌標記），不取代共用語意 `color.accent`；連結、主要按鈕、焦點環與互動狀態使用依淺深主題調整的 Accent。品牌識別與操作色分離是刻意的 Token 契約。例外：nav、fg 兩站的 accent 全家跟品牌色走（由 tokens/brands/<站>.tokens.json 覆寫淺／深兩套），其餘站維持分離。fg 的文字 accent 用深橘 #8F5600 而非品牌色 #FF9A00，因 #FF9A00 對白僅 2.13:1；焦點環用 #B86E00，因 #FF9A00 對白 2.13:1 過不了非文字 3:1。
+- 站點 CSS 不得定義 `--chi-*`：`--chi-*` 變數只由 chi-system 生成物（dist/tokens.css）定義；站點自己的變數一律用 `--<站點>-*` 前綴（例如 `--fg-*`、`--nav-*`）。站點 CSS 出現 `--chi-` 定義即違反 Token 契約，`scripts/check-site-tokens.mjs` 檢查失敗（見 §9）。引用 `var(--chi-*)` 不受此限。
 - 語意色共用一組（Adobe Spectrum 900 階）：成功 #05834E／#099D59、
   異常 #9E6600／#BA7C00、錯誤 #D73220／#FC432E，淺深兩套，皆過 AA，
   永遠配文字或圖示，不只靠顏色。
@@ -133,6 +134,7 @@ CI 驗真的渲染依據，不是檔案在不在（舊系統三支腳本全綠�
 7. 斷點一致（768／1024 在 JSON、CSS、JS 三處一致）
 8. 站點輸出煙霧測試（每份站設定都產生完整 index.html；placeholder 全數填入、品牌與 Logo 路徑正確且都位於 dist 根目錄內、共用 CSS／JS 路徑存在）。另以臨時新增的兩個品牌／站設定執行新站整合測試，驗證只新增品牌 Token 與站設定即可產生預設 Header、指定 Sidebar 版式，且完整站點驗證通過；所有本機 CSS／JS／Logo 路徑須通過靜態 HTTP 200 與 MIME smoke test；Chrome 可用時另以 headless 桌機／手機載入六站並檢查 console；Chrome 可用時，另驗證元件展示頁六品牌 × 淺深主題 × 手機／平板／桌機共 36 組，檢查元件樣式、Runtime、表單互動與水平溢出；並以正式預覽殼驗證六品牌 × 淺深主題 × Header／Sidebar 版式共 24 組 Token 實際消費，檢查品牌識別線、共用操作 Accent、Footer 語意文字、主題色切換與 CSSOM 樣式規則；另以六品牌 × 淺深主題 × Header／Sidebar × 320／390／768／1024／1440px 五種視窗共 120 組幾何回歸，檢查殼層寬度、斷點、側欄寬度／定位、主內容置中、Footer 順序、水平溢出、按鈕與表單控制尺寸一致性及觸控目標；另以六品牌 × 淺深主題共 12 組實際驗證 Button、表單、Tabs、Card、List、Table 的 Hover／Active／Focus／Error／Disabled 狀態與語意 Token；並驗證 Checkbox／Radio／Switch 的 Checked／Disabled、Badge 語意色、Spinner／Skeleton、Empty／Error／Success 資料狀態，以及 Dialog Backdrop、焦點進入、關閉與焦點返回；並以真實鍵盤與 Chrome Accessibility Tree 驗證選擇控制角色／具名稱 Radio 群組、Readonly／Disabled／Invalid 公告、Live Region、Tab 順序與原生 Dialog Modal 背景隔離、Tab／Shift+Tab 邊界焦點；並驗證預設／減少動態偏好、Focus-visible CSS 合約與元件互動；另以 Chrome DevTools Protocol 注入真實 Tab、方向鍵、Home／End、Space、Escape 與滑鼠 backdrop 點擊，於六站桌機／手機共 12 組情境確認焦點落點、`:focus-visible`、Tabs disabled 略過／首末項移動與面板同步、Theme 鍵盤操作及標籤同步，以及 Dialog Escape／backdrop 關閉和焦點返回；另於六站手機版實際驗證 Sidebar 抽屜的 Tab／Shift+Tab 焦點循環、外部焦點回收與 Escape 關閉。 Chrome Accessibility Tree 與 DOM 稽核則覆蓋六站桌機／手機、淺色／深色共 24 組，檢查文件語言／標題、主要 Landmark、互動可存取名稱、表單標籤、圖片 alt、ARIA IDREF、重複 ID、aria-hidden 焦點安全，以及可見文字的實際前景／背景對比。另以元件表單瀏覽器測試覆蓋六站、五種視窗寬度（320／390／768／1024／1365px）及淺深主題共 60 組，實際檢查 Email 有效／錯誤狀態、欄位錯誤樣式、Select／Textarea 值、Checkbox／Radio 操作、按鈕送出表單、停用控制穩定性與表單控制項水平溢出；另以 Chrome DevTools Protocol 於六站桌機／手機共 12 組實際驗證 Tab 焦點順序、Select 方向鍵、Checkbox Space、Radio 方向鍵及 Enter 送出表單。此自動檢查是專案回歸門檻，不宣稱取代完整人工 WCAG／輔助科技測試。
 9. 無障礙與視覺回歸分階段導入：v1.1 已加入 axe-core WCAG 2.0／2.1／2.2 A／AA 自動稽核，涵蓋六站 × 桌機／手機 × 淺／深主題共 24 組；並加入 Playwright Chromium／Firefox／WebKit 三引擎真實頁面互動測試，涵蓋六站頁面與元件展示頁，各三引擎 × 六站 × 桌機／手機共 72 組，另對展示頁真實操作 Tabs、Radio／Switch、表單送出與 Dialog 原生 Modal／焦點返回；站點三引擎 × 六站 × 桌機／手機 × 淺／深主題共 72 組，加展示頁三引擎 × 六站 × 桌機／手機 × 淺／深主題／Dialog 開啟狀態共 108 組，總計 180 組 axe-core WCAG 2.0／2.1／2.2 A／AA 稽核，全部零違規；CI 會安裝三種瀏覽器及系統依賴，將跨瀏覽器互動、跨引擎 axe-core 與既有 Chrome Accessibility Tree、DOM、鍵盤及實際文字對比檢查共同作為阻擋門檻。人工螢幕閱讀器驗收與逐像素截圖差異比對仍待後續評估，不以易受字型／作業系統影響的截圖雜訊作為阻擋條件。
+10. 站點 Token 覆寫檢查（`scripts/check-site-tokens.mjs`）：掃描站點 CSS，出現 `--chi-` 自訂屬性定義即失敗；`--chi-*` 只能被引用（`var(--chi-*)`），不得被站點重新定義。掃描時排除站內釘版複製的 chi-system 目錄（`chi-system/`、`dist/`）與 `node_modules/`。另見 U6：有 accent 覆寫的品牌，其文字 accent 在 canvas／surface／surface-sunken／soft 四種底上皆須 ≥4.5:1，由 `scripts/validate.mjs` 與 token-consumption smoke 檢查。
 
 ## 10. 版本
 
@@ -140,7 +142,7 @@ SemVer。v1.0.0 是公開 API 宣告與 SemVer 承諾開始之時：
 公開 API＝Token、元件 props／slots、站設定 schema、模板區塊；未列入的皆為內部。
 廢棄放 minor、移除放下一個 major；破壞性變更只在 major。
 站釘版用確切版本（或 Git Tag），回滾就是切回上一個 Tag 重建。
-CHANGELOG.md 常備 Unreleased 區。參考：GOV.UK Frontend 版本政策。
+CHANGELOG.md 常備 Unreleased 區。發版節奏、釘版檢查（`scripts/check-pinned.mjs`）與各站重釘流程見 docs/RELEASE.md；Unreleased 累積到一段落就打 patch／minor tag，判斷標準見該文件。參考：GOV.UK Frontend 版本政策。
 
 ## 11. 來源（搬用與參考，皆註明）
 
