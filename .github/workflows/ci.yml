@@ -17,3 +17,5 @@ jobs:
         run: ./node_modules/.bin/playwright-core install --with-deps chromium firefox webkit
       - name: Build, validate, and verify generated files
         run: npm run check
+      - name: Verify pinned-version check script
+        run: node scripts/check-pinned.mjs --pin $(git rev-parse HEAD) --site chi
