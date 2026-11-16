@@ -42,7 +42,7 @@ test('All generated sites and local assets serve with HTTP 200 from dist root', 
   const address = server.address();
   const origin = `http://127.0.0.1:${address.port}`;
   try {
-    for (const site of ['chi', 'fg', 'h', 'merch', 'nav', 'status']) {
+    for (const site of ['auth', 'chi', 'fg', 'h', 'merch', 'nav', 'status']) {
       const pageUrl = new URL(`/sites/${site}/index.html`, origin);
       const pageResponse = await fetch(pageUrl);
       assert.equal(pageResponse.status, 200, `${site} entry page should load`);

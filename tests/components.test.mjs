@@ -133,7 +133,7 @@ test('Generated dist inventory is explicit and excludes undeclared files', () =>
 test('Every generated site asset resolves inside the standalone dist root', () => {
   const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
   const distRoot = path.join(root, 'dist');
-  for (const site of ['chi', 'fg', 'h', 'merch', 'nav', 'status']) {
+  for (const site of ['auth', 'chi', 'fg', 'h', 'merch', 'nav', 'status']) {
     const siteRoot = path.join(distRoot, 'sites', site);
     const html = readFileSync(path.join(siteRoot, 'index.html'), 'utf8');
     for (const [, asset] of html.matchAll(/(?:src|href)="([^"]+)"/g)) {
@@ -188,7 +188,7 @@ test('Component showcase and developer guide cover the stable component catalog'
   for (const id of ['buttons-title','badges-title','form-title','tabs-title','card-title','list-title','table-title','state-title','dialog-title']) {
     assert.ok(showcase.includes(`id="${id}"`), `showcase section ${id}`);
   }
-  for (const brand of ['chi','fg','h','merch','nav','status']) assert.ok(showcase.includes(`value="${brand}"`), `showcase brand ${brand}`);
+  for (const brand of ['auth', 'chi', 'fg', 'h', 'merch', 'nav', 'status']) assert.ok(showcase.includes(`value="${brand}"`), `showcase brand ${brand}`);
   for (const contract of ['aria-invalid', 'aria-describedby', 'data-chi-tabs', 'data-chi-dialog-open', 'chi-switch__input']) {
     assert.ok(guide.includes(contract), `developer guide contract ${contract}`);
   }
