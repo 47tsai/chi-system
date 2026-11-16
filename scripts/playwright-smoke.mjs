@@ -6,7 +6,7 @@ import { chromium, firefox, webkit } from 'playwright-core';
 const ROOT = path.resolve(import.meta.dirname, '..');
 const DIST = path.join(ROOT, 'dist');
 const AXE_SOURCE = readFileSync(path.join(ROOT, 'node_modules/axe-core/axe.min.js'), 'utf8');
-const sites = (process.env.CHI_TEST_SITES || 'chi,fg,h,merch,nav,status').split(',').filter(Boolean);
+const sites = (process.env.CHI_TEST_SITES || 'auth,chi,fg,h,merch,nav,status').split(',').filter(Boolean);
 const viewports = [
   { name: 'desktop', width: 1365, height: 900 },
   { name: 'mobile', width: 390, height: 844 },

@@ -48,7 +48,7 @@ try {
   assert.match(tokenCss, /\[data-chi-brand="contract-probe-sidebar"\]\s*\{/);
 
   const buildResult = buildSite();
-  assert.equal(buildResult.sites, 8);
+  assert.equal(buildResult.sites, 9);
   const validation = spawnSync(process.execPath, [path.join(ROOT, 'scripts', 'validate.mjs')], { cwd: ROOT, encoding: 'utf8' });
   assert.equal(validation.status, 0, `full site validation failed:\n${validation.stdout}\n${validation.stderr}`);
   const preview = JSON.parse(readFileSync(path.join(ROOT, 'preview', 'sites.json'), 'utf8'));

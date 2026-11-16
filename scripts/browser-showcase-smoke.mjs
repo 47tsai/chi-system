@@ -27,7 +27,7 @@ const server = createServer((request, response) => {
 });
 await new Promise((resolve, reject) => { server.once('error', reject); server.listen(0, '127.0.0.1', resolve); });
 const origin = `http://127.0.0.1:${server.address().port}`;
-const brands = ['chi', 'fg', 'h', 'merch', 'nav', 'status'];
+const brands = ['auth', 'chi', 'fg', 'h', 'merch', 'nav', 'status'];
 const themes = ['light', 'dark'];
 const viewports = [{ name: 'mobile', width: 390, height: 844 }, { name: 'tablet', width: 768, height: 900 }, { name: 'desktop', width: 1365, height: 900 }];
 const failures = [];

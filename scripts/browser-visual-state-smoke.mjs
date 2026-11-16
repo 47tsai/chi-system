@@ -13,7 +13,7 @@ if (!browser) {
   process.exit(0);
 }
 
-const brands = ['chi', 'fg', 'h', 'merch', 'nav', 'status'];
+const brands = ['auth', 'chi', 'fg', 'h', 'merch', 'nav', 'status'];
 const themes = ['light', 'dark'];
 const failures = [];
 let passed = 0;

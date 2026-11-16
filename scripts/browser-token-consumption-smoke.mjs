@@ -17,7 +17,7 @@ if (!browser) {
 const tokenCss = readFileSync(path.join(DIST, 'tokens.css'), 'utf8');
 const brands = [...tokenCss.matchAll(/\[data-chi-brand="([^"]+)"\]\s*\{\s*--chi-color-brand:\s*(#[0-9a-fA-F]{6})\s*;/g)]
   .map(([, id, color]) => ({ id, color: color.toLowerCase() }));
-if (brands.length !== 6) throw new Error(`Expected six generated brand tokens, found ${brands.length}`);
+if (brands.length !== 7) throw new Error(`Expected seven generated brand tokens, found ${brands.length}`);
 const server = createServer((request, response) => {
   const pathname = decodeURIComponent(new URL(request.url, 'http://localhost').pathname);
   let target = path.resolve(ROOT, '.' + pathname);

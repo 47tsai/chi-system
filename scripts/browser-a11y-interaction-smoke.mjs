@@ -25,7 +25,7 @@ const server = createServer((request, response) => {
 });
 await new Promise((resolve, reject) => { server.once('error', reject); server.listen(0, '127.0.0.1', resolve); });
 const origin = `http://127.0.0.1:${server.address().port}`;
-const brands = ['chi', 'fg', 'h', 'merch', 'nav', 'status'];
+const brands = ['auth', 'chi', 'fg', 'h', 'merch', 'nav', 'status'];
 const viewports = [{name:'desktop',width:1365,height:900},{name:'mobile',width:390,height:844}];
 const failures = [];
 let passed = 0;
