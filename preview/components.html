@@ -33,7 +33,7 @@
   <div><strong>CHI Design System</strong><div class="showcase-note">元件展示與互動驗收</div></div>
   <div class="showcase-controls">
     <label for="brand-select">品牌</label>
-    <select class="chi-select" id="brand-select"><option value="chi">CHI</option><option value="fg">FG</option><option value="h">H</option><option value="merch">Merch</option><option value="nav">Nav</option><option value="status">Status</option></select>
+    <select class="chi-select" id="brand-select"><option value="auth">Auth</option><option value="chi">CHI</option><option value="fg">FG</option><option value="h">H</option><option value="merch">Merch</option><option value="nav">Nav</option><option value="status">Status</option></select>
     <button class="chi-btn chi-btn--secondary" type="button" data-chi-theme-toggle><span data-chi-theme-icon aria-hidden="true">◐</span></button>
   </div>
 </header>
@@ -57,7 +57,7 @@
   var params = new URLSearchParams(location.search);
   var brand = params.get('brand') || 'chi';
   var theme = params.get('theme') === 'dark' ? 'dark' : 'light';
-  var validBrands = ['chi', 'fg', 'h', 'merch', 'nav', 'status'];
+  var validBrands = ['auth', 'chi', 'fg', 'h', 'merch', 'nav', 'status'];
   if (!validBrands.includes(brand)) brand = 'chi';
   document.documentElement.setAttribute('data-chi-brand', brand);
   document.getElementById('brand-select').value = brand;

@@ -1,5 +1,9 @@
 [
   {
+    "id": "auth",
+    "name": "Chi Auth"
+  },
+  {
     "id": "chi",
     "name": "Chi 主站"
   },
