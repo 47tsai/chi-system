@@ -1,9 +1,1 @@
-{
-  "$description": "h 品牌檔 — 只寫別名，不寫原始值。",
-  "color": {
-    "brand": {
-      "$type": "color",
-      "$value": "{color.fuchsia.500}"
-    }
-  }
-}
+{"$description":"h 品牌檔 — 只寫別名，不寫原始值。accent 覆寫：本站配件跟主題色走（2026-11-17 與 status 同批補齊，此前 accent 缺口會 fallback 到藍色），其餘站不動。文字 accent 用深品紅 #BD00B2 而非品牌色 #FF61F6，因 #FF61F6 對白僅 2.53:1；#BD00B2 在白底 5.52:1、canvas 5.19:1、sunken 4.83:1、soft #FFF3E0 5.03:1，白字按鈕 5.52:1，皆過 AA；hover／active #A9009F、按鈕 active #94008C（白字 7.96:1）。焦點環用 #E600D8（對白 3.92:1、對 sunken 3.43:1，過非文字 3:1），因 #FF61F6 對白 2.53:1 不可用作焦點環。深色 accent #FF6EF7（對深色 canvas 7.68:1）、hover #FF97F9、active 即品牌色 #FF61F6。","button":{"primary":{"background":{"$type":"color","$value":"{color.accent.fuchsia-light-hover}"},"background-active":{"$type":"color","$value":"{color.accent.fuchsia-light-deep}"},"background-hover":{"$type":"color","$value":"{color.accent.fuchsia-light-active}"}}},"color":{"accent":{"$type":"color","$value":"{color.accent.fuchsia-light-hover}"},"accent-active":{"$type":"color","$value":"{color.accent.fuchsia-light-active}"},"accent-hover":{"$type":"color","$value":"{color.accent.fuchsia-light-active}"},"brand":{"$type":"color","$value":"{color.fuchsia.500}"},"focus-ring":{"$type":"color","$value":"{color.accent.fuchsia-light-focus}"}},"dark":{"button":{"primary":{"background":{"$type":"color","$value":"{color.accent.fuchsia-dark}"},"background-active":{"$type":"color","$value":"{color.accent.fuchsia-dark-active}"},"background-hover":{"$type":"color","$value":"{color.accent.fuchsia-dark-hover}"}}},"color":{"accent":{"$type":"color","$value":"{color.accent.fuchsia-dark}"},"accent-active":{"$type":"color","$value":"{color.accent.fuchsia-dark-active}"},"accent-hover":{"$type":"color","$value":"{color.accent.fuchsia-dark-hover}"},"focus-ring":{"$type":"color","$value":"{color.accent.fuchsia-dark}"}},"sidebar":{"text-active":{"$type":"color","$value":"{color.accent.fuchsia-dark}"}}},"sidebar":{"text-active":{"$type":"color","$value":"{color.accent.fuchsia-light-hover}"}}}

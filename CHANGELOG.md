@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## v1.2.0 — 2026-11-17
+
+- status／h／merch 三站 accent 跟主題色走：tokens/brands/status.tokens.json、h.tokens.json、merch.tokens.json 新增淺／深兩套 accent 覆寫（primitives 新增 lime／fuchsia／violet 三套 accent 家族共 21 個原始值），眉標、側邊欄 active、主要按鈕、焦點環等配件不再 fallback 到藍色。起因是齊 2026-11-17 發現 status 站品牌是綠色、元件 accent 卻全是藍色：tokens.css 裡 `[data-chi-brand="status"]` 只覆寫了品牌色，accent 家族缺失。status 文字 accent 用深綠 #46731C 而非品牌色 #8CDC47，因 #8CDC47 對白僅 1.69:1；#46731C 在白底 5.63:1、canvas 5.30:1、sunken 4.93:1、soft #FFF3E0 5.13:1，白字按鈕 5.63:1，皆過 AA；hover／active #3F6B12、按鈕 active #355A0F（白字 8.01:1）。注意：初選 #4A7A1E 白底雖 5.13:1、但 sunken 只有 4.49:1，過不了 per-brand 檢查，已加深一階為 #46731C。焦點環用 #52921C（對白 3.83:1、對 sunken 3.35:1，過非文字 3:1）。深色 accent #A8E063（對深色 canvas 11.76:1）、hover #BBE785、active 即品牌色 #8CDC47。h 文字 accent 用深品紅 #BD00B2（白底 5.52:1、canvas 5.19:1、sunken 4.83:1、soft 5.03:1），品牌色 #FF61F6 對白僅 2.53:1；hover／active #A9009F、按鈕 active #94008C；焦點環 #E600D8（對白 3.92:1、對 sunken 3.43:1）；深色 accent #FF6EF7（對深色 canvas 7.68:1）、hover #FF97F9、active 即品牌色 #FF61F6。merch 文字 accent 直接用品牌色 #584CCC（白底 6.32:1、canvas 5.95:1、sunken 5.53:1，同 auth 做法，品牌色本身已過 AA）；hover／active #493CC7、按鈕 active #4235BA；焦點環亦用品牌色；深色 accent #A8A2E4（對深色 canvas 7.79:1）、hover #C6C2ED、active #928ADD（品牌色 #584CCC 在深色底只有 2.89:1，不可用作深色 active）。全部數值先以腳本驗算、再由 validate.mjs 與 token-consumption smoke 複驗。語意色與其他站品牌色不動。注意：status 站本身須重釘到新版，線上站才能看到綠色配件；h／merch 尚未遷移，改了不影響任何線上站。
+- auth 品牌（2026-11-16 已上 main，本次補記）：tokens/brands/auth.tokens.json 與 Bitwarden 藍 accent 家族（#175DDC），本站配件跟主題色走；v1.1.0 發版後才上 main，當時未記入 CHANGELOG，本版一併收錄。語意色與其他站品牌色不動。
+- 本次發版為 v1.2.0（minor）：新增 Token（lime／fuchsia／violet 三套 accent primitive 家族與三站 accent 覆寫），按 docs/RELEASE.md §2 判為 minor。雖是修復缺口，但新增公開 Token 且渲染結果改變（status／h／merch 配件由藍變綠／粉／紫），不符合 patch「渲染結果不變」的定義；判斷有疑義時往高一級打。
+
 ## v1.1.0 — 2026-11-16
 
 - fg 站 accent 跟主題色走：tokens/brands/fg.tokens.json 新增淺／深兩套 accent 覆寫（齊 2026-11-16 定案），眉標、側邊欄 active、主要按鈕、焦點環等配件不再是藍色。文字 accent 用深橘 #8F5600 而非品牌色 #FF9A00，因 #FF9A00 對白僅 2.13:1；#8F5600 在白底 6.00:1、canvas 5.65:1、sunken 5.25:1、soft #FFF3E0 5.47:1，白字按鈕 6.00:1，皆過 AA；hover／active #7A4900、按鈕 active #663D00（白字 9.41:1）。焦點環用 #B86E00（對白 3.99:1、對 sunken 3.49:1，過非文字 3:1），因 #FF9A00 對白 2.13:1 不可用作焦點環。深色 accent #FFB84D（對深色 canvas 10.63:1）、hover #FFCC80、active #FF9900。另新增 per-brand accent 對比檢查：有覆寫的品牌在 canvas／surface／sunken／soft 四種底上皆須 ≥4.5:1，由 validate.mjs 與 token-consumption smoke 檢查（nav 一併納入檢查，soft 除外：nav 的 soft #E6F4F7 未進 Token，2026-11-14 人工驗算 #006E87 為 5.21:1）。語意色與其他站品牌色不動。注意：fg 站本身尚未重釘，線上站要看到橘色配件須等 fg 重釘到新版。

@@ -1,9 +1,1 @@
-{
-  "$description": "status 品牌檔 — 只寫別名，不寫原始值。",
-  "color": {
-    "brand": {
-      "$type": "color",
-      "$value": "{color.lime.500}"
-    }
-  }
-}
+{"$description":"status 品牌檔 — 只寫別名，不寫原始值。accent 覆寫：本站配件跟主題色走（齊 2026-11-17 發現 accent 全是藍色後定案修復），其餘站不動。文字 accent 用深綠 #46731C 而非品牌色 #8CDC47，因 #8CDC47 對白僅 1.69:1；#46731C 在白底 5.63:1、canvas 5.30:1、sunken 4.93:1、soft #FFF3E0 5.13:1，白字按鈕 5.63:1，皆過 AA；hover／active #3F6B12、按鈕 active #355A0F（白字 8.01:1）。焦點環用 #52921C（對白 3.83:1、對 sunken 3.35:1，過非文字 3:1），因 #8CDC47 對白 1.69:1 不可用作焦點環。深色 accent #A8E063（對深色 canvas 11.76:1）、hover #BBE785、active 即品牌色 #8CDC47。","button":{"primary":{"background":{"$type":"color","$value":"{color.accent.lime-light-hover}"},"background-active":{"$type":"color","$value":"{color.accent.lime-light-deep}"},"background-hover":{"$type":"color","$value":"{color.accent.lime-light-active}"}}},"color":{"accent":{"$type":"color","$value":"{color.accent.lime-light-hover}"},"accent-active":{"$type":"color","$value":"{color.accent.lime-light-active}"},"accent-hover":{"$type":"color","$value":"{color.accent.lime-light-active}"},"brand":{"$type":"color","$value":"{color.lime.500}"},"focus-ring":{"$type":"color","$value":"{color.accent.lime-light-focus}"}},"dark":{"button":{"primary":{"background":{"$type":"color","$value":"{color.accent.lime-dark}"},"background-active":{"$type":"color","$value":"{color.accent.lime-dark-active}"},"background-hover":{"$type":"color","$value":"{color.accent.lime-dark-hover}"}}},"color":{"accent":{"$type":"color","$value":"{color.accent.lime-dark}"},"accent-active":{"$type":"color","$value":"{color.accent.lime-dark-active}"},"accent-hover":{"$type":"color","$value":"{color.accent.lime-dark-hover}"},"focus-ring":{"$type":"color","$value":"{color.accent.lime-dark}"}},"sidebar":{"text-active":{"$type":"color","$value":"{color.accent.lime-dark}"}}},"sidebar":{"text-active":{"$type":"color","$value":"{color.accent.lime-light-hover}"}}}

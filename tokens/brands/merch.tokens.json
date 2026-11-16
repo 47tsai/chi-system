@@ -1,9 +1,1 @@
-{
-  "$description": "merch 品牌檔 — 只寫別名，不寫原始值。",
-  "color": {
-    "brand": {
-      "$type": "color",
-      "$value": "{color.violet.500}"
-    }
-  }
-}
+{"$description":"merch 品牌檔 — 只寫別名，不寫原始值。accent 覆寫：本站配件跟主題色走（2026-11-17 與 status 同批補齊，此前 accent 缺口會 fallback 到藍色），其餘站不動。文字 accent 直接用品牌色 #584CCC，因它對白已 6.32:1、對 canvas 5.95:1、對 sunken 5.53:1，過 AA；hover／active #493CC7、按鈕 active #4235BA（白字 8.57:1）。焦點環亦用品牌色（同 nav／auth 做法），對白 6.32:1，過非文字 3:1。深色 accent #A8A2E4（對深色 canvas 7.79:1）、hover #C6C2ED、active #928ADD（比文字色再深一階；品牌色 #584CCC 在深色底只有 2.89:1，不可用作深色 active）。","button":{"primary":{"background":{"$type":"color","$value":"{color.accent.violet-light-hover}"},"background-active":{"$type":"color","$value":"{color.accent.violet-light-deep}"},"background-hover":{"$type":"color","$value":"{color.accent.violet-light-active}"}}},"color":{"accent":{"$type":"color","$value":"{color.accent.violet-light-hover}"},"accent-active":{"$type":"color","$value":"{color.accent.violet-light-active}"},"accent-hover":{"$type":"color","$value":"{color.accent.violet-light-active}"},"brand":{"$type":"color","$value":"{color.violet.500}"},"focus-ring":{"$type":"color","$value":"{color.accent.violet-light-focus}"}},"dark":{"button":{"primary":{"background":{"$type":"color","$value":"{color.accent.violet-dark}"},"background-active":{"$type":"color","$value":"{color.accent.violet-dark-active}"},"background-hover":{"$type":"color","$value":"{color.accent.violet-dark-hover}"}}},"color":{"accent":{"$type":"color","$value":"{color.accent.violet-dark}"},"accent-active":{"$type":"color","$value":"{color.accent.violet-dark-active}"},"accent-hover":{"$type":"color","$value":"{color.accent.violet-dark-hover}"},"focus-ring":{"$type":"color","$value":"{color.accent.violet-dark}"}},"sidebar":{"text-active":{"$type":"color","$value":"{color.accent.violet-dark}"}}},"sidebar":{"text-active":{"$type":"color","$value":"{color.accent.violet-light-hover}"}}}
