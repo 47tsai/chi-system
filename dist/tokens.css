@@ -189,6 +189,10 @@
   --chi-sidebar-text-active: #6B9BFF;
 }
 
+[data-chi-brand="auth"] {
+  --chi-color-brand: #175DDC;
+}
+
 [data-chi-brand="chi"] {
   --chi-color-brand: #4A88FC;
 }
@@ -211,6 +215,28 @@
 
 [data-chi-brand="status"] {
   --chi-color-brand: #8CDC47;
+}
+
+[data-chi-brand="auth"] {
+  --chi-button-primary-background: #175DDC;
+  --chi-button-primary-background-active: #10419A;
+  --chi-button-primary-background-hover: #144FBB;
+  --chi-color-accent: #175DDC;
+  --chi-color-accent-active: #144FBB;
+  --chi-color-accent-hover: #144FBB;
+  --chi-color-focus-ring: #175DDC;
+  --chi-sidebar-text-active: #175DDC;
+}
+
+[data-chi-theme="dark"][data-chi-brand="auth"] {
+  --chi-button-primary-background: #749EEA;
+  --chi-button-primary-background-active: #5D8EE7;
+  --chi-button-primary-background-hover: #97B6EF;
+  --chi-color-accent: #749EEA;
+  --chi-color-accent-active: #5D8EE7;
+  --chi-color-accent-hover: #97B6EF;
+  --chi-color-focus-ring: #749EEA;
+  --chi-sidebar-text-active: #749EEA;
 }
 
 [data-chi-brand="fg"] {
